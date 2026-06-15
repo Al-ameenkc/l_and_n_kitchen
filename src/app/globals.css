@@ -28,7 +28,6 @@ body {
 }
 
 .carousel-wheel {
-  scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
 }
 

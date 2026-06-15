@@ -17,11 +17,11 @@ interface CardStackProps {
   onCurrentChange?: (dish: Dish | null) => void;
 }
 
-const SWIPE_THRESHOLD = 72;
-const SWIPE_VELOCITY = 320;
+const SWIPE_THRESHOLD = 64;
+const SWIPE_VELOCITY = 280;
 const PULSE_MS = 420;
 const VISIBLE_BEHIND = 4;
-const FLY_OFF_DISTANCE = 520;
+const FLY_OFF_DISTANCE = 480;
 
 export function CardStack({
   deck,
@@ -64,21 +64,45 @@ export function CardStack({
     window.setTimeout(() => setRejectPulse(false), PULSE_MS);
   }, []);
 
+  const completeWish = useCallback(() => {
+    if (!current) return;
+    onWish(current);
+    advance();
+  }, [current, onWish, advance]);
+
+  const completeTrash = useCallback(() => {
+    if (!current) return;
+    onTrash(current);
+    advance();
+  }, [current, onTrash, advance]);
+
   const handleWish = useCallback(() => {
     if (!current) return;
     flashWish();
     hapticCardSwipe();
-    onWish(current);
-    advance();
-  }, [current, onWish, advance, flashWish]);
+    completeWish();
+  }, [current, completeWish, flashWish]);
 
   const handleTrash = useCallback(() => {
     if (!current) return;
     flashReject();
     hapticCardSwipe();
-    onTrash(current);
-    advance();
-  }, [current, onTrash, advance, flashReject]);
+    completeTrash();
+  }, [current, completeTrash, flashReject]);
+
+  const handleSwipeWish = useCallback(() => {
+    if (!current) return;
+    flashWish();
+    hapticCardSwipe();
+    completeWish();
+  }, [current, completeWish, flashWish]);
+
+  const handleSwipeTrash = useCallback(() => {
+    if (!current) return;
+    flashReject();
+    hapticCardSwipe();
+    completeTrash();
+  }, [current, completeTrash, flashReject]);
 
   return (
     <div className="relative flex h-full min-h-[min(56vh,440px)] max-h-[min(58vh,460px)] flex-1 overflow-visible px-0">
@@ -127,8 +151,8 @@ export function CardStack({
               <SwipeableCard
                 key={current.id}
                 dish={current}
-                onWish={handleWish}
-                onTrash={handleTrash}
+                onSwipeWish={handleSwipeWish}
+                onSwipeTrash={handleSwipeTrash}
                 onTap={() => onCardTap(current)}
                 onDragXChange={setDragX}
                 onDraggingChange={setIsDragging}
@@ -144,16 +168,16 @@ export function CardStack({
 
 function SwipeableCard({
   dish,
-  onWish,
-  onTrash,
+  onSwipeWish,
+  onSwipeTrash,
   onTap,
   onDragXChange,
   onDraggingChange,
   elevated,
 }: {
   dish: Dish;
-  onWish: () => void;
-  onTrash: () => void;
+  onSwipeWish: () => void;
+  onSwipeTrash: () => void;
   onTap: () => void;
   onDragXChange: (x: number) => void;
   onDraggingChange: (dragging: boolean) => void;
@@ -161,7 +185,7 @@ function SwipeableCard({
 }) {
   const x = useMotionValue(0);
   const opacity = useMotionValue(1);
-  const rotate = useTransform(x, [-280, 280], [-18, 18]);
+  const rotate = useTransform(x, [-300, 300], [-16, 16]);
   const didSwipe = useRef(false);
   const [isFlyingOff, setIsFlyingOff] = useState(false);
 
@@ -179,21 +203,15 @@ function SwipeableCard({
 
       const currentX = x.get();
       const targetX =
-        direction === "wish"
-          ? Math.max(currentX, 80) + FLY_OFF_DISTANCE
-          : Math.min(currentX, -80) - FLY_OFF_DISTANCE;
+        direction === "wish" ? currentX + FLY_OFF_DISTANCE : currentX - FLY_OFF_DISTANCE;
 
-      const controls = animate(x, targetX, {
-        type: "spring",
-        stiffness: 180,
-        damping: 26,
-        mass: 0.9,
-        velocity: direction === "wish" ? 800 : -800,
-      });
-
-      animate(opacity, 0, { duration: 0.32, ease: "easeOut" });
-
-      controls.then(() => {
+      Promise.all([
+        animate(x, targetX, {
+          duration: 0.36,
+          ease: [0.32, 0.72, 0, 1],
+        }),
+        animate(opacity, 0, { duration: 0.3, ease: "easeOut" }),
+      ]).then(() => {
         onComplete();
       });
     },
@@ -211,15 +229,14 @@ function SwipeableCard({
         touchAction: "none",
       }}
       drag={isFlyingOff ? false : "x"}
-      dragElastic={0.18}
-      dragConstraints={{ left: 0, right: 0 }}
+      dragElastic={0.12}
       dragMomentum={false}
       onDragStart={() => {
         didSwipe.current = false;
         onDraggingChange(true);
       }}
       onDrag={(_, info) => {
-        if (Math.abs(info.offset.x) > 8) {
+        if (Math.abs(info.offset.x) > 6) {
           didSwipe.current = true;
         }
       }}
@@ -229,16 +246,16 @@ function SwipeableCard({
         onDraggingChange(false);
 
         if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > SWIPE_VELOCITY) {
-          flyOff("wish", onWish);
+          flyOff("wish", onSwipeWish);
           return;
         }
         if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -SWIPE_VELOCITY) {
-          flyOff("trash", onTrash);
+          flyOff("trash", onSwipeTrash);
           return;
         }
 
         didSwipe.current = false;
-        animate(x, 0, { type: "spring", stiffness: 420, damping: 32 });
+        animate(x, 0, { type: "spring", stiffness: 380, damping: 34 });
         onDragXChange(0);
       }}
       onTap={() => {

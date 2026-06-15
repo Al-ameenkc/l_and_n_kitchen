@@ -36,7 +36,7 @@ export function DishDetailView({ dish, onClose }: DishDetailViewProps) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: "100%" }}
           transition={{ type: "spring", stiffness: 320, damping: 32 }}
-          className="fixed inset-0 z-50 mx-auto flex max-w-[430px] flex-col bg-[#111111]"
+          className="fixed inset-0 z-[60] mx-auto flex max-w-[430px] flex-col bg-[#111111]"
         >
           <div className="relative h-[42vh] shrink-0 bg-zinc-900">
             <Image src={dish.image} alt={dish.name} fill className="object-cover" unoptimized />

@@ -91,6 +91,7 @@ export function MenuApp() {
         total={wishlistTotal}
         onClose={() => setWishlistOpen(false)}
         onRemove={removeFromWishlist}
+        onSelectDish={(dish) => setDetailDishId(dish.id)}
       />
 
       <TrashSheet

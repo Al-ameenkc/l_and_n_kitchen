@@ -12,9 +12,17 @@ interface WishListSheetProps {
   total: number;
   onClose: () => void;
   onRemove: (id: string) => void;
+  onSelectDish: (dish: Dish) => void;
 }
 
-export function WishListSheet({ open, dishes, total, onClose, onRemove }: WishListSheetProps) {
+export function WishListSheet({
+  open,
+  dishes,
+  total,
+  onClose,
+  onRemove,
+  onSelectDish,
+}: WishListSheetProps) {
   return (
     <AnimatePresence>
       {open && (
@@ -38,7 +46,9 @@ export function WishListSheet({ open, dishes, total, onClose, onRemove }: WishLi
             <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
               <div>
                 <h2 className="text-lg font-extrabold text-white">My Wish List</h2>
-                <p className="text-xs font-normal text-zinc-500">Show this list to staff when ordering</p>
+                <p className="text-xs font-normal text-zinc-500">
+                  Tap a dish for details · show this list to staff when ordering
+                </p>
               </div>
               <button type="button" onClick={onClose} className="text-sm font-medium text-zinc-400">
                 Close
@@ -53,24 +63,35 @@ export function WishListSheet({ open, dishes, total, onClose, onRemove }: WishLi
               ) : (
                 <ul className="space-y-3">
                   {dishes.map((dish) => (
-                    <li
-                      key={dish.id}
-                      className="flex items-center gap-3 rounded-2xl bg-white p-3"
-                    >
-                      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
-                        <Image src={dish.image} alt={dish.name} fill className="object-cover" unoptimized />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-bold text-black">{dish.name}</p>
-                        <p className="text-xs font-normal text-zinc-500">
-                          {formatPrepTime(dish.prepTimeMin, dish.prepTimeMax)}
-                        </p>
-                        <p className="text-sm font-extrabold text-green-600">{formatPrice(dish.price)}</p>
-                      </div>
+                    <li key={dish.id} className="flex items-center gap-3 rounded-2xl bg-white p-3">
+                      <button
+                        type="button"
+                        onClick={() => onSelectDish(dish)}
+                        className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                      >
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
+                          <Image
+                            src={dish.image}
+                            alt={dish.name}
+                            fill
+                            className="object-cover"
+                            unoptimized
+                          />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-bold text-black">{dish.name}</p>
+                          <p className="text-xs font-normal text-zinc-500">
+                            {formatPrepTime(dish.prepTimeMin, dish.prepTimeMax)}
+                          </p>
+                          <p className="text-sm font-extrabold text-green-600">
+                            {formatPrice(dish.price)}
+                          </p>
+                        </div>
+                      </button>
                       <button
                         type="button"
                         onClick={() => onRemove(dish.id)}
-                        className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-red-500"
+                        className="shrink-0 rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-red-500"
                       >
                         Remove
                       </button>
