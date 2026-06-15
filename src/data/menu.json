@@ -1,0 +1,3427 @@
+{
+  "categories": [
+    "English Dishes",
+    "Grill",
+    "Side Dishes",
+    "Soups",
+    "Alacarte",
+    "Sauces",
+    "Salads",
+    "Mocktails",
+    "Smoothies",
+    "Fresh Juice",
+    "Drinks",
+    "Tea",
+    "Books",
+    "Traditional",
+    "Snacks",
+    "Others",
+    "VIP",
+    "Games",
+    "Delivery"
+  ],
+  "dishes": [
+    {
+      "id": "english-dishes-l-n-special",
+      "name": "L & N Special",
+      "category": "English Dishes",
+      "price": 7000,
+      "currency": "NGN",
+      "shortDescription": "House special rice platter",
+      "description": "House special rice platter. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-irish-potato-porridge",
+      "name": "Irish Potato Porridge",
+      "category": "English Dishes",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Potato porridge with chicken breast",
+      "description": "Potato porridge with chicken breast. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-indomie-egg",
+      "name": "Indomie & Egg",
+      "category": "English Dishes",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Indomie & Egg",
+      "description": "Indomie & Egg. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "eggs",
+        "noodles"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-yam-egg",
+      "name": "Yam & Egg",
+      "category": "English Dishes",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Yam & Egg",
+      "description": "Yam & Egg. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "eggs",
+        "yam or plantain"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-spaghetti-jollof",
+      "name": "Spaghetti Jollof",
+      "category": "English Dishes",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Spaghetti Jollof",
+      "description": "Spaghetti Jollof. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "rice",
+        "noodles"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Grilled Chicken & Coleslaw",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-moi-moi-1-pcs",
+      "name": "Moi Moi (1 Pcs)",
+      "category": "English Dishes",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Moi Moi (1 Pcs)",
+      "description": "Moi Moi (1 Pcs). A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-fried-egg-2-pcs",
+      "name": "Fried Egg (2 Pcs)",
+      "category": "English Dishes",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Fried or boiled eggs",
+      "description": "Fried or boiled eggs. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "eggs"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-fried-yam-boiled-yam",
+      "name": "Fried Yam / Boiled Yam",
+      "category": "English Dishes",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Fried Yam / Boiled Yam",
+      "description": "Fried Yam / Boiled Yam. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "yam or plantain"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-rice-and-beans-garaugarau",
+      "name": "Rice and Beans (Garaugarau)",
+      "category": "English Dishes",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Rice and Beans (Garaugarau)",
+      "description": "Rice and Beans (Garaugarau). A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "rice",
+        "beans"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-plain-white-rice-and-beans",
+      "name": "Plain White Rice and Beans",
+      "category": "English Dishes",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Plain White Rice and Beans",
+      "description": "Plain White Rice and Beans. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "rice",
+        "beans"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-fried-rice-and-chicken",
+      "name": "Fried Rice and Chicken",
+      "category": "English Dishes",
+      "price": 9500,
+      "currency": "NGN",
+      "shortDescription": "Fried Rice and Chicken",
+      "description": "Fried Rice and Chicken. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "chicken",
+        "rice"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-jollof-rice-and-beans",
+      "name": "Jollof Rice and Beans",
+      "category": "English Dishes",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Jollof Rice and Beans",
+      "description": "Jollof Rice and Beans. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "rice",
+        "beans"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Grilled Chicken & Coleslaw",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-boiled-sweet-potatoes",
+      "name": "Boiled Sweet Potatoes",
+      "category": "English Dishes",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Boiled Sweet Potatoes",
+      "description": "Boiled Sweet Potatoes. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-chicken-parts",
+      "name": "Chicken Parts",
+      "category": "English Dishes",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Chicken Parts",
+      "description": "Chicken Parts. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-fried-plantain-6-pieces",
+      "name": "Fried Plantain (6 Pieces)",
+      "category": "English Dishes",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Fried Plantain (6 Pieces)",
+      "description": "Fried Plantain (6 Pieces). A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "yam or plantain"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-porridge-beans-sweet-potatoes",
+      "name": "Porridge Beans & Sweet Potatoes",
+      "category": "English Dishes",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Porridge Beans & Sweet Potatoes",
+      "description": "Porridge Beans & Sweet Potatoes. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "beans"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-boiled-egg-1-piece",
+      "name": "Boiled Egg (1 Piece)",
+      "category": "English Dishes",
+      "price": 800,
+      "currency": "NGN",
+      "shortDescription": "Boiled Egg (1 Piece)",
+      "description": "Boiled Egg (1 Piece). A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "eggs"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-indomie-egg-and-sausage",
+      "name": "Indomie, Egg and Sausage",
+      "category": "English Dishes",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Indomie, Egg and Sausage",
+      "description": "Indomie, Egg and Sausage. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "eggs",
+        "noodles"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-scrambled-eggs",
+      "name": "Scrambled Eggs",
+      "category": "English Dishes",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Scrambled Eggs",
+      "description": "Scrambled Eggs. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "beef or ram",
+        "eggs"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-fried-rice-only",
+      "name": "Fried Rice Only",
+      "category": "English Dishes",
+      "price": 5500,
+      "currency": "NGN",
+      "shortDescription": "Fried Rice Only",
+      "description": "Fried Rice Only. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "rice"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 510,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-golden-yam",
+      "name": "Golden Yam",
+      "category": "English Dishes",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Golden Yam",
+      "description": "Golden Yam. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "yam or plantain"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-plain-white-rice",
+      "name": "Plain White Rice",
+      "category": "English Dishes",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Plain White Rice",
+      "description": "Plain White Rice. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "rice"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-indomie-only",
+      "name": "Indomie Only",
+      "category": "English Dishes",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Indomie Only",
+      "description": "Indomie Only. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "noodles"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 510,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-extra-beef",
+      "name": "Extra Beef",
+      "category": "English Dishes",
+      "price": 800,
+      "currency": "NGN",
+      "shortDescription": "Extra Beef",
+      "description": "Extra Beef. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "beef or ram"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-omelette",
+      "name": "Omelette",
+      "category": "English Dishes",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Omelette",
+      "description": "Omelette. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-plain-jollof-rice",
+      "name": "Plain Jollof Rice",
+      "category": "English Dishes",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Plain Jollof Rice",
+      "description": "Plain Jollof Rice. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "rice"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Grilled Chicken & Coleslaw",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-sausages",
+      "name": "Sausages",
+      "category": "English Dishes",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Sausages",
+      "description": "Sausages. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-ceo-salad",
+      "name": "CEO Salad",
+      "category": "English Dishes",
+      "price": 8000,
+      "currency": "NGN",
+      "shortDescription": "CEO Salad",
+      "description": "CEO Salad. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-chicken-salad",
+      "name": "Chicken Salad",
+      "category": "English Dishes",
+      "price": 8000,
+      "currency": "NGN",
+      "shortDescription": "Chicken Salad",
+      "description": "Chicken Salad. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 618,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-combo-1",
+      "name": "Combo 1",
+      "category": "English Dishes",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Combo 1",
+      "description": "Combo 1. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-combo-2",
+      "name": "Combo 2",
+      "category": "English Dishes",
+      "price": 8000,
+      "currency": "NGN",
+      "shortDescription": "Combo 2",
+      "description": "Combo 2. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-combo-3",
+      "name": "Combo 3",
+      "category": "English Dishes",
+      "price": 13000,
+      "currency": "NGN",
+      "shortDescription": "Combo 3",
+      "description": "Combo 3. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-combo-4",
+      "name": "Combo 4",
+      "category": "English Dishes",
+      "price": 15000,
+      "currency": "NGN",
+      "shortDescription": "Combo 4",
+      "description": "Combo 4. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-combo-5",
+      "name": "Combo 5",
+      "category": "English Dishes",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Combo 5",
+      "description": "Combo 5. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-combo-6",
+      "name": "Combo 6",
+      "category": "English Dishes",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Combo 6",
+      "description": "Combo 6. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "english-dishes-combo-7",
+      "name": "Combo 7",
+      "category": "English Dishes",
+      "price": 20000,
+      "currency": "NGN",
+      "shortDescription": "Combo 7",
+      "description": "Combo 7. A hearty Nigerian-style plate prepared fresh in our kitchen. Expect bold seasoning and generous portions.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 30,
+      "estimatedCalories": 751,
+      "bestComboWith": "Fried Plantain & Chapman mocktail",
+      "image": "/images/placeholders/english-dishes.svg"
+    },
+    {
+      "id": "grill-balangu-ram-meat",
+      "name": "Balangu (Ram Meat)",
+      "category": "Grill",
+      "price": 9000,
+      "currency": "NGN",
+      "shortDescription": "Northern Nigerian ram meat specialty",
+      "description": "Northern Nigerian ram meat specialty. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "beef or ram"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-grilled-chicken",
+      "name": "Grilled Chicken",
+      "category": "Grill",
+      "price": 8500,
+      "currency": "NGN",
+      "shortDescription": "Grilled Chicken",
+      "description": "Grilled Chicken. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-gas-meat",
+      "name": "Gas Meat",
+      "category": "Grill",
+      "price": 7000,
+      "currency": "NGN",
+      "shortDescription": "Gas Meat",
+      "description": "Gas Meat. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-gas-chicken",
+      "name": "Gas Chicken",
+      "category": "Grill",
+      "price": 10000,
+      "currency": "NGN",
+      "shortDescription": "Gas Chicken",
+      "description": "Gas Chicken. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-grilled-tilapia-fish",
+      "name": "Grilled Tilapia Fish",
+      "category": "Grill",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Grilled Tilapia Fish",
+      "description": "Grilled Tilapia Fish. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "fish"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-roasted-fish-and-plantain",
+      "name": "Roasted Fish and Plantain",
+      "category": "Grill",
+      "price": 9000,
+      "currency": "NGN",
+      "shortDescription": "Roasted Fish and Plantain",
+      "description": "Roasted Fish and Plantain. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "fish",
+        "yam or plantain"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-beef-stew",
+      "name": "Beef Stew",
+      "category": "Grill",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Beef Stew",
+      "description": "Beef Stew. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "beef or ram"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-l-n-peppered-beef",
+      "name": "L & N Peppered Beef",
+      "category": "Grill",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "L & N Peppered Beef",
+      "description": "L & N Peppered Beef. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "beef or ram",
+        "pepper spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-fried-ice-fish",
+      "name": "Fried Ice Fish",
+      "category": "Grill",
+      "price": 5500,
+      "currency": "NGN",
+      "shortDescription": "Fried Ice Fish",
+      "description": "Fried Ice Fish. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "fish"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-fried-local-chicken",
+      "name": "Fried Local Chicken",
+      "category": "Grill",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Fried Local Chicken",
+      "description": "Fried Local Chicken. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-fried-intestine-and-ram",
+      "name": "Fried Intestine and Ram",
+      "category": "Grill",
+      "price": 7000,
+      "currency": "NGN",
+      "shortDescription": "Fried Intestine and Ram",
+      "description": "Fried Intestine and Ram. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "beef or ram"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Boiled Plantain & Zobo drink",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-grilled-catfish-small",
+      "name": "Grilled Catfish Small",
+      "category": "Grill",
+      "price": 18000,
+      "currency": "NGN",
+      "shortDescription": "Grilled Catfish Small",
+      "description": "Grilled Catfish Small. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "fish"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-grilled-catfish-big",
+      "name": "Grilled Catfish Big",
+      "category": "Grill",
+      "price": 20000,
+      "currency": "NGN",
+      "shortDescription": "Grilled Catfish Big",
+      "description": "Grilled Catfish Big. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "fish"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 713,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "grill-grilled-croaker-fish",
+      "name": "Grilled Croaker Fish",
+      "category": "Grill",
+      "price": 6500,
+      "currency": "NGN",
+      "shortDescription": "Grilled Croaker Fish",
+      "description": "Grilled Croaker Fish. Grilled or roasted over open flame for a smoky aroma. Served hot with traditional Northern Nigerian flair.",
+      "ingredients": [
+        "fish"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 35,
+      "estimatedCalories": 567,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/grill.svg"
+    },
+    {
+      "id": "side-dishes-boiled-plantain",
+      "name": "Boiled Plantain",
+      "category": "Side Dishes",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Boiled Plantain",
+      "description": "Boiled Plantain. Perfect accompaniment to your main — simple, comforting, and freshly prepared.",
+      "ingredients": [
+        "yam or plantain"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 312,
+      "bestComboWith": "Any grilled protein or soup",
+      "image": "/images/placeholders/side-dishes.svg"
+    },
+    {
+      "id": "side-dishes-boiled-irish-potato",
+      "name": "Boiled Irish Potato",
+      "category": "Side Dishes",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Boiled Irish Potato",
+      "description": "Boiled Irish Potato. Perfect accompaniment to your main — simple, comforting, and freshly prepared.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 312,
+      "bestComboWith": "Any grilled protein or soup",
+      "image": "/images/placeholders/side-dishes.svg"
+    },
+    {
+      "id": "side-dishes-beef-part-2-pcs",
+      "name": "Beef Part (2 Pcs)",
+      "category": "Side Dishes",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Beef Part (2 Pcs)",
+      "description": "Beef Part (2 Pcs). Perfect accompaniment to your main — simple, comforting, and freshly prepared.",
+      "ingredients": [
+        "beef or ram"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 312,
+      "bestComboWith": "Any grilled protein or soup",
+      "image": "/images/placeholders/side-dishes.svg"
+    },
+    {
+      "id": "side-dishes-boiled-yam-4-pcs",
+      "name": "Boiled Yam (4 Pcs)",
+      "category": "Side Dishes",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Boiled Yam (4 Pcs)",
+      "description": "Boiled Yam (4 Pcs). Perfect accompaniment to your main — simple, comforting, and freshly prepared.",
+      "ingredients": [
+        "yam or plantain"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 312,
+      "bestComboWith": "Any grilled protein or soup",
+      "image": "/images/placeholders/side-dishes.svg"
+    },
+    {
+      "id": "side-dishes-fried-chips",
+      "name": "Fried Chips",
+      "category": "Side Dishes",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Fried Chips",
+      "description": "Fried Chips. Perfect accompaniment to your main — simple, comforting, and freshly prepared.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 312,
+      "bestComboWith": "Any grilled protein or soup",
+      "image": "/images/placeholders/side-dishes.svg"
+    },
+    {
+      "id": "side-dishes-egg-sauce",
+      "name": "Egg Sauce",
+      "category": "Side Dishes",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Egg Sauce",
+      "description": "Egg Sauce. Perfect accompaniment to your main — simple, comforting, and freshly prepared.",
+      "ingredients": [
+        "eggs"
+      ],
+      "allergens": [
+        "eggs"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 312,
+      "bestComboWith": "Any grilled protein or soup",
+      "image": "/images/placeholders/side-dishes.svg"
+    },
+    {
+      "id": "side-dishes-fish-part",
+      "name": "Fish Part",
+      "category": "Side Dishes",
+      "price": 5500,
+      "currency": "NGN",
+      "shortDescription": "Fish Part",
+      "description": "Fish Part. Perfect accompaniment to your main — simple, comforting, and freshly prepared.",
+      "ingredients": [
+        "fish"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 312,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/side-dishes.svg"
+    },
+    {
+      "id": "soups-miyan-kubewa-dried-okra-soup",
+      "name": "Miyan Kubewa (Dried Okra Soup)",
+      "category": "Soups",
+      "price": 4500,
+      "currency": "NGN",
+      "shortDescription": "Miyan Kubewa (Dried Okra Soup)",
+      "description": "Miyan Kubewa (Dried Okra Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "okra"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-fefesu-jalan-shanu-cow-tail-pepper-soup",
+      "name": "Fefesu Jalan Shanu (Cow Tail Pepper Soup)",
+      "category": "Soups",
+      "price": 7500,
+      "currency": "NGN",
+      "shortDescription": "Fefesu Jalan Shanu (Cow Tail Pepper Soup)",
+      "description": "Fefesu Jalan Shanu (Cow Tail Pepper Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "pepper spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "White Rice or Agidi",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-ferfesu-naman-rago-ram-pepper-soup",
+      "name": "Ferfesu Naman Rago (Ram Pepper Soup)",
+      "category": "Soups",
+      "price": 7500,
+      "currency": "NGN",
+      "shortDescription": "Ferfesu Naman Rago (Ram Pepper Soup)",
+      "description": "Ferfesu Naman Rago (Ram Pepper Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "beef or ram",
+        "pepper spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "White Rice or Agidi",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-ferfesu-kaza-chicken-pepper-soup",
+      "name": "Ferfesu Kaza (Chicken Pepper Soup)",
+      "category": "Soups",
+      "price": 6500,
+      "currency": "NGN",
+      "shortDescription": "Ferfesu Kaza (Chicken Pepper Soup)",
+      "description": "Ferfesu Kaza (Chicken Pepper Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "chicken",
+        "pepper spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "White Rice or Agidi",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-ferfesu-kayan-ciki-assorted-pepper-soup",
+      "name": "Ferfesu Kayan Ciki (Assorted Pepper Soup)",
+      "category": "Soups",
+      "price": 7000,
+      "currency": "NGN",
+      "shortDescription": "Ferfesu Kayan Ciki (Assorted Pepper Soup)",
+      "description": "Ferfesu Kayan Ciki (Assorted Pepper Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "pepper spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "White Rice or Agidi",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-miyan-ogbono",
+      "name": "Miyan Ogbono",
+      "category": "Soups",
+      "price": 5500,
+      "currency": "NGN",
+      "shortDescription": "Miyan Ogbono",
+      "description": "Miyan Ogbono. Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "ogbono seeds"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-miyan-egusi",
+      "name": "Miyan Egusi",
+      "category": "Soups",
+      "price": 5500,
+      "currency": "NGN",
+      "shortDescription": "Miyan Egusi",
+      "description": "Miyan Egusi. Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "melon seeds"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-miyan-ganye-spinach",
+      "name": "Miyan Ganye (Spinach)",
+      "category": "Soups",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Miyan Ganye (Spinach)",
+      "description": "Miyan Ganye (Spinach). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "spinach"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-miyan-kubewa-fresh-okra-soup",
+      "name": "Miyan Kubewa (Fresh Okra Soup)",
+      "category": "Soups",
+      "price": 4500,
+      "currency": "NGN",
+      "shortDescription": "Miyan Kubewa (Fresh Okra Soup)",
+      "description": "Miyan Kubewa (Fresh Okra Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "okra"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-miyan-zogale-moringa-soup",
+      "name": "Miyan Zogale (Moringa Soup)",
+      "category": "Soups",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Miyan Zogale (Moringa Soup)",
+      "description": "Miyan Zogale (Moringa Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "moringa leaves"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-miyan-taushe-groundnut-soup",
+      "name": "Miyan Taushe (Groundnut Soup)",
+      "category": "Soups",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Miyan Taushe (Groundnut Soup)",
+      "description": "Miyan Taushe (Groundnut Soup). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "groundnuts"
+      ],
+      "allergens": [
+        "peanuts",
+        "tree nuts"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "soups-taushe-no-meat",
+      "name": "Taushe (No Meat)",
+      "category": "Soups",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Taushe (No Meat)",
+      "description": "Taushe (No Meat). Rich, aromatic soup slow-simmered with traditional spices. Best paired with swallow or rice.",
+      "ingredients": [
+        "groundnuts"
+      ],
+      "allergens": [
+        "peanuts",
+        "tree nuts"
+      ],
+      "prepTimeMin": 25,
+      "prepTimeMax": 45,
+      "estimatedCalories": 414,
+      "bestComboWith": "Tuwon Shinkafa or Semovita swallow",
+      "image": "/images/placeholders/soups.svg"
+    },
+    {
+      "id": "alacarte-kidney-and-liver-sauce",
+      "name": "Kidney and Liver Sauce",
+      "category": "Alacarte",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Kidney and Liver Sauce",
+      "description": "Kidney and Liver Sauce. Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "alacarte-paten-acha",
+      "name": "Paten Acha",
+      "category": "Alacarte",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Paten Acha",
+      "description": "Paten Acha. Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "alacarte-kunu-madara",
+      "name": "Kunu Madara",
+      "category": "Alacarte",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Kunu Madara",
+      "description": "Kunu Madara. Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "millet or tiger nuts"
+      ],
+      "allergens": [
+        "tree nuts"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "alacarte-fankaso",
+      "name": "Fankaso",
+      "category": "Alacarte",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Fankaso",
+      "description": "Fankaso. Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "alacarte-samosa-5-pieces",
+      "name": "Samosa (5 Pieces)",
+      "category": "Alacarte",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Samosa (5 Pieces)",
+      "description": "Samosa (5 Pieces). Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "alacarte-pancakes-5-pieces",
+      "name": "Pancakes (5 Pieces)",
+      "category": "Alacarte",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Pancakes (5 Pieces)",
+      "description": "Pancakes (5 Pieces). Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "alacarte-sandwich-2-pieces",
+      "name": "Sandwich (2 Pieces)",
+      "category": "Alacarte",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Sandwich (2 Pieces)",
+      "description": "Sandwich (2 Pieces). Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "gluten"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "alacarte-denderu-rago",
+      "name": "Denderu Rago",
+      "category": "Alacarte",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Denderu Rago",
+      "description": "Denderu Rago. Made to order — allow a little extra time for fresh preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 15,
+      "prepTimeMax": 25,
+      "estimatedCalories": 363,
+      "bestComboWith": "Arabian Tea or Fresh Juice",
+      "image": "/images/placeholders/alacarte.svg"
+    },
+    {
+      "id": "sauces-pepper-sauce",
+      "name": "Pepper Sauce",
+      "category": "Sauces",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Pepper Sauce",
+      "description": "Pepper Sauce. Flavor-packed sauce to complement rice, swallow, or grilled protein.",
+      "ingredients": [
+        "pepper spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 230,
+      "bestComboWith": "Plain White Rice or Boiled Yam",
+      "image": "/images/placeholders/sauces.svg"
+    },
+    {
+      "id": "sauces-chicken-stew",
+      "name": "Chicken Stew",
+      "category": "Sauces",
+      "price": 7000,
+      "currency": "NGN",
+      "shortDescription": "Chicken Stew",
+      "description": "Chicken Stew. Flavor-packed sauce to complement rice, swallow, or grilled protein.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 230,
+      "bestComboWith": "Plain White Rice or Boiled Yam",
+      "image": "/images/placeholders/sauces.svg"
+    },
+    {
+      "id": "sauces-stew-without-meat",
+      "name": "Stew Without Meat",
+      "category": "Sauces",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Stew Without Meat",
+      "description": "Stew Without Meat. Flavor-packed sauce to complement rice, swallow, or grilled protein.",
+      "ingredients": [
+        "tomatoes",
+        "peppers",
+        "spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 230,
+      "bestComboWith": "Plain White Rice or Boiled Yam",
+      "image": "/images/placeholders/sauces.svg"
+    },
+    {
+      "id": "sauces-fish-stew",
+      "name": "Fish Stew",
+      "category": "Sauces",
+      "price": 7000,
+      "currency": "NGN",
+      "shortDescription": "Fish Stew",
+      "description": "Fish Stew. Flavor-packed sauce to complement rice, swallow, or grilled protein.",
+      "ingredients": [
+        "fish"
+      ],
+      "allergens": [
+        "fish"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 230,
+      "bestComboWith": "Fried Plantain & Tartar-style pepper sauce",
+      "image": "/images/placeholders/sauces.svg"
+    },
+    {
+      "id": "sauces-chicken-sauce",
+      "name": "Chicken Sauce",
+      "category": "Sauces",
+      "price": 6500,
+      "currency": "NGN",
+      "shortDescription": "Chicken Sauce",
+      "description": "Chicken Sauce. Flavor-packed sauce to complement rice, swallow, or grilled protein.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 230,
+      "bestComboWith": "Plain White Rice or Boiled Yam",
+      "image": "/images/placeholders/sauces.svg"
+    },
+    {
+      "id": "salads-chicken-salad",
+      "name": "Chicken Salad",
+      "category": "Salads",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Chicken Salad",
+      "description": "Chicken Salad. Crisp and refreshing mix, lightly dressed.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 8,
+      "prepTimeMax": 15,
+      "estimatedCalories": 195,
+      "bestComboWith": "Grilled Chicken or Chapman",
+      "image": "/images/placeholders/salads.svg"
+    },
+    {
+      "id": "salads-coleslaw",
+      "name": "Coleslaw",
+      "category": "Salads",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Coleslaw",
+      "description": "Coleslaw. Crisp and refreshing mix, lightly dressed.",
+      "ingredients": [
+        "fresh vegetables",
+        "dressing"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 8,
+      "prepTimeMax": 15,
+      "estimatedCalories": 195,
+      "bestComboWith": "Grilled Chicken or Chapman",
+      "image": "/images/placeholders/salads.svg"
+    },
+    {
+      "id": "salads-potato-salad",
+      "name": "Potato Salad",
+      "category": "Salads",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Potato Salad",
+      "description": "Potato Salad. Crisp and refreshing mix, lightly dressed.",
+      "ingredients": [
+        "fresh vegetables",
+        "dressing"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 8,
+      "prepTimeMax": 15,
+      "estimatedCalories": 195,
+      "bestComboWith": "Grilled Chicken or Chapman",
+      "image": "/images/placeholders/salads.svg"
+    },
+    {
+      "id": "salads-ceo-salad",
+      "name": "CEO Salad",
+      "category": "Salads",
+      "price": 8000,
+      "currency": "NGN",
+      "shortDescription": "CEO Salad",
+      "description": "CEO Salad. Crisp and refreshing mix, lightly dressed.",
+      "ingredients": [
+        "fresh vegetables",
+        "dressing"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 8,
+      "prepTimeMax": 15,
+      "estimatedCalories": 195,
+      "bestComboWith": "Grilled Chicken or Chapman",
+      "image": "/images/placeholders/salads.svg"
+    },
+    {
+      "id": "salads-fruit-cup-salad",
+      "name": "Fruit Cup Salad",
+      "category": "Salads",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Fruit Cup Salad",
+      "description": "Fruit Cup Salad. Crisp and refreshing mix, lightly dressed.",
+      "ingredients": [
+        "fresh vegetables",
+        "dressing"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 8,
+      "prepTimeMax": 15,
+      "estimatedCalories": 195,
+      "bestComboWith": "Grilled Chicken or Chapman",
+      "image": "/images/placeholders/salads.svg"
+    },
+    {
+      "id": "salads-green-salad",
+      "name": "Green Salad",
+      "category": "Salads",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Green Salad",
+      "description": "Green Salad. Crisp and refreshing mix, lightly dressed.",
+      "ingredients": [
+        "fresh vegetables",
+        "dressing"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 8,
+      "prepTimeMax": 15,
+      "estimatedCalories": 195,
+      "bestComboWith": "Grilled Chicken or Chapman",
+      "image": "/images/placeholders/salads.svg"
+    },
+    {
+      "id": "mocktails-chapman",
+      "name": "Chapman",
+      "category": "Mocktails",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Chapman",
+      "description": "Chapman. Non-alcoholic mixed drink — sweet, tangy, and cooling.",
+      "ingredients": [
+        "fruit mix",
+        "soda or tonic"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 157,
+      "bestComboWith": "CEO Salad or Suya-style grill",
+      "image": "/images/placeholders/mocktails.svg"
+    },
+    {
+      "id": "mocktails-lemonade",
+      "name": "Lemonade",
+      "category": "Mocktails",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Lemonade",
+      "description": "Lemonade. Non-alcoholic mixed drink — sweet, tangy, and cooling.",
+      "ingredients": [
+        "fruit mix",
+        "soda or tonic"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 157,
+      "bestComboWith": "CEO Salad or Suya-style grill",
+      "image": "/images/placeholders/mocktails.svg"
+    },
+    {
+      "id": "mocktails-virgin-mojito",
+      "name": "Virgin Mojito",
+      "category": "Mocktails",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Virgin Mojito",
+      "description": "Virgin Mojito. Non-alcoholic mixed drink — sweet, tangy, and cooling.",
+      "ingredients": [
+        "fruit mix",
+        "soda or tonic"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 157,
+      "bestComboWith": "CEO Salad or Suya-style grill",
+      "image": "/images/placeholders/mocktails.svg"
+    },
+    {
+      "id": "smoothies-oreos-shake",
+      "name": "Oreos Shake",
+      "category": "Smoothies",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Oreos Shake",
+      "description": "Oreos Shake. Thick, creamy blend served chilled.",
+      "ingredients": [
+        "milk",
+        "ice cream",
+        "flavoring"
+      ],
+      "allergens": [
+        "dairy"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 394,
+      "bestComboWith": "Puff-Puff or Akara snack",
+      "image": "/images/placeholders/smoothies.svg"
+    },
+    {
+      "id": "smoothies-vanilla-milkshake",
+      "name": "Vanilla Milkshake",
+      "category": "Smoothies",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Vanilla Milkshake",
+      "description": "Vanilla Milkshake. Thick, creamy blend served chilled.",
+      "ingredients": [
+        "milk",
+        "ice cream",
+        "flavoring"
+      ],
+      "allergens": [
+        "dairy"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 394,
+      "bestComboWith": "Puff-Puff or Akara snack",
+      "image": "/images/placeholders/smoothies.svg"
+    },
+    {
+      "id": "smoothies-strawberry-milkshake",
+      "name": "Strawberry Milkshake",
+      "category": "Smoothies",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Strawberry Milkshake",
+      "description": "Strawberry Milkshake. Thick, creamy blend served chilled.",
+      "ingredients": [
+        "milk",
+        "ice cream",
+        "flavoring"
+      ],
+      "allergens": [
+        "dairy"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 394,
+      "bestComboWith": "Puff-Puff or Akara snack",
+      "image": "/images/placeholders/smoothies.svg"
+    },
+    {
+      "id": "fresh-juice-orange-juice",
+      "name": "Orange Juice",
+      "category": "Fresh Juice",
+      "price": 5000,
+      "currency": "NGN",
+      "shortDescription": "Orange Juice",
+      "description": "Orange Juice. Pressed from fresh fruit — bright and naturally sweet.",
+      "ingredients": [
+        "fresh fruit"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 131,
+      "bestComboWith": "Light salad or snack platter",
+      "image": "/images/placeholders/fresh-juice.svg"
+    },
+    {
+      "id": "fresh-juice-watermelon-juice",
+      "name": "Watermelon Juice",
+      "category": "Fresh Juice",
+      "price": 4500,
+      "currency": "NGN",
+      "shortDescription": "Watermelon Juice",
+      "description": "Watermelon Juice. Pressed from fresh fruit — bright and naturally sweet.",
+      "ingredients": [
+        "fresh fruit"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 98,
+      "bestComboWith": "Light salad or snack platter",
+      "image": "/images/placeholders/fresh-juice.svg"
+    },
+    {
+      "id": "fresh-juice-tropical-delight",
+      "name": "Tropical Delight",
+      "category": "Fresh Juice",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Tropical Delight",
+      "description": "Tropical Delight. Pressed from fresh fruit — bright and naturally sweet.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 131,
+      "bestComboWith": "Light salad or snack platter",
+      "image": "/images/placeholders/fresh-juice.svg"
+    },
+    {
+      "id": "fresh-juice-fresh-pineapple-juice",
+      "name": "Fresh Pineapple Juice",
+      "category": "Fresh Juice",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Fresh Pineapple Juice",
+      "description": "Fresh Pineapple Juice. Pressed from fresh fruit — bright and naturally sweet.",
+      "ingredients": [
+        "fresh fruit"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 10,
+      "estimatedCalories": 131,
+      "bestComboWith": "Light salad or snack platter",
+      "image": "/images/placeholders/fresh-juice.svg"
+    },
+    {
+      "id": "drinks-zobo",
+      "name": "Zobo",
+      "category": "Drinks",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Zobo",
+      "description": "Zobo. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "hibiscus, ginger"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-tamarine",
+      "name": "Tamarine",
+      "category": "Drinks",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Tamarine",
+      "description": "Tamarine. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-ginger-drink",
+      "name": "Ginger Drink",
+      "category": "Drinks",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Ginger Drink",
+      "description": "Ginger Drink. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-kunu-aya",
+      "name": "Kunu Aya",
+      "category": "Drinks",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Kunu Aya",
+      "description": "Kunu Aya. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "millet or tiger nuts"
+      ],
+      "allergens": [
+        "tree nuts"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-swcheeps",
+      "name": "Swcheeps",
+      "category": "Drinks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Swcheeps",
+      "description": "Swcheeps. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-big-coke",
+      "name": "Big Coke",
+      "category": "Drinks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Big Coke",
+      "description": "Big Coke. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 216,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-big-sprite",
+      "name": "Big Sprite",
+      "category": "Drinks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Big Sprite",
+      "description": "Big Sprite. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 216,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-big-fanta",
+      "name": "Big Fanta",
+      "category": "Drinks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Big Fanta",
+      "description": "Big Fanta. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 216,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-malt",
+      "name": "Malt",
+      "category": "Drinks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Malt",
+      "description": "Malt. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-water",
+      "name": "Water",
+      "category": "Drinks",
+      "price": 500,
+      "currency": "NGN",
+      "shortDescription": "Water",
+      "description": "Water. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 85,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-kuka-baobab-drink",
+      "name": "Kuka Baobab Drink",
+      "category": "Drinks",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Kuka Baobab Drink",
+      "description": "Kuka Baobab Drink. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-predator-energy",
+      "name": "Predator Energy",
+      "category": "Drinks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Predator Energy",
+      "description": "Predator Energy. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-small-coke",
+      "name": "Small Coke",
+      "category": "Drinks",
+      "price": 800,
+      "currency": "NGN",
+      "shortDescription": "Small Coke",
+      "description": "Small Coke. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-small-fanta",
+      "name": "Small Fanta",
+      "category": "Drinks",
+      "price": 800,
+      "currency": "NGN",
+      "shortDescription": "Small Fanta",
+      "description": "Small Fanta. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-small-sprite",
+      "name": "Small Sprite",
+      "category": "Drinks",
+      "price": 800,
+      "currency": "NGN",
+      "shortDescription": "Small Sprite",
+      "description": "Small Sprite. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-hollandia-medium",
+      "name": "Hollandia Medium",
+      "category": "Drinks",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Hollandia Medium",
+      "description": "Hollandia Medium. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-5alive",
+      "name": "5alive",
+      "category": "Drinks",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "5alive",
+      "description": "5alive. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-chi-exotic-medium",
+      "name": "Chi Exotic Medium",
+      "category": "Drinks",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Chi Exotic Medium",
+      "description": "Chi Exotic Medium. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "drinks-monster-energy",
+      "name": "Monster Energy",
+      "category": "Drinks",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Monster Energy",
+      "description": "Monster Energy. Chilled beverage, ready to serve.",
+      "ingredients": [
+        "refreshing base ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 2,
+      "prepTimeMax": 8,
+      "estimatedCalories": 139,
+      "bestComboWith": "Grill platter or rice dish",
+      "image": "/images/placeholders/drinks.svg"
+    },
+    {
+      "id": "tea-arabian-tea-small",
+      "name": "Arabian Tea Small",
+      "category": "Tea",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Arabian Tea Small",
+      "description": "Arabian Tea Small. Warm spiced or classic tea — aromatic and soothing.",
+      "ingredients": [
+        "tea leaves",
+        "spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 12,
+      "estimatedCalories": 34,
+      "bestComboWith": "Samosa or Pancakes",
+      "image": "/images/placeholders/tea.svg"
+    },
+    {
+      "id": "tea-arabian-tea-big",
+      "name": "Arabian Tea Big",
+      "category": "Tea",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Arabian Tea Big",
+      "description": "Arabian Tea Big. Warm spiced or classic tea — aromatic and soothing.",
+      "ingredients": [
+        "tea leaves",
+        "spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 12,
+      "estimatedCalories": 89,
+      "bestComboWith": "Samosa or Pancakes",
+      "image": "/images/placeholders/tea.svg"
+    },
+    {
+      "id": "tea-lipton",
+      "name": "Lipton",
+      "category": "Tea",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Lipton",
+      "description": "Lipton. Warm spiced or classic tea — aromatic and soothing.",
+      "ingredients": [
+        "tea leaves",
+        "spices"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 5,
+      "prepTimeMax": 12,
+      "estimatedCalories": 56,
+      "bestComboWith": "Samosa or Pancakes",
+      "image": "/images/placeholders/tea.svg"
+    },
+    {
+      "id": "books-mask",
+      "name": "Mask",
+      "category": "Books",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Mask",
+      "description": "Mask. Book available for purchase at the restaurant.",
+      "ingredients": [
+        "printed book"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "A quiet corner & Arabian Tea",
+      "image": "/images/placeholders/books.svg"
+    },
+    {
+      "id": "books-something-deep",
+      "name": "Something Deep",
+      "category": "Books",
+      "price": 3500,
+      "currency": "NGN",
+      "shortDescription": "Something Deep",
+      "description": "Something Deep. Book available for purchase at the restaurant.",
+      "ingredients": [
+        "printed book"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "A quiet corner & Arabian Tea",
+      "image": "/images/placeholders/books.svg"
+    },
+    {
+      "id": "traditional-tuwon-shinkafa-rice-swallow",
+      "name": "Tuwon Shinkafa (Rice Swallow)",
+      "category": "Traditional",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Tuwon Shinkafa (Rice Swallow)",
+      "description": "Tuwon Shinkafa (Rice Swallow). Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "rice"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-tuwon-semovita",
+      "name": "Tuwon Semovita",
+      "category": "Traditional",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Tuwon Semovita",
+      "description": "Tuwon Semovita. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-sakwara-pounded-yam",
+      "name": "Sakwara (Pounded Yam)",
+      "category": "Traditional",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Sakwara (Pounded Yam)",
+      "description": "Sakwara (Pounded Yam). Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "yam or plantain"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-danwake-flour-kuka-potash",
+      "name": "Danwake (Flour, Kuka & Potash)",
+      "category": "Traditional",
+      "price": 4000,
+      "currency": "NGN",
+      "shortDescription": "Danwake (Flour, Kuka & Potash)",
+      "description": "Danwake (Flour, Kuka & Potash). Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-sinarsi-1-pcs",
+      "name": "Sinarsi (1 Pcs)",
+      "category": "Traditional",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Sinarsi (1 Pcs)",
+      "description": "Sinarsi (1 Pcs). Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-dambo-shinkafa-with-meat",
+      "name": "Dambo Shinkafa with Meat",
+      "category": "Traditional",
+      "price": 8000,
+      "currency": "NGN",
+      "shortDescription": "Dambo Shinkafa with Meat",
+      "description": "Dambo Shinkafa with Meat. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-dambo-sauce",
+      "name": "Dambo Sauce",
+      "category": "Traditional",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Dambo Sauce",
+      "description": "Dambo Sauce. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-wheat",
+      "name": "Wheat",
+      "category": "Traditional",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Wheat",
+      "description": "Wheat. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "gluten"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-kunu-geda",
+      "name": "Kunu Geda",
+      "category": "Traditional",
+      "price": 2500,
+      "currency": "NGN",
+      "shortDescription": "Kunu Geda",
+      "description": "Kunu Geda. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "millet or tiger nuts"
+      ],
+      "allergens": [
+        "tree nuts"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-kunu-tsamiya",
+      "name": "Kunu Tsamiya",
+      "category": "Traditional",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Kunu Tsamiya",
+      "description": "Kunu Tsamiya. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "millet or tiger nuts"
+      ],
+      "allergens": [
+        "tree nuts"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-mai-shanu",
+      "name": "Mai Shanu",
+      "category": "Traditional",
+      "price": 250,
+      "currency": "NGN",
+      "shortDescription": "Mai Shanu",
+      "description": "Mai Shanu. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-chicken-babano",
+      "name": "Chicken Babano",
+      "category": "Traditional",
+      "price": 6000,
+      "currency": "NGN",
+      "shortDescription": "Chicken Babano",
+      "description": "Chicken Babano. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-chicken-babano-1-piece",
+      "name": "Chicken Babano (1 Piece)",
+      "category": "Traditional",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Chicken Babano (1 Piece)",
+      "description": "Chicken Babano (1 Piece). Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "chicken"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-miyan-kuka-with-beef",
+      "name": "Miyan Kuka with Beef",
+      "category": "Traditional",
+      "price": 4500,
+      "currency": "NGN",
+      "shortDescription": "Miyan Kuka with Beef",
+      "description": "Miyan Kuka with Beef. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "beef or ram"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-biskin-shinkafa",
+      "name": "Biskin Shinkafa",
+      "category": "Traditional",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Biskin Shinkafa",
+      "description": "Biskin Shinkafa. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-tuwon-garri",
+      "name": "Tuwon Garri",
+      "category": "Traditional",
+      "price": 700,
+      "currency": "NGN",
+      "shortDescription": "Tuwon Garri",
+      "description": "Tuwon Garri. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-bitter-leaf-soup",
+      "name": "Bitter Leaf Soup",
+      "category": "Traditional",
+      "price": 6500,
+      "currency": "NGN",
+      "shortDescription": "Bitter Leaf Soup",
+      "description": "Bitter Leaf Soup. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-white-soup",
+      "name": "White Soup",
+      "category": "Traditional",
+      "price": 7000,
+      "currency": "NGN",
+      "shortDescription": "White Soup",
+      "description": "White Soup. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-fura-da-nono",
+      "name": "Fura da Nono",
+      "category": "Traditional",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Fura da Nono",
+      "description": "Fura da Nono. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "millet, fermented milk"
+      ],
+      "allergens": [
+        "dairy"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Masa (1 pc) & Kunu Tsamiya",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-tsiri",
+      "name": "Tsiri",
+      "category": "Traditional",
+      "price": 1500,
+      "currency": "NGN",
+      "shortDescription": "Tsiri",
+      "description": "Tsiri. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-kwadon-zogale",
+      "name": "Kwadon Zogale",
+      "category": "Traditional",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Kwadon Zogale",
+      "description": "Kwadon Zogale. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "moringa leaves"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-monday-iftar",
+      "name": "Monday Iftar",
+      "category": "Traditional",
+      "price": 15000,
+      "currency": "NGN",
+      "shortDescription": "Monday Iftar",
+      "description": "Monday Iftar. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 672,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-thursday-iftar",
+      "name": "Thursday Iftar",
+      "category": "Traditional",
+      "price": 15000,
+      "currency": "NGN",
+      "shortDescription": "Thursday Iftar",
+      "description": "Thursday Iftar. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 672,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-dambo-shinkafa-no-meat",
+      "name": "Dambo Shinkafa (No Meat)",
+      "category": "Traditional",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Dambo Shinkafa (No Meat)",
+      "description": "Dambo Shinkafa (No Meat). Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-masa-1-pcs",
+      "name": "Masa (1 Pcs)",
+      "category": "Traditional",
+      "price": 500,
+      "currency": "NGN",
+      "shortDescription": "Masa (1 Pcs)",
+      "description": "Masa (1 Pcs). Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "traditional-margi-soup",
+      "name": "Margi Soup",
+      "category": "Traditional",
+      "price": 10000,
+      "currency": "NGN",
+      "shortDescription": "Margi Soup",
+      "description": "Margi Soup. Authentic Northern Nigerian specialty — familiar flavors with homestyle preparation.",
+      "ingredients": [
+        "seasonal ingredients"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 20,
+      "prepTimeMax": 40,
+      "estimatedCalories": 509,
+      "bestComboWith": "Miyan Taushe or pepper soup",
+      "image": "/images/placeholders/traditional.svg"
+    },
+    {
+      "id": "snacks-akara-10-pcs",
+      "name": "Akara (10 Pcs)",
+      "category": "Snacks",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Akara (10 Pcs)",
+      "description": "Akara (10 Pcs). Light bite, fried fresh — crisp outside, soft inside.",
+      "ingredients": [
+        "flour",
+        "oil",
+        "seasoning"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 303,
+      "bestComboWith": "Zobo or Fresh Pineapple Juice",
+      "image": "/images/placeholders/snacks.svg"
+    },
+    {
+      "id": "snacks-puff-puff-5-pcs",
+      "name": "Puff-Puff (5 Pcs)",
+      "category": "Snacks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Puff-Puff (5 Pcs)",
+      "description": "Puff-Puff (5 Pcs). Light bite, fried fresh — crisp outside, soft inside.",
+      "ingredients": [
+        "flour",
+        "oil",
+        "seasoning"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 303,
+      "bestComboWith": "Zobo or Fresh Pineapple Juice",
+      "image": "/images/placeholders/snacks.svg"
+    },
+    {
+      "id": "snacks-pop-corn",
+      "name": "Pop Corn",
+      "category": "Snacks",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Pop Corn",
+      "description": "Pop Corn. Light bite, fried fresh — crisp outside, soft inside.",
+      "ingredients": [
+        "flour",
+        "oil",
+        "seasoning"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 303,
+      "bestComboWith": "Zobo or Fresh Pineapple Juice",
+      "image": "/images/placeholders/snacks.svg"
+    },
+    {
+      "id": "snacks-sausage-roll-1-piece",
+      "name": "Sausage Roll (1 Piece)",
+      "category": "Snacks",
+      "price": 300,
+      "currency": "NGN",
+      "shortDescription": "Sausage Roll (1 Piece)",
+      "description": "Sausage Roll (1 Piece). Light bite, fried fresh — crisp outside, soft inside.",
+      "ingredients": [
+        "flour",
+        "oil",
+        "seasoning"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 10,
+      "prepTimeMax": 20,
+      "estimatedCalories": 303,
+      "bestComboWith": "Zobo or Fresh Pineapple Juice",
+      "image": "/images/placeholders/snacks.svg"
+    },
+    {
+      "id": "others-smoothie-cup",
+      "name": "Smoothie Cup",
+      "category": "Others",
+      "price": 300,
+      "currency": "NGN",
+      "shortDescription": "Smoothie Cup",
+      "description": "Smoothie Cup. Additional service or packaging item.",
+      "ingredients": [
+        "service item"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 28,
+      "bestComboWith": "Any main course dish",
+      "image": "/images/placeholders/others.svg"
+    },
+    {
+      "id": "others-takeaway-pack",
+      "name": "Takeaway Pack",
+      "category": "Others",
+      "price": 300,
+      "currency": "NGN",
+      "shortDescription": "Takeaway Pack",
+      "description": "Takeaway Pack. Additional service or packaging item.",
+      "ingredients": [
+        "service item"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 28,
+      "bestComboWith": "Any main course dish",
+      "image": "/images/placeholders/others.svg"
+    },
+    {
+      "id": "others-buffet",
+      "name": "Buffet",
+      "category": "Others",
+      "price": 15000,
+      "currency": "NGN",
+      "shortDescription": "Buffet",
+      "description": "Buffet. Additional service or packaging item.",
+      "ingredients": [
+        "service item"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 49,
+      "bestComboWith": "Any main course dish",
+      "image": "/images/placeholders/others.svg"
+    },
+    {
+      "id": "vip-vip-charge",
+      "name": "VIP Charge",
+      "category": "VIP",
+      "price": 30000,
+      "currency": "NGN",
+      "shortDescription": "VIP Charge",
+      "description": "VIP Charge. Premium private dining or lounge experience at L&N Kitchen.",
+      "ingredients": [
+        "private dining experience"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 0,
+      "bestComboWith": "Full traditional platter & mocktails",
+      "image": "/images/placeholders/vip.svg"
+    },
+    {
+      "id": "vip-vip-extra",
+      "name": "VIP Extra",
+      "category": "VIP",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "VIP Extra",
+      "description": "VIP Extra. Premium private dining or lounge experience at L&N Kitchen.",
+      "ingredients": [
+        "private dining experience"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 0,
+      "bestComboWith": "Full traditional platter & mocktails",
+      "image": "/images/placeholders/vip.svg"
+    },
+    {
+      "id": "vip-wazobia",
+      "name": "Wazobia",
+      "category": "VIP",
+      "price": 300000,
+      "currency": "NGN",
+      "shortDescription": "Wazobia",
+      "description": "Wazobia. Premium private dining or lounge experience at L&N Kitchen.",
+      "ingredients": [
+        "private dining experience"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 0,
+      "bestComboWith": "Full traditional platter & mocktails",
+      "image": "/images/placeholders/vip.svg"
+    },
+    {
+      "id": "vip-babangida",
+      "name": "Babangida",
+      "category": "VIP",
+      "price": 1000000,
+      "currency": "NGN",
+      "shortDescription": "Babangida",
+      "description": "Babangida. Premium private dining or lounge experience at L&N Kitchen.",
+      "ingredients": [
+        "private dining experience"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 0,
+      "bestComboWith": "Full traditional platter & mocktails",
+      "image": "/images/placeholders/vip.svg"
+    },
+    {
+      "id": "vip-gum-lodge",
+      "name": "Gum Lodge",
+      "category": "VIP",
+      "price": 350000,
+      "currency": "NGN",
+      "shortDescription": "Gum Lodge",
+      "description": "Gum Lodge. Premium private dining or lounge experience at L&N Kitchen.",
+      "ingredients": [
+        "private dining experience"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 0,
+      "bestComboWith": "Full traditional platter & mocktails",
+      "image": "/images/placeholders/vip.svg"
+    },
+    {
+      "id": "vip-gashua",
+      "name": "Gashua",
+      "category": "VIP",
+      "price": 150000,
+      "currency": "NGN",
+      "shortDescription": "Gashua",
+      "description": "Gashua. Premium private dining or lounge experience at L&N Kitchen.",
+      "ingredients": [
+        "private dining experience"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 5,
+      "estimatedCalories": 0,
+      "bestComboWith": "Full traditional platter & mocktails",
+      "image": "/images/placeholders/vip.svg"
+    },
+    {
+      "id": "games-table-tennis",
+      "name": "Table Tennis",
+      "category": "Games",
+      "price": 500,
+      "currency": "NGN",
+      "shortDescription": "Table Tennis",
+      "description": "Table Tennis. Recreational activity available at the restaurant.",
+      "ingredients": [
+        "game equipment rental"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "Snacks & soft drinks",
+      "image": "/images/placeholders/games.svg"
+    },
+    {
+      "id": "games-pool-table",
+      "name": "Pool Table",
+      "category": "Games",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Pool Table",
+      "description": "Pool Table. Recreational activity available at the restaurant.",
+      "ingredients": [
+        "game equipment rental"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "Snacks & soft drinks",
+      "image": "/images/placeholders/games.svg"
+    },
+    {
+      "id": "delivery-distant-delivery",
+      "name": "Distant Delivery",
+      "category": "Delivery",
+      "price": 3000,
+      "currency": "NGN",
+      "shortDescription": "Distant Delivery",
+      "description": "Distant Delivery. Delivery fee based on distance from the restaurant.",
+      "ingredients": [
+        "delivery service fee"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "Any menu favorites",
+      "image": "/images/placeholders/delivery.svg"
+    },
+    {
+      "id": "delivery-short-distance",
+      "name": "Short Distance",
+      "category": "Delivery",
+      "price": 600,
+      "currency": "NGN",
+      "shortDescription": "Short Distance",
+      "description": "Short Distance. Delivery fee based on distance from the restaurant.",
+      "ingredients": [
+        "delivery service fee"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "Any menu favorites",
+      "image": "/images/placeholders/delivery.svg"
+    },
+    {
+      "id": "delivery-long-distance",
+      "name": "Long Distance",
+      "category": "Delivery",
+      "price": 1000,
+      "currency": "NGN",
+      "shortDescription": "Long Distance",
+      "description": "Long Distance. Delivery fee based on distance from the restaurant.",
+      "ingredients": [
+        "delivery service fee"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "Any menu favorites",
+      "image": "/images/placeholders/delivery.svg"
+    },
+    {
+      "id": "delivery-extra-extra-delivery",
+      "name": "Extra Extra Delivery",
+      "category": "Delivery",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Extra Extra Delivery",
+      "description": "Extra Extra Delivery. Delivery fee based on distance from the restaurant.",
+      "ingredients": [
+        "delivery service fee"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "Any menu favorites",
+      "image": "/images/placeholders/delivery.svg"
+    },
+    {
+      "id": "delivery-extra-long-distance",
+      "name": "Extra Long Distance",
+      "category": "Delivery",
+      "price": 2000,
+      "currency": "NGN",
+      "shortDescription": "Extra Long Distance",
+      "description": "Extra Long Distance. Delivery fee based on distance from the restaurant.",
+      "ingredients": [
+        "delivery service fee"
+      ],
+      "allergens": [
+        "ask staff for full allergen info"
+      ],
+      "prepTimeMin": 1,
+      "prepTimeMax": 1,
+      "estimatedCalories": 0,
+      "bestComboWith": "Any menu favorites",
+      "image": "/images/placeholders/delivery.svg"
+    }
+  ]
+}
