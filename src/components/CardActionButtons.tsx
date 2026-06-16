@@ -3,9 +3,8 @@
 import { motion } from "framer-motion";
 
 interface CardActionButtonsProps {
-  onReject: () => void;
+  onOpenTrash: () => void;
   onOpenWishlist: () => void;
-  onOpenTrash?: () => void;
   disabled?: boolean;
   dragX?: number;
   wishPulse?: boolean;
@@ -13,9 +12,8 @@ interface CardActionButtonsProps {
 }
 
 export function CardActionButtons({
-  onReject,
-  onOpenWishlist,
   onOpenTrash,
+  onOpenWishlist,
   disabled,
   dragX = 0,
   wishPulse = false,
@@ -28,19 +26,14 @@ export function CardActionButtons({
     <>
       <motion.button
         type="button"
-        aria-label="Reject dish"
-        disabled={disabled}
-        onClick={onReject}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          onOpenTrash?.();
-        }}
+        aria-label="View dismissed dishes"
+        onClick={onOpenTrash}
         animate={{
           scale: rejectActive ? 1.06 : 1,
           backgroundColor: rejectActive ? "rgba(239, 68, 68, 0.55)" : "rgba(239, 68, 68, 0.22)",
         }}
         transition={{ type: "spring", stiffness: 500, damping: 28 }}
-        className="absolute left-3 top-[34%] z-[55] flex h-14 w-14 items-center justify-center rounded-full border border-red-400/35 text-red-500 backdrop-blur-md disabled:opacity-30"
+        className="absolute left-3 top-[34%] z-[55] flex h-14 w-14 items-center justify-center rounded-full border border-red-400/35 text-red-500 backdrop-blur-md"
       >
         <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="3">
           <path d="M18 6L6 18M6 6l12 12" />

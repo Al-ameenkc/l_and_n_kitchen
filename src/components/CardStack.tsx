@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AnimatePresence, animate, motion, useMotionValue, useTransform } from "framer-motion";
 import type { Dish } from "@/types/menu";
 import { hapticCardSwipe } from "@/utils/haptics";
 import { CardActionButtons } from "./CardActionButtons";
@@ -17,11 +16,10 @@ interface CardStackProps {
   onCurrentChange?: (dish: Dish | null) => void;
 }
 
-const SWIPE_THRESHOLD = 64;
-const SWIPE_VELOCITY = 280;
-const PULSE_MS = 420;
-const VISIBLE_BEHIND = 4;
-const FLY_OFF_DISTANCE = 480;
+const SWIPE_THRESHOLD = 72;
+const FLY_OFF = 420;
+const PULSE_MS = 320;
+const VISIBLE_BEHIND = 2;
 
 export function CardStack({
   deck,
@@ -36,7 +34,6 @@ export function CardStack({
   const [dragX, setDragX] = useState(0);
   const [wishPulse, setWishPulse] = useState(false);
   const [rejectPulse, setRejectPulse] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     setIndex(0);
@@ -50,9 +47,7 @@ export function CardStack({
     onCurrentChange?.(current);
   }, [current, onCurrentChange]);
 
-  const advance = useCallback(() => {
-    setIndex((i) => i + 1);
-  }, []);
+  const advance = useCallback(() => setIndex((i) => i + 1), []);
 
   const flashWish = useCallback(() => {
     setWishPulse(true);
@@ -76,47 +71,18 @@ export function CardStack({
     advance();
   }, [current, onTrash, advance]);
 
-  const handleWish = useCallback(() => {
-    if (!current) return;
-    flashWish();
-    hapticCardSwipe();
-    completeWish();
-  }, [current, completeWish, flashWish]);
-
-  const handleTrash = useCallback(() => {
-    if (!current) return;
-    flashReject();
-    hapticCardSwipe();
-    completeTrash();
-  }, [current, completeTrash, flashReject]);
-
-  const handleSwipeWish = useCallback(() => {
-    if (!current) return;
-    flashWish();
-    hapticCardSwipe();
-    completeWish();
-  }, [current, completeWish, flashWish]);
-
-  const handleSwipeTrash = useCallback(() => {
-    if (!current) return;
-    flashReject();
-    hapticCardSwipe();
-    completeTrash();
-  }, [current, completeTrash, flashReject]);
-
   return (
-    <div className="relative flex h-full min-h-[min(56vh,440px)] max-h-[min(58vh,460px)] flex-1 overflow-visible px-0">
+    <div className="relative flex h-full min-h-[min(54vh,420px)] max-h-[min(56vh,440px)] flex-1 overflow-visible px-0">
       <CardActionButtons
-        onReject={handleTrash}
-        onOpenWishlist={onOpenWishlist}
         onOpenTrash={onOpenTrash}
+        onOpenWishlist={onOpenWishlist}
         disabled={!current}
         dragX={dragX}
         wishPulse={wishPulse}
         rejectPulse={rejectPulse}
       />
 
-      <div className="relative mx-14 min-h-[min(56vh,440px)] max-h-[min(58vh,460px)] w-full flex-1 overflow-visible">
+      <div className="relative mx-14 min-h-[min(54vh,420px)] max-h-[min(56vh,440px)] w-full flex-1 overflow-visible">
         {!current ? (
           <div className="flex h-full flex-col items-center justify-center rounded-[2rem] border border-dashed border-zinc-700 px-6 text-center">
             <p className="text-lg font-bold text-white">No more dishes here</p>
@@ -131,34 +97,36 @@ export function CardStack({
               .reverse()
               .map((dish, reverseIdx) => {
                 const depth = behind.length - reverseIdx;
-                const rotation = depth % 2 === 0 ? -4 : 4;
-                const xOffset = depth % 2 === 0 ? -14 : 14;
                 return (
                   <div
                     key={dish.id}
-                    className="pointer-events-none absolute inset-0 origin-bottom"
+                    className="pointer-events-none absolute inset-0"
                     style={{
-                      transform: `translateX(${xOffset}px) rotate(${rotation}deg) scale(${1 - depth * 0.028}) translateY(${depth * 8}px)`,
+                      transform: `translateX(${depth % 2 === 0 ? -10 : 10}px) scale(${1 - depth * 0.03}) translateY(${depth * 6}px)`,
                       zIndex: 10 + depth,
                     }}
                   >
-                    <DishCard dish={dish} interactive={false} className="opacity-[0.94]" />
+                    <DishCard dish={dish} interactive={false} className="opacity-90" />
                   </div>
                 );
               })}
 
-            <AnimatePresence mode="popLayout">
-              <SwipeableCard
-                key={current.id}
-                dish={current}
-                onSwipeWish={handleSwipeWish}
-                onSwipeTrash={handleSwipeTrash}
-                onTap={() => onCardTap(current)}
-                onDragXChange={setDragX}
-                onDraggingChange={setIsDragging}
-                elevated={isDragging}
-              />
-            </AnimatePresence>
+            <SwipeableCard
+              key={current.id}
+              dish={current}
+              onSwipeWish={() => {
+                flashWish();
+                hapticCardSwipe();
+                completeWish();
+              }}
+              onSwipeTrash={() => {
+                flashReject();
+                hapticCardSwipe();
+                completeTrash();
+              }}
+              onTap={() => onCardTap(current)}
+              onDragXChange={setDragX}
+            />
           </>
         )}
       </div>
@@ -172,103 +140,114 @@ function SwipeableCard({
   onSwipeTrash,
   onTap,
   onDragXChange,
-  onDraggingChange,
-  elevated,
 }: {
   dish: Dish;
   onSwipeWish: () => void;
   onSwipeTrash: () => void;
   onTap: () => void;
   onDragXChange: (x: number) => void;
-  onDraggingChange: (dragging: boolean) => void;
-  elevated: boolean;
 }) {
-  const x = useMotionValue(0);
-  const opacity = useMotionValue(1);
-  const rotate = useTransform(x, [-300, 300], [-16, 16]);
-  const didSwipe = useRef(false);
-  const [isFlyingOff, setIsFlyingOff] = useState(false);
+  const [x, setX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const xRef = useRef(0);
+  const startPointer = useRef(0);
+  const startX = useRef(0);
+  const moved = useRef(false);
+  const locked = useRef(false);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const unsubscribe = x.on("change", (latest) => {
-      onDragXChange(latest);
-    });
-    return unsubscribe;
-  }, [x, onDragXChange]);
-
-  const flyOff = useCallback(
-    (direction: "wish" | "trash", onComplete: () => void) => {
-      setIsFlyingOff(true);
-      didSwipe.current = true;
-
-      const currentX = x.get();
-      const targetX =
-        direction === "wish" ? currentX + FLY_OFF_DISTANCE : currentX - FLY_OFF_DISTANCE;
-
-      Promise.all([
-        animate(x, targetX, {
-          duration: 0.36,
-          ease: [0.32, 0.72, 0, 1],
-        }),
-        animate(opacity, 0, { duration: 0.3, ease: "easeOut" }),
-      ]).then(() => {
-        onComplete();
-      });
+  const setPosition = useCallback(
+    (next: number) => {
+      xRef.current = next;
+      setX(next);
+      onDragXChange(next);
     },
-    [opacity, x]
+    [onDragXChange]
   );
 
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el) return;
+
+    const flyOff = (direction: "wish" | "trash", done: () => void) => {
+      locked.current = true;
+      setIsAnimating(true);
+      setIsDragging(false);
+      const target = direction === "wish" ? FLY_OFF : -FLY_OFF;
+      setPosition(target);
+      window.setTimeout(done, 200);
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (locked.current) return;
+      setIsDragging(true);
+      setIsAnimating(false);
+      moved.current = false;
+      startPointer.current = e.clientX;
+      startX.current = xRef.current;
+      el.setPointerCapture(e.pointerId);
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!el.hasPointerCapture(e.pointerId) || locked.current) return;
+      const delta = e.clientX - startPointer.current;
+      if (Math.abs(delta) > 4) moved.current = true;
+      setPosition(startX.current + delta);
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      if (!el.hasPointerCapture(e.pointerId)) return;
+      el.releasePointerCapture(e.pointerId);
+      setIsDragging(false);
+
+      if (locked.current) return;
+
+      const delta = e.clientX - startPointer.current;
+      const finalX = startX.current + delta;
+
+      if (finalX > SWIPE_THRESHOLD) {
+        flyOff("wish", onSwipeWish);
+        return;
+      }
+      if (finalX < -SWIPE_THRESHOLD) {
+        flyOff("trash", onSwipeTrash);
+        return;
+      }
+
+      if (!moved.current) {
+        onTap();
+      }
+
+      setIsAnimating(true);
+      setPosition(0);
+      window.setTimeout(() => setIsAnimating(false), 180);
+    };
+
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", onPointerUp);
+    el.addEventListener("pointercancel", onPointerUp);
+
+    return () => {
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", onPointerUp);
+      el.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, [onSwipeTrash, onSwipeWish, onTap, setPosition]);
+
   return (
-    <motion.div
-      className="swipe-surface absolute inset-0 cursor-grab active:cursor-grabbing"
+    <div
+      ref={cardRef}
+      className="swipe-surface absolute inset-0 z-50 touch-none select-none"
       style={{
-        x,
-        rotate,
-        opacity,
-        zIndex: elevated || isFlyingOff ? 60 : 50,
-        touchAction: "none",
-      }}
-      drag={isFlyingOff ? false : "x"}
-      dragElastic={0.12}
-      dragMomentum={false}
-      onDragStart={() => {
-        didSwipe.current = false;
-        onDraggingChange(true);
-      }}
-      onDrag={(_, info) => {
-        if (Math.abs(info.offset.x) > 6) {
-          didSwipe.current = true;
-        }
-      }}
-      onDragEnd={(_, info) => {
-        if (isFlyingOff) return;
-
-        onDraggingChange(false);
-
-        if (info.offset.x > SWIPE_THRESHOLD || info.velocity.x > SWIPE_VELOCITY) {
-          flyOff("wish", onSwipeWish);
-          return;
-        }
-        if (info.offset.x < -SWIPE_THRESHOLD || info.velocity.x < -SWIPE_VELOCITY) {
-          flyOff("trash", onSwipeTrash);
-          return;
-        }
-
-        didSwipe.current = false;
-        animate(x, 0, { type: "spring", stiffness: 380, damping: 34 });
-        onDragXChange(0);
-      }}
-      onTap={() => {
-        if (!didSwipe.current && !isFlyingOff) {
-          onTap();
-        }
+        transform: `translate3d(${x}px, 0, 0) rotate(${x * 0.035}deg)`,
+        transition: isDragging || !isAnimating ? "none" : "transform 0.18s ease-out, opacity 0.18s ease-out",
+        opacity: Math.abs(x) > FLY_OFF * 0.75 ? 0 : 1,
       }}
     >
-      <DishCard
-        dish={dish}
-        interactive={false}
-        className="pointer-events-none relative z-50 select-none shadow-[0_30px_80px_rgba(0,0,0,0.55)]"
-      />
-    </motion.div>
+      <DishCard dish={dish} interactive={false} className="shadow-[0_24px_60px_rgba(0,0,0,0.5)]" />
+    </div>
   );
 }

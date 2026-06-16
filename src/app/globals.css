@@ -34,6 +34,7 @@ body {
 .carousel-wheel-ios {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
+  touch-action: pan-x;
 }
 
 button {

@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 
 interface HeaderBarProps {
   searchQuery: string;
@@ -14,7 +15,17 @@ export function HeaderBar({ searchQuery, onSearchChange }: HeaderBarProps) {
   const isExpanded = focused || searchQuery.length > 0;
 
   return (
-    <header className="pointer-events-none relative z-20 shrink-0 bg-transparent px-5 pb-1 pt-12">
+    <header className="pointer-events-none relative z-20 shrink-0 bg-transparent px-5 pb-1 pt-7">
+      <div className="mb-1 flex justify-center">
+        <Image
+          src="/images/ChatGPT_Image_Jun_15__2026__08_20_55_PM-removebg-preview.png"
+          alt="L&N Kitchen"
+          width={52}
+          height={22}
+          priority
+          className="h-auto w-[16vw] max-w-[52px] min-w-[40px]"
+        />
+      </div>
       <div className="relative flex h-11 items-center">
         <AnimatePresence mode="wait">
           {!isExpanded && (

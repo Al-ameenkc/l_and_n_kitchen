@@ -20,6 +20,7 @@ interface MenuStore {
   setDetailDishId: (id: string | null) => void;
   setWishlistOpen: (open: boolean) => void;
   setTrashOpen: (open: boolean) => void;
+  syncWithMenuDishIds: (validDishIds: string[]) => void;
 }
 
 export const useMenuStore = create<MenuStore>()(
@@ -64,6 +65,16 @@ export const useMenuStore = create<MenuStore>()(
       setDetailDishId: (id) => set({ detailDishId: id }),
       setWishlistOpen: (open) => set({ wishlistOpen: open, trashOpen: false }),
       setTrashOpen: (open) => set({ trashOpen: open, wishlistOpen: false }),
+      syncWithMenuDishIds: (validDishIds) =>
+        set((state) => {
+          const valid = new Set(validDishIds);
+          return {
+            wishlist: state.wishlist.filter((id) => valid.has(id)),
+            trash: state.trash.filter((id) => valid.has(id)),
+            detailDishId:
+              state.detailDishId && valid.has(state.detailDishId) ? state.detailDishId : null,
+          };
+        }),
     }),
     {
       name: "ln-kitchen-menu",

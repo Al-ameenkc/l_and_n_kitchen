@@ -18,4 +18,6 @@ export interface Dish {
 export interface MenuData {
   categories: string[];
   dishes: Dish[];
+  /** Category name → image URL (from admin / Supabase) */
+  categoryImages?: Record<string, string>;
 }
