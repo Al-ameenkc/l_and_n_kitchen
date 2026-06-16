@@ -212,7 +212,7 @@ export function CurvedCategoryCarousel({
   const underlineTop = SLOT_TOP + CIRCLE_SIZE + 30;
 
   return (
-    <div className="relative z-30 shrink-0 overflow-hidden pb-2 pt-1">
+    <div className="relative z-30 shrink-0 overflow-hidden pb-1 pt-1">
       <div
         className="pointer-events-none absolute left-1/2 z-40 -translate-x-1/2 rounded-full border-2 border-white"
         style={{ top: SLOT_TOP, width: RING_SIZE, height: RING_SIZE }}
@@ -232,7 +232,7 @@ export function CurvedCategoryCarousel({
 
       <div
         ref={scrollRef}
-        className="carousel-wheel carousel-wheel-ios flex h-[168px] snap-x snap-mandatory items-start gap-5 overflow-x-auto overflow-y-hidden px-[calc(50%-2.75rem)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="carousel-wheel carousel-wheel-ios flex h-[156px] snap-x snap-mandatory items-start gap-5 overflow-x-auto overflow-y-hidden px-[calc(50%-2.75rem)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{ WebkitOverflowScrolling: "touch", paddingTop: SLOT_TOP, touchAction: "pan-x" }}
       >
         {loopItems.map(({ id, key }) => {

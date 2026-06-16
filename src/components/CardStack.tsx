@@ -5,6 +5,7 @@ import type { Dish } from "@/types/menu";
 import { hapticCardSwipe } from "@/utils/haptics";
 import { CardActionButtons } from "./CardActionButtons";
 import { DishCard } from "./DishCard";
+import { markSwipeHintSeen } from "./SwipeHintOverlay";
 
 interface CardStackProps {
   deck: Dish[];
@@ -61,18 +62,20 @@ export function CardStack({
 
   const completeWish = useCallback(() => {
     if (!current) return;
+    markSwipeHintSeen();
     onWish(current);
     advance();
   }, [current, onWish, advance]);
 
   const completeTrash = useCallback(() => {
     if (!current) return;
+    markSwipeHintSeen();
     onTrash(current);
     advance();
   }, [current, onTrash, advance]);
 
   return (
-    <div className="relative flex h-full min-h-[min(54vh,420px)] max-h-[min(56vh,440px)] flex-1 overflow-visible px-0">
+    <div className="relative flex h-full min-h-[min(50vh,400px)] max-h-[min(52vh,420px)] flex-1 overflow-visible px-0">
       <CardActionButtons
         onOpenTrash={onOpenTrash}
         onOpenWishlist={onOpenWishlist}
@@ -82,7 +85,7 @@ export function CardStack({
         rejectPulse={rejectPulse}
       />
 
-      <div className="relative mx-14 min-h-[min(54vh,420px)] max-h-[min(56vh,440px)] w-full flex-1 overflow-visible">
+      <div className="relative mx-14 min-h-[min(50vh,400px)] max-h-[min(52vh,420px)] w-full flex-1 overflow-visible">
         {!current ? (
           <div className="flex h-full flex-col items-center justify-center rounded-[2rem] border border-dashed border-zinc-700 px-6 text-center">
             <p className="text-lg font-bold text-white">No more dishes here</p>

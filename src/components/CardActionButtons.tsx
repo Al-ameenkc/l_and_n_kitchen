@@ -73,11 +73,11 @@ interface WishListBarProps {
 
 export function WishListBar({ count, onOpen }: WishListBarProps) {
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-center bg-transparent px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-center bg-transparent px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-1">
       <button
         type="button"
         onClick={onOpen}
-        className="pointer-events-auto flex w-auto min-w-[11.5rem] max-w-[16.5rem] items-center justify-center gap-2 rounded-full bg-white px-8 py-3.5 text-base font-extrabold text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition active:scale-[0.98]"
+        className="pointer-events-auto flex w-auto min-w-[11rem] max-w-[16rem] items-center justify-center gap-2 rounded-full bg-white px-7 py-3 text-[0.95rem] font-extrabold text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition active:scale-[0.98]"
       >
         My Wish List
         {count > 0 && (

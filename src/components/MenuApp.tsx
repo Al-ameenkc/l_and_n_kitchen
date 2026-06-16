@@ -14,6 +14,7 @@ import { CardStack } from "./CardStack";
 import { CurvedCategoryCarousel } from "./CurvedCategoryCarousel";
 import { DishDetailView } from "./DishDetailView";
 import { HeaderBar } from "./HeaderBar";
+import { SwipeHintOverlay } from "./SwipeHintOverlay";
 import { TrashSheet } from "./TrashSheet";
 import { WishListSheet } from "./WishListSheet";
 
@@ -78,7 +79,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         />
       </div>
 
-      <main className="relative z-10 -mt-7 flex min-h-0 flex-1 flex-col overflow-visible pb-20 pt-0">
+      <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(5.75rem,env(safe-area-inset-bottom))] pt-1">
         <CardStack
           deck={deck}
           onWish={handleWish}
@@ -88,6 +89,8 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
           onOpenTrash={() => setTrashOpen(true)}
         />
       </main>
+
+      <SwipeHintOverlay active={deck.length > 0} />
 
       <WishListBar count={wishlistDishes.length} onOpen={() => setWishlistOpen(true)} />
 

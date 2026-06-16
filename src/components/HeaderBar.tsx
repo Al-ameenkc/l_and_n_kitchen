@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 interface HeaderBarProps {
@@ -15,46 +15,29 @@ export function HeaderBar({ searchQuery, onSearchChange }: HeaderBarProps) {
   const isExpanded = focused || searchQuery.length > 0;
 
   return (
-    <header className="pointer-events-none relative z-20 shrink-0 bg-transparent px-5 pb-1 pt-7">
-      <div className="mb-1 flex justify-center">
+    <header className="pointer-events-none relative z-20 shrink-0 bg-transparent px-4 pb-1 pt-[max(1rem,env(safe-area-inset-top))]">
+      <div className="flex h-11 w-full items-center gap-2">
         <Image
           src="/images/ChatGPT_Image_Jun_15__2026__08_20_55_PM-removebg-preview.png"
           alt="L&N Kitchen"
           width={52}
           height={22}
           priority
-          className="h-auto w-[16vw] max-w-[52px] min-w-[40px]"
+          className="pointer-events-none h-auto w-[16vw] max-w-[52px] min-w-[40px] shrink-0"
         />
-      </div>
-      <div className="relative flex h-11 items-center">
-        <AnimatePresence mode="wait">
-          {!isExpanded && (
-            <motion.h1
-              key="title"
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -16 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="pointer-events-none absolute left-0 text-[1.65rem] font-extrabold leading-none tracking-tight text-white"
-            >
-              Swipe right
-            </motion.h1>
-          )}
-        </AnimatePresence>
 
         <motion.div
           layout
           initial={false}
           animate={{
-            width: isExpanded ? "100%" : 124,
-            marginLeft: isExpanded ? 0 : "auto",
+            width: isExpanded ? "calc(100% - 3.75rem)" : 124,
           }}
           transition={{
             type: "tween",
             duration: 0.48,
             ease: [0.22, 1, 0.36, 1],
           }}
-          className="pointer-events-auto ml-auto flex h-11 items-center overflow-hidden rounded-full bg-[#2a2a2a]/95 px-4 backdrop-blur-sm"
+          className="pointer-events-auto ml-auto flex h-11 min-w-[124px] items-center overflow-hidden rounded-full bg-[#2a2a2a]/95 px-4 backdrop-blur-sm"
         >
           <input
             ref={inputRef}
