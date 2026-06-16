@@ -250,7 +250,9 @@ export default function AdminPage() {
           <Field id="admin-password" label="Admin password" required>
             <input
               id="admin-password"
+              name="admin-password"
               type="password"
+              autoComplete="current-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -333,6 +335,7 @@ export default function AdminPage() {
             >
               <input
                 id="cat-name"
+                name="cat-name"
                 required
                 value={catName}
                 onChange={(e) => setCatName(e.target.value)}
@@ -348,6 +351,7 @@ export default function AdminPage() {
             >
               <input
                 id="cat-sort"
+                name="cat-sort"
                 type="number"
                 value={catSort}
                 onChange={(e) => setCatSort(Number(e.target.value))}
@@ -370,6 +374,7 @@ export default function AdminPage() {
                   {catImage ? "Change image" : "Choose image file"}
                   <input
                     id="cat-image"
+                    name="cat-image"
                     type="file"
                     accept="image/*"
                     className="sr-only"
@@ -411,6 +416,8 @@ export default function AdminPage() {
                       <label className="mt-1 inline-block cursor-pointer text-xs text-green-400 hover:underline">
                         Change image
                         <input
+                          id={`cat-image-${c.id}`}
+                          name={`cat-image-${c.id}`}
                           type="file"
                           accept="image/*"
                           className="sr-only"
@@ -442,6 +449,8 @@ export default function AdminPage() {
           <form onSubmit={saveDish} className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
             <h2 className="font-bold">{editingDishId ? "Edit dish" : "Add dish"}</h2>
             <input
+              id="dish-name"
+              name="dish-name"
               required
               value={dishForm.name}
               onChange={(e) => setDishForm({ ...dishForm, name: e.target.value })}
@@ -449,6 +458,8 @@ export default function AdminPage() {
               className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
             />
             <select
+              id="dish-category"
+              name="dish-category"
               required
               value={dishForm.category_id}
               onChange={(e) => setDishForm({ ...dishForm, category_id: e.target.value })}
@@ -469,6 +480,7 @@ export default function AdminPage() {
             >
               <input
                 id="dish-price"
+                name="dish-price"
                 type="number"
                 required
                 min={0}
@@ -482,12 +494,16 @@ export default function AdminPage() {
               />
             </Field>
             <input
+              id="dish-short-description"
+              name="dish-short-description"
               value={dishForm.short_description}
               onChange={(e) => setDishForm({ ...dishForm, short_description: e.target.value })}
               placeholder="Short description"
               className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
             />
             <textarea
+              id="dish-description"
+              name="dish-description"
               value={dishForm.description}
               onChange={(e) => setDishForm({ ...dishForm, description: e.target.value })}
               placeholder="Full description"
@@ -495,12 +511,16 @@ export default function AdminPage() {
               className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
             />
             <input
+              id="dish-ingredients"
+              name="dish-ingredients"
               value={dishForm.ingredients}
               onChange={(e) => setDishForm({ ...dishForm, ingredients: e.target.value })}
               placeholder="Ingredients (comma separated)"
               className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
             />
             <input
+              id="dish-allergens"
+              name="dish-allergens"
               value={dishForm.allergens}
               onChange={(e) => setDishForm({ ...dishForm, allergens: e.target.value })}
               placeholder="Allergens (comma separated)"
@@ -514,6 +534,7 @@ export default function AdminPage() {
               >
                 <input
                   id="dish-prep-min"
+                  name="dish-prep-min"
                   type="number"
                   min={0}
                   step={1}
@@ -533,6 +554,7 @@ export default function AdminPage() {
               >
                 <input
                   id="dish-prep-max"
+                  name="dish-prep-max"
                   type="number"
                   min={0}
                   step={1}
@@ -553,6 +575,7 @@ export default function AdminPage() {
             >
               <input
                 id="dish-calories"
+                name="dish-calories"
                 type="number"
                 min={0}
                 step={1}
@@ -568,12 +591,16 @@ export default function AdminPage() {
               />
             </Field>
             <input
+              id="dish-best-combo"
+              name="dish-best-combo"
               value={dishForm.best_combo_with}
               onChange={(e) => setDishForm({ ...dishForm, best_combo_with: e.target.value })}
               placeholder="Best combo with…"
               className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
             />
             <input
+              id="dish-image"
+              name="dish-image"
               type="file"
               accept="image/*"
               onChange={async (e) => {

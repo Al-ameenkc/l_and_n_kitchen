@@ -40,7 +40,11 @@ export function HeaderBar({ searchQuery, onSearchChange }: HeaderBarProps) {
           className="pointer-events-auto ml-auto flex h-11 min-w-[124px] items-center overflow-hidden rounded-full bg-[#2a2a2a]/95 px-4 backdrop-blur-sm"
         >
           <input
+            id="menu-search"
+            name="menu-search"
             ref={inputRef}
+            type="search"
+            autoComplete="off"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             onFocus={() => setFocused(true)}
