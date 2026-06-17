@@ -20,7 +20,6 @@ export async function POST(request: Request) {
   const body = (await request.json()) as {
     name?: string;
     image_url?: string;
-    sort_order?: number;
   };
 
   if (!body.name?.trim()) {
@@ -28,13 +27,23 @@ export async function POST(request: Request) {
   }
 
   const supabase = createServiceClient();
+
+  const { data: lastCategory } = await supabase
+    .from("categories")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const nextSortOrder = (lastCategory?.sort_order ?? -1) + 1;
+
   const { data, error } = await supabase
     .from("categories")
     .insert({
       name: body.name.trim(),
       slug: slugify(body.name),
       image_url: body.image_url ?? null,
-      sort_order: body.sort_order ?? 0,
+      sort_order: nextSortOrder,
     })
     .select()
     .single();

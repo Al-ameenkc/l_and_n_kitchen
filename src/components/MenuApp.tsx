@@ -90,7 +90,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         />
       </main>
 
-      <SwipeHintOverlay active={deck.length > 0} />
+      <SwipeHintOverlay />
 
       <WishListBar count={wishlistDishes.length} onOpen={() => setWishlistOpen(true)} />
 

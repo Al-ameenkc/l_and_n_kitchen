@@ -88,7 +88,6 @@ export default function AdminPage() {
   };
 
   const [catName, setCatName] = useState("");
-  const [catSort, setCatSort] = useState(0);
   const [catImage, setCatImage] = useState("");
 
   const [dishForm, setDishForm] = useState(emptyDish);
@@ -145,7 +144,7 @@ export default function AdminPage() {
     const res = await fetch("/api/admin/categories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: catName, sort_order: catSort, image_url: catImage || null }),
+      body: JSON.stringify({ name: catName, image_url: catImage || null }),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -154,7 +153,6 @@ export default function AdminPage() {
       return;
     }
     setCatName("");
-    setCatSort(0);
     setCatImage("");
     showMessage("Category added.");
     load();
@@ -210,7 +208,7 @@ export default function AdminPage() {
   const editDish = (dish: DbDish) => {
     setEditingDishId(dish.id);
     setDishForm({
-      name: dish.name,
+      name: dish.name.toUpperCase(),
       category_id: dish.category_id,
       price: Number(dish.price),
       short_description: dish.short_description,
@@ -323,7 +321,7 @@ export default function AdminPage() {
             <div>
               <h2 className="font-bold">Add category</h2>
               <p className="mt-1 text-xs text-zinc-500">
-                Categories appear in the menu carousel at the top. Lower sort order = further left.
+                Categories appear left to right in the carousel. New categories are added at the end automatically.
               </p>
             </div>
 
@@ -340,22 +338,6 @@ export default function AdminPage() {
                 value={catName}
                 onChange={(e) => setCatName(e.target.value)}
                 placeholder="e.g. Soups"
-                className={inputClass}
-              />
-            </Field>
-
-            <Field
-              id="cat-sort"
-              label="Sort order"
-              hint="Number controlling carousel position. Use 0, 10, 20… so you can insert categories later."
-            >
-              <input
-                id="cat-sort"
-                name="cat-sort"
-                type="number"
-                value={catSort}
-                onChange={(e) => setCatSort(Number(e.target.value))}
-                placeholder="0"
                 className={inputClass}
               />
             </Field>
@@ -403,7 +385,7 @@ export default function AdminPage() {
             <h2 className="mb-2 font-bold">Existing categories</h2>
             <p className="mb-3 text-xs text-zinc-500">Delete removes the category and all dishes in it.</p>
             <ul className="space-y-2">
-              {categories.map((c) => (
+              {categories.map((c, index) => (
                 <li
                   key={c.id}
                   className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3"
@@ -412,7 +394,9 @@ export default function AdminPage() {
                     <CategoryCirclePreview src={c.image_url ?? undefined} alt={c.name} />
                     <div>
                       <p className="font-semibold">{c.name}</p>
-                      <p className="text-xs text-zinc-500">Order: {c.sort_order}</p>
+                      <p className="text-xs text-zinc-500">
+                        Carousel position: {index + 2} (after All)
+                      </p>
                       <label className="mt-1 inline-block cursor-pointer text-xs text-green-400 hover:underline">
                         Change image
                         <input
@@ -453,7 +437,9 @@ export default function AdminPage() {
               name="dish-name"
               required
               value={dishForm.name}
-              onChange={(e) => setDishForm({ ...dishForm, name: e.target.value })}
+              onChange={(e) =>
+                setDishForm({ ...dishForm, name: e.target.value.toUpperCase() })
+              }
               placeholder="Dish name"
               className="w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
             />

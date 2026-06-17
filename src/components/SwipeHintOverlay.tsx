@@ -6,19 +6,20 @@ import { AnimatePresence, motion } from "framer-motion";
 const STORAGE_KEY = "ln-swipe-hint-v2";
 
 interface SwipeHintOverlayProps {
-  active: boolean;
+  /** When true, the overlay can appear (e.g. after the menu shell has mounted). */
+  ready?: boolean;
 }
 
-export function SwipeHintOverlay({ active }: SwipeHintOverlayProps) {
+export function SwipeHintOverlay({ ready = true }: SwipeHintOverlayProps) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (!active) return;
+    if (!ready) return;
     if (typeof window !== "undefined" && localStorage.getItem(STORAGE_KEY)) return;
 
-    const timer = window.setTimeout(() => setShow(true), 650);
+    const timer = window.setTimeout(() => setShow(true), 400);
     return () => window.clearTimeout(timer);
-  }, [active]);
+  }, [ready]);
 
   const dismiss = useCallback(() => setShow(false), []);
 

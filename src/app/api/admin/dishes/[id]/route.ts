@@ -27,8 +27,9 @@ export async function PUT(request: Request, { params }: Params) {
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
   if (body.name !== undefined) {
-    updates.name = String(body.name).trim();
-    if (!body.slug) updates.slug = slugify(String(body.name));
+    const name = String(body.name).trim().toUpperCase();
+    updates.name = name;
+    if (!body.slug) updates.slug = slugify(name);
   }
   if (body.slug !== undefined) updates.slug = String(body.slug);
   if (body.category_id !== undefined) updates.category_id = String(body.category_id);

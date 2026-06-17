@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Name and category are required." }, { status: 400 });
   }
 
-  const name = String(body.name).trim();
+  const name = String(body.name).trim().toUpperCase();
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from("dishes")

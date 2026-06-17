@@ -22,7 +22,6 @@ const LABELS: Record<string, string> = {
 };
 
 const ITEM_STRIDE = 108;
-const LOOP_COPIES = 3;
 const WHEEL_RADIUS = 320;
 const CENTER_LIFT = -1.5;
 const SLOT_TOP = 3;
@@ -53,23 +52,16 @@ export function CurvedCategoryCarousel({
 }: CurvedCategoryCarouselProps) {
   const baseItems = useMemo(() => ["all", ...categories], [categories]);
 
-  const loopItems = useMemo(
-    () =>
-      Array.from({ length: LOOP_COPIES }, (_, copy) =>
-        baseItems.map((id) => ({ id, key: `${id}::${copy}` }))
-      ).flat(),
-    [baseItems]
-  );
-
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastCentered = useRef(selected);
   const fromScrollRef = useRef(false);
   const isUserScrolling = useRef(false);
+  const isAnimatingRef = useRef(false);
   const settleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef(0);
+  const arcLoopRef = useRef(0);
 
   const count = baseItems.length;
-  const segmentWidth = count * ITEM_STRIDE;
 
   const applyArc = useCallback(() => {
     const el = scrollRef.current;
@@ -92,46 +84,58 @@ export function CurvedCategoryCarousel({
     });
   }, []);
 
+  const stopArcLoop = useCallback(() => {
+    cancelAnimationFrame(arcLoopRef.current);
+    arcLoopRef.current = 0;
+  }, []);
+
+  const startArcLoop = useCallback(() => {
+    stopArcLoop();
+    const tick = () => {
+      applyArc();
+      if (isAnimatingRef.current) {
+        arcLoopRef.current = requestAnimationFrame(tick);
+      }
+    };
+    arcLoopRef.current = requestAnimationFrame(tick);
+  }, [applyArc, stopArcLoop]);
+
   const indexFromScroll = useCallback(
     (scrollLeft: number) => {
-      const raw = Math.round((scrollLeft - segmentWidth) / ITEM_STRIDE);
-      return ((raw % count) + count) % count;
+      if (count <= 1) return 0;
+      const raw = Math.round(scrollLeft / ITEM_STRIDE);
+      return Math.max(0, Math.min(count - 1, raw));
     },
-    [count, segmentWidth]
+    [count]
   );
 
-  const maintainLoop = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el || segmentWidth === 0) return;
-
-    if (el.scrollLeft < segmentWidth * 0.5) {
-      el.scrollLeft += segmentWidth;
-    } else if (el.scrollLeft >= segmentWidth * 2.5) {
-      el.scrollLeft -= segmentWidth;
-    }
-  }, [segmentWidth]);
-
   const scrollToIndex = useCallback(
-    (targetIndex: number) => {
+    (targetIndex: number, smooth = false) => {
       const el = scrollRef.current;
       if (!el || count === 0) return;
 
-      const currentRaw = Math.round((el.scrollLeft - segmentWidth) / ITEM_STRIDE);
-      const currentMod = ((currentRaw % count) + count) % count;
-      let delta = targetIndex - currentMod;
-      if (delta > count / 2) delta -= count;
-      if (delta < -count / 2) delta += count;
+      const clamped = Math.max(0, Math.min(count - 1, targetIndex));
+      const targetLeft = clamped * ITEM_STRIDE;
 
-      el.scrollLeft += delta * ITEM_STRIDE;
-      maintainLoop();
-      applyArc();
+      if (smooth) {
+        isAnimatingRef.current = true;
+        isUserScrolling.current = true;
+        el.classList.add("carousel-wheel--animating");
+        startArcLoop();
+        el.scrollTo({ left: targetLeft, behavior: "smooth" });
+      } else {
+        el.scrollLeft = targetLeft;
+        applyArc();
+      }
     },
-    [applyArc, count, maintainLoop, segmentWidth]
+    [applyArc, count, startArcLoop]
   );
 
   const onScrollSettled = useCallback(() => {
     isUserScrolling.current = false;
-    maintainLoop();
+    isAnimatingRef.current = false;
+    stopArcLoop();
+    scrollRef.current?.classList.remove("carousel-wheel--animating");
     applyArc();
 
     const el = scrollRef.current;
@@ -146,29 +150,29 @@ export function CurvedCategoryCarousel({
       fromScrollRef.current = true;
       onChange(id);
     }
-  }, [applyArc, baseItems, indexFromScroll, maintainLoop, onChange]);
+  }, [applyArc, baseItems, indexFromScroll, onChange, stopArcLoop]);
 
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el || segmentWidth === 0) return;
+    if (!el || count === 0) return;
 
     const idx = Math.max(0, baseItems.indexOf(selected));
-    el.scrollLeft = segmentWidth + idx * ITEM_STRIDE;
+    el.scrollLeft = idx * ITEM_STRIDE;
     lastCentered.current = selected;
     requestAnimationFrame(applyArc);
-  }, [baseItems, segmentWidth]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [baseItems, count]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
     const onScroll = () => {
-      isUserScrolling.current = true;
+      if (!isAnimatingRef.current) isUserScrolling.current = true;
       cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(applyArc);
 
       if (settleTimer.current) clearTimeout(settleTimer.current);
-      settleTimer.current = setTimeout(onScrollSettled, 120);
+      settleTimer.current = setTimeout(onScrollSettled, isAnimatingRef.current ? 80 : 120);
     };
 
     const onScrollEnd = () => {
@@ -184,8 +188,9 @@ export function CurvedCategoryCarousel({
       el.removeEventListener("scrollend", onScrollEnd);
       if (settleTimer.current) clearTimeout(settleTimer.current);
       cancelAnimationFrame(rafRef.current);
+      stopArcLoop();
     };
-  }, [applyArc, onScrollSettled]);
+  }, [applyArc, onScrollSettled, stopArcLoop]);
 
   useEffect(() => {
     if (fromScrollRef.current) {
@@ -193,9 +198,8 @@ export function CurvedCategoryCarousel({
       return;
     }
     if (selected !== lastCentered.current && !isUserScrolling.current) {
-      lastCentered.current = selected;
       const idx = baseItems.indexOf(selected);
-      if (idx >= 0) scrollToIndex(idx);
+      if (idx >= 0) scrollToIndex(idx, true);
     }
   }, [baseItems, scrollToIndex, selected]);
 
@@ -224,7 +228,7 @@ export function CurvedCategoryCarousel({
         <div className="h-[3px] w-10 rounded-full bg-white" />
       </div>
       <div
-        className="pointer-events-none absolute left-1/2 z-40 w-28 -translate-x-1/2 text-center text-xs font-bold leading-tight text-white"
+        className="pointer-events-none absolute left-1/2 z-40 w-28 -translate-x-1/2 text-center text-xs font-bold leading-tight text-white transition-opacity duration-200"
         style={{ top: labelTop }}
       >
         {getLabel(selected)}
@@ -235,20 +239,20 @@ export function CurvedCategoryCarousel({
         className="carousel-wheel carousel-wheel-ios flex h-[156px] snap-x snap-mandatory items-start gap-5 overflow-x-auto overflow-y-hidden px-[calc(50%-2.75rem)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{ WebkitOverflowScrolling: "touch", paddingTop: SLOT_TOP, touchAction: "pan-x" }}
       >
-        {loopItems.map(({ id, key }) => {
+        {baseItems.map((id) => {
           const imageSrc = getCategoryImage(id);
 
           return (
             <button
-              key={key}
+              key={id}
               type="button"
               data-cat-item
               data-category-id={id}
               onClick={() => {
-                lastCentered.current = id;
+                const idx = baseItems.indexOf(id);
+                if (idx < 0 || id === lastCentered.current) return;
                 fromScrollRef.current = true;
-                onChange(id);
-                scrollToIndex(baseItems.indexOf(id));
+                scrollToIndex(idx, true);
               }}
               className="flex w-[5.5rem] shrink-0 snap-center snap-always flex-col items-center gap-1.5 will-change-transform"
               style={{ transformOrigin: "center top", scrollSnapStop: "always" }}

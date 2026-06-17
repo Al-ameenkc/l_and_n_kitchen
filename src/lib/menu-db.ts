@@ -56,7 +56,8 @@ export async function fetchMenuFromDb(): Promise<MenuData | null> {
     const { data: categories, error: catErr } = await supabase
       .from("categories")
       .select("id, name, slug, image_url, sort_order")
-      .order("sort_order", { ascending: true });
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
 
     if (catErr) throw catErr;
     if (!categories?.length) return null;
@@ -109,7 +110,8 @@ export async function listCategoriesAdmin(): Promise<DbCategory[]> {
   const { data, error } = await supabase
     .from("categories")
     .select("*")
-    .order("sort_order", { ascending: true });
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
   if (error) throw error;
   return data ?? [];
 }
