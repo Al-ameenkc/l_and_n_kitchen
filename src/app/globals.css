@@ -35,6 +35,125 @@ body {
   scroll-snap-type: none;
 }
 
+/* iOS-style nav bar glass (frosted material) */
+.ios-glass {
+  background: rgba(255, 255, 255, 0.1);
+  border: 0.5px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06),
+    0 8px 32px rgba(0, 0, 0, 0.28);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+}
+
+.ios-glass-track {
+  background: rgba(0, 0, 0, 0.42);
+  border: 0.5px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 4px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  backdrop-filter: blur(16px) saturate(120%);
+}
+
+.ios-swipe-order-host {
+  overflow: visible;
+}
+
+.ios-swipe-chevron-hint {
+  transition: opacity 0.18s ease;
+}
+
+.ios-swipe-chevron-hint--hidden {
+  opacity: 0;
+}
+
+.ios-swipe-shimmer {
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.1) 38%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0.1) 62%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: swipe-shimmer 3.2s ease-in-out infinite;
+}
+
+.ios-liquid-bubble__label .ios-swipe-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.32) 38%,
+    rgba(255, 255, 255, 0.92) 50%,
+    rgba(255, 255, 255, 0.32) 62%,
+    rgba(255, 255, 255, 0.32) 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.ios-swipe-chevron-hint .ios-swipe-shimmer {
+  font-size: 1.125rem;
+}
+
+.ios-swipe-shimmer--delay-1 {
+  animation-delay: 0.35s;
+}
+
+.ios-swipe-shimmer--delay-2 {
+  animation-delay: 0.7s;
+}
+
+@keyframes swipe-shimmer {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+
+/* iPhone liquid-glass swipe bubble */
+.ios-liquid-bubble {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  top: 4px;
+  height: calc(100% - 8px);
+  border-radius: 9999px;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  will-change: transform;
+}
+
+.ios-liquid-bubble__lens {
+  display: none;
+}
+
+.ios-liquid-bubble__label {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.375rem;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
+}
+
 .carousel-wheel-ios {
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-x: contain;
