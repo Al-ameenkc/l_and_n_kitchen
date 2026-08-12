@@ -69,14 +69,21 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-[#111111]">
-      <div className="relative z-30 shrink-0 overflow-visible">
-        <HeaderBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
-        <CurvedCategoryCarousel
-          categories={menuData.categories}
-          categoryImages={menuData.categoryImages}
-          selected={categoryFilter}
-          onChange={setCategoryFilter}
+      <div className="relative z-40 shrink-0 overflow-visible">
+        <HeaderBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          dishes={menuData.dishes}
+          onSelectSuggestion={(dish) => setDetailDishId(dish.id)}
         />
+        <div className="relative z-10">
+          <CurvedCategoryCarousel
+            categories={menuData.categories}
+            categoryImages={menuData.categoryImages}
+            selected={categoryFilter}
+            onChange={setCategoryFilter}
+          />
+        </div>
       </div>
 
       <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(5.75rem,env(safe-area-inset-bottom))] pt-1">

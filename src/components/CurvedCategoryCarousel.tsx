@@ -216,7 +216,7 @@ export function CurvedCategoryCarousel({
   const underlineTop = SLOT_TOP + CIRCLE_SIZE + 30;
 
   return (
-    <div className="relative z-30 shrink-0 overflow-hidden pb-1 pt-1">
+    <div className="relative z-10 mt-[5px] shrink-0 overflow-hidden pb-1 pt-1">
       <div
         className="pointer-events-none absolute left-1/2 z-40 -translate-x-1/2 rounded-full border-2 border-white"
         style={{ top: SLOT_TOP, width: RING_SIZE, height: RING_SIZE }}

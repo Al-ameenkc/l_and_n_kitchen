@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, animate, useMotionValue, useMotionValueEvent } from "framer-motion";
 import type { Dish } from "@/types/menu";
+import { buildOrderShareUrl, qrImageUrl } from "@/lib/orderShare";
 import { formatPrice } from "@/utils/formatPrice";
 import { formatPrepTime } from "@/utils/prepTime";
 
@@ -187,13 +188,43 @@ function SwipeToOrderBar({
 }
 
 function OrderSummaryTable({ dishes, total }: { dishes: Dish[]; total: number }) {
+  const [shareUrl, setShareUrl] = useState("");
+
+  useEffect(() => {
+    setShareUrl(buildOrderShareUrl(window.location.origin, dishes.map((d) => d.id)));
+  }, [dishes]);
+
+  const qrSrc = useMemo(
+    () => (shareUrl ? qrImageUrl(shareUrl, 160) : ""),
+    [shareUrl]
+  );
+
   return (
     <div className="overflow-hidden rounded-2xl bg-white text-black">
-      <div className="border-b border-zinc-200 bg-zinc-50 px-4 py-3">
-        <p className="text-center text-xs font-semibold uppercase tracking-wide text-zinc-500">
-          L&amp;N Kitchen — Order summary
-        </p>
-        <p className="mt-1 text-center text-xs text-zinc-400">Show this table to your waiter</p>
+      <div className="flex items-center gap-3 border-b border-zinc-200 bg-zinc-50 px-4 py-3">
+        <div className="min-w-0 flex-1 text-left">
+          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            L&amp;N Kitchen — Order summary
+          </p>
+          <p className="mt-1 text-xs text-zinc-400">Show this table to your waiter</p>
+          <p className="mt-2 text-[11px] leading-snug text-zinc-500">
+            Or let them scan the QR — they&apos;ll see this list and enter your table.
+          </p>
+        </div>
+        {qrSrc ? (
+          <div className="shrink-0 rounded-xl bg-white p-1.5 ring-1 ring-zinc-200">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={qrSrc}
+              alt="Scan to open this order"
+              width={96}
+              height={96}
+              className="h-24 w-24"
+            />
+          </div>
+        ) : (
+          <div className="h-24 w-24 shrink-0 animate-pulse rounded-xl bg-zinc-200" />
+        )}
       </div>
 
       <div className="overflow-x-auto">

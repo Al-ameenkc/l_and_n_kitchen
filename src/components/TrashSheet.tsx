@@ -62,11 +62,11 @@ export function TrashSheet({
               ) : (
                 <ul className="space-y-3">
                   {dishes.map((dish) => (
-                    <li key={dish.id} className="flex items-center gap-3 rounded-2xl bg-white p-3">
+                    <li key={dish.id} className="rounded-2xl bg-white p-3">
                       <button
                         type="button"
                         onClick={() => onSelectDish(dish)}
-                        className="flex min-w-0 flex-1 items-center gap-3 text-left"
+                        className="flex w-full items-center gap-3 text-left"
                       >
                         <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
                           <Image
@@ -82,20 +82,20 @@ export function TrashSheet({
                           <p className="text-sm font-normal text-zinc-500">{formatPrice(dish.price)}</p>
                         </div>
                       </button>
-                      <div className="flex shrink-0 flex-col gap-1">
-                        <button
-                          type="button"
-                          onClick={() => onRestoreToWishlist(dish.id)}
-                          className="rounded-full bg-green-50 px-2 py-1 text-[10px] font-semibold text-green-700"
-                        >
-                          To Wish
-                        </button>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
                         <button
                           type="button"
                           onClick={() => onRestoreToDeck(dish.id)}
-                          className="rounded-full bg-zinc-100 px-2 py-1 text-[10px] font-semibold text-zinc-600"
+                          className="rounded-xl bg-zinc-100 px-3 py-3 text-sm font-bold text-zinc-700 active:bg-zinc-200"
                         >
                           To Deck
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onRestoreToWishlist(dish.id)}
+                          className="rounded-xl bg-green-50 px-3 py-3 text-sm font-bold text-green-700 active:bg-green-100"
+                        >
+                          To Wish
                         </button>
                       </div>
                     </li>
