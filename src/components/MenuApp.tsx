@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useDeck } from "@/hooks/useDeck";
 import {
   getWishlistDishes,
+  getWishlistItemCount,
   getWishlistTotal,
   getTrashDishes,
   useMenuStore,
@@ -30,6 +31,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     addToWishlist,
     addToTrash,
     removeFromWishlist,
+    setWishlistQty,
     restoreFromTrashToWishlist,
     restoreFromTrashToDeck,
     setSearchQuery,
@@ -54,6 +56,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     () => getWishlistTotal(menuData.dishes, wishlist),
     [menuData.dishes, wishlist]
   );
+  const wishlistCount = useMemo(() => getWishlistItemCount(wishlist), [wishlist]);
 
   const detailDish = useMemo(
     () => menuData.dishes.find((d) => d.id === detailDishId) ?? null,
@@ -99,7 +102,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
 
       <SwipeHintOverlay />
 
-      <WishListBar count={wishlistDishes.length} onOpen={() => setWishlistOpen(true)} />
+      <WishListBar count={wishlistCount} onOpen={() => setWishlistOpen(true)} />
 
       <DishDetailView dish={detailDish} onClose={() => setDetailDishId(null)} />
 
@@ -109,6 +112,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         total={wishlistTotal}
         onClose={() => setWishlistOpen(false)}
         onRemove={removeFromWishlist}
+        onChangeQty={setWishlistQty}
         onSelectDish={(dish) => setDetailDishId(dish.id)}
       />
 

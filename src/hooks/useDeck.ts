@@ -7,9 +7,10 @@ export function useDeck(dishes: Dish[]) {
 
   const deck = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
+    const wishIds = new Set(wishlist.map((entry) => entry.id));
 
     return dishes.filter((dish) => {
-      if (wishlist.includes(dish.id) || trash.includes(dish.id)) return false;
+      if (wishIds.has(dish.id) || trash.includes(dish.id)) return false;
 
       if (query) {
         const haystack = [

@@ -5,15 +5,17 @@ import Image from "next/image";
 import { AnimatePresence, motion, animate, useMotionValue, useMotionValueEvent } from "framer-motion";
 import type { Dish } from "@/types/menu";
 import { buildOrderShareUrl, qrImageUrl } from "@/lib/orderShare";
+import type { WishlistDish } from "@/store/menuStore";
 import { formatPrice } from "@/utils/formatPrice";
 import { formatPrepTime } from "@/utils/prepTime";
 
 interface WishListSheetProps {
   open: boolean;
-  dishes: Dish[];
+  dishes: WishlistDish[];
   total: number;
   onClose: () => void;
   onRemove: (id: string) => void;
+  onChangeQty: (id: string, qty: number) => void;
   onSelectDish: (dish: Dish) => void;
 }
 
@@ -187,15 +189,56 @@ function SwipeToOrderBar({
   );
 }
 
-function OrderSummaryTable({ dishes, total }: { dishes: Dish[]; total: number }) {
+function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: number }) {
   const [shareUrl, setShareUrl] = useState("");
+  const [shareError, setShareError] = useState("");
+  const itemsKey = useMemo(
+    () => dishes.map((d) => `${d.id}:${d.qty}`).join("|"),
+    [dishes]
+  );
 
   useEffect(() => {
-    setShareUrl(buildOrderShareUrl(window.location.origin, dishes.map((d) => d.id)));
-  }, [dishes]);
+    if (!dishes.length) {
+      setShareUrl("");
+      return;
+    }
+
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      setShareError("");
+      try {
+        const res = await fetch("/api/order-shares", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: dishes.map((d) => ({ id: d.id, qty: d.qty })),
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.id) {
+          throw new Error(data.error ?? "Could not create QR link");
+        }
+        if (!cancelled) {
+          setShareUrl(buildOrderShareUrl(window.location.origin, data.id as string));
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setShareUrl("");
+          setShareError(e instanceof Error ? e.message : "Could not create QR link");
+        }
+      }
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+    // itemsKey captures dish ids + quantities without recreating on unrelated renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsKey]);
 
   const qrSrc = useMemo(
-    () => (shareUrl ? qrImageUrl(shareUrl, 160) : ""),
+    () => (shareUrl ? qrImageUrl(shareUrl, 220) : ""),
     [shareUrl]
   );
 
@@ -210,6 +253,9 @@ function OrderSummaryTable({ dishes, total }: { dishes: Dish[]; total: number })
           <p className="mt-2 text-[11px] leading-snug text-zinc-500">
             Or let them scan the QR — they&apos;ll see this list and enter your table.
           </p>
+          {shareError ? (
+            <p className="mt-2 text-[11px] text-red-500">{shareError}</p>
+          ) : null}
         </div>
         {qrSrc ? (
           <div className="shrink-0 rounded-xl bg-white p-1.5 ring-1 ring-zinc-200">
@@ -217,13 +263,15 @@ function OrderSummaryTable({ dishes, total }: { dishes: Dish[]; total: number })
             <img
               src={qrSrc}
               alt="Scan to open this order"
-              width={96}
-              height={96}
-              className="h-24 w-24"
+              width={112}
+              height={112}
+              className="h-28 w-28"
             />
           </div>
         ) : (
-          <div className="h-24 w-24 shrink-0 animate-pulse rounded-xl bg-zinc-200" />
+          <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-xl bg-zinc-200 text-center text-[10px] font-medium text-zinc-500">
+            {shareError ? "QR unavailable" : "Preparing QR…"}
+          </div>
         )}
       </div>
 
@@ -233,6 +281,7 @@ function OrderSummaryTable({ dishes, total }: { dishes: Dish[]; total: number })
             <tr className="border-b border-zinc-200 text-xs uppercase tracking-wide text-zinc-500">
               <th className="px-4 py-3 font-semibold">#</th>
               <th className="px-2 py-3 font-semibold">Dish</th>
+              <th className="px-2 py-3 text-center font-semibold">Qty</th>
               <th className="px-4 py-3 text-right font-semibold">Price</th>
             </tr>
           </thead>
@@ -244,13 +293,16 @@ function OrderSummaryTable({ dishes, total }: { dishes: Dish[]; total: number })
                   <p className="font-bold leading-tight">{dish.name}</p>
                   <p className="mt-0.5 text-xs text-zinc-500">{dish.category}</p>
                 </td>
-                <td className="px-4 py-3 text-right font-extrabold">{formatPrice(dish.price)}</td>
+                <td className="px-2 py-3 text-center font-extrabold">{dish.qty}</td>
+                <td className="px-4 py-3 text-right font-extrabold">
+                  {formatPrice(dish.price * dish.qty)}
+                </td>
               </tr>
             ))}
           </tbody>
           <tfoot>
             <tr className="bg-zinc-50">
-              <td colSpan={2} className="px-4 py-4 text-base font-extrabold">
+              <td colSpan={3} className="px-4 py-4 text-base font-extrabold">
                 Total
               </td>
               <td className="px-4 py-4 text-right text-lg font-extrabold text-green-600">
@@ -264,12 +316,52 @@ function OrderSummaryTable({ dishes, total }: { dishes: Dish[]; total: number })
   );
 }
 
+function QtyStepper({
+  qty,
+  onChange,
+}: {
+  qty: number;
+  onChange: (qty: number) => void;
+}) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-full bg-zinc-100 p-0.5">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        onClick={() => onChange(qty - 1)}
+        disabled={qty <= 1}
+        className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-sm font-bold text-zinc-700 disabled:opacity-40"
+      >
+        −
+      </button>
+      <input
+        type="number"
+        min={1}
+        max={99}
+        value={qty}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="w-7 bg-transparent text-center text-xs font-extrabold text-black outline-none"
+      />
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={() => onChange(qty + 1)}
+        disabled={qty >= 99}
+        className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-sm font-bold text-zinc-700 disabled:opacity-40"
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
 export function WishListSheet({
   open,
   dishes,
   total,
   onClose,
   onRemove,
+  onChangeQty,
   onSelectDish,
 }: WishListSheetProps) {
   const [view, setView] = useState<"list" | "order">("list");
@@ -314,7 +406,7 @@ export function WishListSheet({
                 <div className="col-span-2">
                   <h2 className="text-lg font-extrabold text-white">My Wish List</h2>
                   <p className="text-xs font-normal text-zinc-500">
-                    Tap a dish for details · swipe to order when ready
+                    Set quantities · swipe to order when ready
                   </p>
                 </div>
               )}
@@ -362,16 +454,25 @@ export function WishListSheet({
                           </p>
                           <p className="text-sm font-extrabold text-green-600">
                             {formatPrice(dish.price)}
+                            {dish.qty > 1 ? (
+                              <span className="font-semibold text-zinc-500">
+                                {" "}
+                                × {dish.qty}
+                              </span>
+                            ) : null}
                           </p>
                         </div>
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => onRemove(dish.id)}
-                        className="shrink-0 rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-red-500"
-                      >
-                        Remove
-                      </button>
+                      <div className="flex shrink-0 flex-col items-end gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => onRemove(dish.id)}
+                          className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-red-500"
+                        >
+                          Remove
+                        </button>
+                        <QtyStepper qty={dish.qty} onChange={(qty) => onChangeQty(dish.id, qty)} />
+                      </div>
                     </li>
                   ))}
                 </ul>

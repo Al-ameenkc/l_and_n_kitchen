@@ -71,3 +71,5 @@ create policy "Public read menu images"
 -- Authenticated users with service role upload via API (service role bypasses RLS)
 -- If uploads fail, also create the bucket manually:
 -- Dashboard → Storage → New bucket → name: menu-images → Public bucket: ON
+
+-- Also run orders-waiters.sql for guest order assignment (waiters + orders tables).
