@@ -1,11 +1,9 @@
 import { NextResponse } from "next/server";
-import { MENU_IMAGES_BUCKET } from "@/lib/storage";
+import { ensureOrderSharesBucket, ORDER_SHARES_BUCKET } from "@/lib/storage";
 import type { OrderShareItem } from "@/lib/orderShare";
 import { createServiceClient } from "@/lib/supabase/server";
 
 type Params = { params: Promise<{ id: string }> };
-
-const SHARE_PREFIX = "order-shares";
 
 function normalizeItems(raw: unknown): OrderShareItem[] {
   if (!Array.isArray(raw)) return [];
@@ -30,9 +28,11 @@ export async function GET(_request: Request, { params }: Params) {
 
   try {
     const supabase = createServiceClient();
+    await ensureOrderSharesBucket(supabase);
+
     const { data, error } = await supabase.storage
-      .from(MENU_IMAGES_BUCKET)
-      .download(`${SHARE_PREFIX}/${shareId}.json`);
+      .from(ORDER_SHARES_BUCKET)
+      .download(`${shareId}.json`);
 
     if (error || !data) {
       return NextResponse.json({ error: "Order share not found." }, { status: 404 });

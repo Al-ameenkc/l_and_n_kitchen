@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { ensureMenuImagesBucket, MENU_IMAGES_BUCKET } from "@/lib/storage";
+import { ensureOrderSharesBucket, ORDER_SHARES_BUCKET } from "@/lib/storage";
 import type { OrderShareItem } from "@/lib/orderShare";
 import { createServiceClient } from "@/lib/supabase/server";
-
-const SHARE_PREFIX = "order-shares";
 
 function normalizeItems(raw: unknown): OrderShareItem[] {
   if (!Array.isArray(raw)) return [];
@@ -28,7 +26,7 @@ export async function POST(request: Request) {
     }
 
     const supabase = createServiceClient();
-    await ensureMenuImagesBucket(supabase);
+    await ensureOrderSharesBucket(supabase);
 
     const id = crypto.randomUUID().replace(/-/g, "").slice(0, 16);
     const payload = JSON.stringify({
@@ -37,8 +35,8 @@ export async function POST(request: Request) {
     });
 
     const { error } = await supabase.storage
-      .from(MENU_IMAGES_BUCKET)
-      .upload(`${SHARE_PREFIX}/${id}.json`, Buffer.from(payload, "utf8"), {
+      .from(ORDER_SHARES_BUCKET)
+      .upload(`${id}.json`, Buffer.from(payload, "utf8"), {
         contentType: "application/json",
         upsert: false,
       });
