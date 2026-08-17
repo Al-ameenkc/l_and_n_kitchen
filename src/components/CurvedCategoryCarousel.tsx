@@ -13,20 +13,26 @@ interface CurvedCategoryCarouselProps {
 }
 
 const LABELS: Record<string, string> = {
-  all: "All",
   Soups: "Soup",
   "English Dishes": "English",
+  "English dishes": "English",
   "Side Dishes": "Sides",
+  "Side dishes": "Sides",
   Alacarte: "A la Carte",
   "Fresh Juice": "Fresh Juice",
 };
 
 const ITEM_STRIDE = 108;
+const ITEM_WIDTH = 88;
+const ITEM_GAP = ITEM_STRIDE - ITEM_WIDTH;
 const WHEEL_RADIUS = 320;
 const CENTER_LIFT = -1.5;
 const SLOT_TOP = 3;
 const RING_SIZE = 80;
 const CIRCLE_SIZE = 76;
+const CIRCLE_IMAGE_RATIO = 0.78;
+const CIRCLE_NUDGE_X = 0.2;
+const CIRCLE_NUDGE_Y = -1.2;
 
 function getLabel(category: string): string {
   return LABELS[category] ?? category;
@@ -50,7 +56,7 @@ export function CurvedCategoryCarousel({
   selected,
   onChange,
 }: CurvedCategoryCarouselProps) {
-  const baseItems = useMemo(() => ["all", ...categories], [categories]);
+  const baseItems = useMemo(() => categories, [categories]);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastCentered = useRef(selected);
@@ -75,6 +81,16 @@ export function CurvedCategoryCarousel({
 
       node.style.transform = `translate3d(0, ${y}px, 0) scale(${scale})`;
       node.style.opacity = `${opacity}`;
+
+      const circle = node.querySelector<HTMLElement>("[data-cat-circle]");
+      if (circle) {
+        const centered = Math.abs(distance) < ITEM_WIDTH * 0.45;
+        if (centered) {
+          circle.style.transform = `translate3d(${CIRCLE_NUDGE_X / scale}px, ${CIRCLE_NUDGE_Y / scale}px, 0)`;
+        } else {
+          circle.style.transform = "none";
+        }
+      }
 
       const label = node.querySelector<HTMLElement>("[data-cat-label]");
       if (label) {
@@ -206,7 +222,6 @@ export function CurvedCategoryCarousel({
   const getCategoryImage = useCallback(
     (id: string) => {
       if (categoryImages[id]) return categoryImages[id];
-      if (id === "all") return "/images/placeholders/grill.svg";
       return getCategoryPlaceholder(id);
     },
     [categoryImages]
@@ -236,8 +251,15 @@ export function CurvedCategoryCarousel({
 
       <div
         ref={scrollRef}
-        className="carousel-wheel carousel-wheel-ios flex h-[156px] snap-x snap-mandatory items-start gap-5 overflow-x-auto overflow-y-hidden px-[calc(50%-2.75rem)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        style={{ WebkitOverflowScrolling: "touch", paddingTop: SLOT_TOP, touchAction: "pan-x" }}
+        className="carousel-wheel carousel-wheel-ios flex h-[156px] snap-x snap-mandatory items-start overflow-x-auto overflow-y-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          paddingTop: SLOT_TOP,
+          paddingLeft: `calc(50% - ${ITEM_WIDTH / 2}px)`,
+          paddingRight: `calc(50% - ${ITEM_WIDTH / 2}px)`,
+          gap: ITEM_GAP,
+          touchAction: "pan-x",
+        }}
       >
         {baseItems.map((id) => {
           const imageSrc = getCategoryImage(id);
@@ -254,14 +276,25 @@ export function CurvedCategoryCarousel({
                 fromScrollRef.current = true;
                 scrollToIndex(idx, true);
               }}
-              className="flex w-[5.5rem] shrink-0 snap-center snap-always flex-col items-center gap-1.5 will-change-transform"
-              style={{ transformOrigin: "center top", scrollSnapStop: "always" }}
+              className="flex shrink-0 snap-center snap-always flex-col items-center gap-1.5 will-change-transform"
+              style={{
+                width: ITEM_WIDTH,
+                transformOrigin: "center top",
+                scrollSnapStop: "always",
+              }}
             >
               <div
+                data-cat-circle
                 className="relative flex items-center justify-center overflow-hidden rounded-full bg-white shadow-sm"
                 style={{ width: CIRCLE_SIZE, height: CIRCLE_SIZE }}
               >
-                <div className="relative h-[78%] w-[78%]">
+                <div
+                  className="relative"
+                  style={{
+                    width: CIRCLE_SIZE * CIRCLE_IMAGE_RATIO,
+                    height: CIRCLE_SIZE * CIRCLE_IMAGE_RATIO,
+                  }}
+                >
                   <Image
                     src={imageSrc}
                     alt={getLabel(id)}

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 interface CardActionButtonsProps {
   onOpenTrash: () => void;
   onOpenWishlist: () => void;
+  trashCount?: number;
   disabled?: boolean;
   dragX?: number;
   wishPulse?: boolean;
@@ -14,6 +15,7 @@ interface CardActionButtonsProps {
 export function CardActionButtons({
   onOpenTrash,
   onOpenWishlist,
+  trashCount = 0,
   disabled,
   dragX = 0,
   wishPulse = false,
@@ -24,21 +26,28 @@ export function CardActionButtons({
 
   return (
     <>
-      <motion.button
-        type="button"
-        aria-label="View dismissed dishes"
-        onClick={onOpenTrash}
-        animate={{
-          scale: rejectActive ? 1.06 : 1,
-          backgroundColor: rejectActive ? "rgba(239, 68, 68, 0.55)" : "rgba(239, 68, 68, 0.22)",
-        }}
-        transition={{ type: "spring", stiffness: 500, damping: 28 }}
-        className="absolute left-3 top-[34%] z-[55] flex h-14 w-14 items-center justify-center rounded-full border border-red-400/35 text-red-500 backdrop-blur-md"
-      >
-        <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="3">
-          <path d="M18 6L6 18M6 6l12 12" />
-        </svg>
-      </motion.button>
+      <div className="absolute left-3 top-[34%] z-[55] flex flex-col items-center">
+        <motion.button
+          type="button"
+          aria-label="View dismissed dishes"
+          onClick={onOpenTrash}
+          animate={{
+            scale: rejectActive ? 1.06 : 1,
+            backgroundColor: rejectActive ? "rgba(239, 68, 68, 0.55)" : "rgba(239, 68, 68, 0.22)",
+          }}
+          transition={{ type: "spring", stiffness: 500, damping: 28 }}
+          className="flex h-14 w-14 items-center justify-center rounded-full border border-red-400/35 text-red-500 backdrop-blur-md"
+        >
+          <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="3">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </motion.button>
+        {trashCount > 0 && (
+          <span className="mt-1 min-w-[1.25rem] rounded-full bg-red-500 px-1.5 py-0.5 text-center text-[10px] font-bold leading-none text-white">
+            {trashCount}
+          </span>
+        )}
+      </div>
 
       <motion.button
         type="button"

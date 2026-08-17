@@ -8,7 +8,9 @@ import { formatPrepTime } from "@/utils/prepTime";
 
 interface DishDetailViewProps {
   dish: Dish | null;
+  inWishlist?: boolean;
   onClose: () => void;
+  onAddToWishlist?: (dish: Dish) => void;
 }
 
 function DetailCard({
@@ -26,7 +28,12 @@ function DetailCard({
   );
 }
 
-export function DishDetailView({ dish, onClose }: DishDetailViewProps) {
+export function DishDetailView({
+  dish,
+  inWishlist = false,
+  onClose,
+  onAddToWishlist,
+}: DishDetailViewProps) {
   return (
     <AnimatePresence>
       {dish && (
@@ -48,6 +55,16 @@ export function DishDetailView({ dish, onClose }: DishDetailViewProps) {
             >
               Back
             </button>
+            {onAddToWishlist && (
+              <button
+                type="button"
+                onClick={() => onAddToWishlist(dish)}
+                disabled={inWishlist}
+                className="absolute right-5 top-12 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md disabled:opacity-60"
+              >
+                {inWishlist ? "In wish list" : "Add to wish list"}
+              </button>
+            )}
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-10 pt-4">

@@ -5,36 +5,18 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import type { Dish } from "@/types/menu";
 import { formatPrice } from "@/utils/formatPrice";
+import { searchDishes } from "@/utils/searchDishes";
 
 interface HeaderBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   dishes: Dish[];
-  onSelectSuggestion: (dish: Dish) => void;
-}
-
-function scoreDish(dish: Dish, query: string): number {
-  const q = query.toLowerCase();
-  const name = dish.name.toLowerCase();
-  const category = dish.category.toLowerCase();
-  const short = dish.shortDescription.toLowerCase();
-  const ingredients = dish.ingredients.join(" ").toLowerCase();
-
-  if (name === q) return 100;
-  if (name.startsWith(q)) return 90;
-  if (name.includes(q)) return 75;
-  if (category.startsWith(q)) return 60;
-  if (category.includes(q)) return 50;
-  if (short.includes(q) || ingredients.includes(q)) return 35;
-  if (dish.description.toLowerCase().includes(q)) return 25;
-  return 0;
 }
 
 export function HeaderBar({
   searchQuery,
   onSearchChange,
   dishes,
-  onSelectSuggestion,
 }: HeaderBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -44,12 +26,7 @@ export function HeaderBar({
   const suggestions = useMemo(() => {
     const q = searchQuery.trim();
     if (!q) return [];
-    return dishes
-      .map((dish) => ({ dish, score: scoreDish(dish, q) }))
-      .filter((row) => row.score > 0)
-      .sort((a, b) => b.score - a.score || a.dish.name.localeCompare(b.dish.name))
-      .slice(0, 12)
-      .map((row) => row.dish);
+    return searchDishes(dishes, q).slice(0, 12);
   }, [dishes, searchQuery]);
 
   const showDropdown = focused && searchQuery.trim().length > 0;
@@ -165,7 +142,6 @@ export function HeaderBar({
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={() => {
                           onSearchChange(dish.name);
-                          onSelectSuggestion(dish);
                           setFocused(false);
                           inputRef.current?.blur();
                         }}

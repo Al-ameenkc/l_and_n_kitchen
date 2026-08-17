@@ -66,7 +66,7 @@ export const useMenuStore = create<MenuStore>()(
       wishlist: [],
       trash: [],
       searchQuery: "",
-      categoryFilter: "all",
+      categoryFilter: "",
       detailDishId: null,
       wishlistOpen: false,
       trashOpen: false,

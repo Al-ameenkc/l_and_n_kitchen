@@ -9,6 +9,7 @@ import { markSwipeHintSeen } from "./SwipeHintOverlay";
 
 interface CardStackProps {
   deck: Dish[];
+  trashCount?: number;
   onWish: (dish: Dish) => void;
   onTrash: (dish: Dish) => void;
   onCardTap: (dish: Dish) => void;
@@ -22,8 +23,25 @@ const FLY_OFF = 420;
 const PULSE_MS = 320;
 const VISIBLE_BEHIND = 2;
 
+function behindCardStyle(depth: number, dragX: number) {
+  const dragProgress = Math.min(1, Math.abs(dragX) / SWIPE_THRESHOLD);
+
+  if (depth === 1) {
+    return {
+      transform: `translateX(0px) scale(${0.97 + dragProgress * 0.03}) translateY(${6 * (1 - dragProgress)}px)`,
+      opacity: 0.92 + dragProgress * 0.08,
+    };
+  }
+
+  return {
+    transform: `translateX(${depth % 2 === 0 ? -10 : 10}px) scale(${1 - depth * 0.03}) translateY(${depth * 6}px)`,
+    opacity: 0.9,
+  };
+}
+
 export function CardStack({
   deck,
+  trashCount = 0,
   onWish,
   onTrash,
   onCardTap,
@@ -31,24 +49,25 @@ export function CardStack({
   onOpenTrash,
   onCurrentChange,
 }: CardStackProps) {
-  const [index, setIndex] = useState(0);
   const [dragX, setDragX] = useState(0);
   const [wishPulse, setWishPulse] = useState(false);
   const [rejectPulse, setRejectPulse] = useState(false);
 
   useEffect(() => {
-    setIndex(0);
     setDragX(0);
   }, [deck]);
 
-  const current = deck[index] ?? null;
-  const behind = deck.slice(index + 1, index + 1 + VISIBLE_BEHIND);
+  // Swiped cards are removed from the deck, so the next card always shifts into index 0.
+  const current = deck[0] ?? null;
+  const behind = deck.slice(1, 1 + VISIBLE_BEHIND);
 
   useEffect(() => {
     onCurrentChange?.(current);
   }, [current, onCurrentChange]);
 
-  const advance = useCallback(() => setIndex((i) => i + 1), []);
+  const advance = useCallback(() => {
+    setDragX(0);
+  }, []);
 
   const flashWish = useCallback(() => {
     setWishPulse(true);
@@ -79,6 +98,7 @@ export function CardStack({
       <CardActionButtons
         onOpenTrash={onOpenTrash}
         onOpenWishlist={onOpenWishlist}
+        trashCount={trashCount}
         disabled={!current}
         dragX={dragX}
         wishPulse={wishPulse}
@@ -96,20 +116,20 @@ export function CardStack({
         ) : (
           <>
             {behind
-              .slice()
-              .reverse()
-              .map((dish, reverseIdx) => {
-                const depth = behind.length - reverseIdx;
+              .map((dish, idx) => ({ dish, depth: idx + 1 }))
+              .sort((a, b) => b.depth - a.depth)
+              .map(({ dish, depth }) => {
+                const style = behindCardStyle(depth, dragX);
                 return (
                   <div
                     key={dish.id}
-                    className="pointer-events-none absolute inset-0"
+                    className="pointer-events-none absolute inset-0 transition-[transform,opacity] duration-75 ease-out"
                     style={{
-                      transform: `translateX(${depth % 2 === 0 ? -10 : 10}px) scale(${1 - depth * 0.03}) translateY(${depth * 6}px)`,
-                      zIndex: 10 + depth,
+                      ...style,
+                      zIndex: 10 + (VISIBLE_BEHIND + 1 - depth),
                     }}
                   >
-                    <DishCard dish={dish} interactive={false} className="opacity-90" />
+                    <DishCard dish={dish} interactive={false} />
                   </div>
                 );
               })}
@@ -168,6 +188,10 @@ function SwipeableCard({
     },
     [onDragXChange]
   );
+
+  useEffect(() => {
+    onDragXChange(0);
+  }, [dish.id, onDragXChange]);
 
   useEffect(() => {
     const el = cardRef.current;

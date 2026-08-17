@@ -44,6 +44,17 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
 
   const deck = useDeck(menuData.dishes);
 
+  const searchableDishes = useMemo(() => {
+    const wishIds = new Set(wishlist.map((entry) => entry.id));
+    return menuData.dishes.filter(
+      (dish) => !wishIds.has(dish.id) && !trash.includes(dish.id)
+    );
+  }, [menuData.dishes, wishlist, trash]);
+
+  const deckKey = searchQuery.trim()
+    ? `search:${searchQuery.trim().toLowerCase()}`
+    : `category:${categoryFilter}`;
+
   const wishlistDishes = useMemo(
     () => getWishlistDishes(menuData.dishes, wishlist),
     [menuData.dishes, wishlist]
@@ -62,6 +73,10 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     () => menuData.dishes.find((d) => d.id === detailDishId) ?? null,
     [menuData.dishes, detailDishId]
   );
+  const detailInWishlist = useMemo(
+    () => (detailDishId ? wishlist.some((entry) => entry.id === detailDishId) : false),
+    [wishlist, detailDishId]
+  );
 
   const handleWish = useCallback((dish: Dish) => addToWishlist(dish.id), [addToWishlist]);
   const handleTrash = useCallback((dish: Dish) => addToTrash(dish.id), [addToTrash]);
@@ -70,14 +85,21 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     syncWithMenuDishIds(menuData.dishes.map((d) => d.id));
   }, [menuData.dishes, syncWithMenuDishIds]);
 
+  useEffect(() => {
+    const first = menuData.categories[0];
+    if (!first) return;
+    if (!categoryFilter || !menuData.categories.includes(categoryFilter)) {
+      setCategoryFilter(first);
+    }
+  }, [menuData.categories, categoryFilter, setCategoryFilter]);
+
   return (
     <div className="relative flex h-full flex-col overflow-hidden bg-[#111111]">
       <div className="relative z-40 shrink-0 overflow-visible">
         <HeaderBar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          dishes={menuData.dishes}
-          onSelectSuggestion={(dish) => setDetailDishId(dish.id)}
+          dishes={searchableDishes}
         />
         <div className="relative z-10">
           <CurvedCategoryCarousel
@@ -91,7 +113,9 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
 
       <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(5.75rem,env(safe-area-inset-bottom))] pt-1">
         <CardStack
+          key={deckKey}
           deck={deck}
+          trashCount={trash.length}
           onWish={handleWish}
           onTrash={handleTrash}
           onCardTap={(dish) => setDetailDishId(dish.id)}
@@ -104,7 +128,12 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
 
       <WishListBar count={wishlistCount} onOpen={() => setWishlistOpen(true)} />
 
-      <DishDetailView dish={detailDish} onClose={() => setDetailDishId(null)} />
+      <DishDetailView
+        dish={detailDish}
+        inWishlist={detailInWishlist}
+        onClose={() => setDetailDishId(null)}
+        onAddToWishlist={handleWish}
+      />
 
       <WishListSheet
         open={wishlistOpen}

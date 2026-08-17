@@ -29,9 +29,9 @@ export function DishCard({ dish, onTap, className = "", interactive = true }: Di
           draggable={false}
         />
       </div>
-      <div className="flex h-[45%] flex-col justify-center gap-2 rounded-b-[2rem] bg-white px-5 py-4">
-        <p className="line-clamp-2 text-lg font-extrabold leading-tight text-zinc-900">{dish.name}</p>
-        <p className="line-clamp-2 text-sm font-normal text-zinc-500">{dish.shortDescription}</p>
+      <div className="flex h-[45%] flex-col justify-center gap-1.5 rounded-b-[2rem] bg-white px-5 py-3">
+        <p className="line-clamp-2 text-[15px] font-extrabold leading-snug text-zinc-900">{dish.name}</p>
+        <p className="line-clamp-2 text-xs font-normal leading-snug text-zinc-500">{dish.shortDescription}</p>
         <div className="mt-1 flex items-center justify-between gap-2">
           <p className="text-base font-extrabold text-zinc-900">{formatPrice(dish.price)}</p>
           <p className="text-xs font-medium text-zinc-500">
