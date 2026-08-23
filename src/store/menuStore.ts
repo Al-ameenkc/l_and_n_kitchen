@@ -55,6 +55,8 @@ interface MenuStore {
   placeOrderFromWishlist: (items: OrderItem[]) => void;
   addToLocalOrder: (item: OrderItem) => void;
   clearActiveOrder: () => void;
+  /** Full guest reset after payment - fresh menu session */
+  resetGuestSession: () => void;
   isItemLocked: (id: string) => boolean;
   lockedQtyFor: (id: string) => number;
 }
@@ -220,6 +222,21 @@ export const useMenuStore = create<MenuStore>()(
           lockedItems: [],
           orderStatus: null,
           orderSnapshotItems: [],
+        }),
+      resetGuestSession: () =>
+        set({
+          wishlist: [],
+          trash: [],
+          activeShareId: null,
+          activeOrderId: null,
+          customerToken: null,
+          lockedItems: [],
+          orderStatus: null,
+          orderSnapshotItems: [],
+          detailDishId: null,
+          wishlistOpen: false,
+          trashOpen: false,
+          searchQuery: "",
         }),
       isItemLocked: (id) => get().lockedItems.some((item) => item.id === id),
       lockedQtyFor: (id) => get().lockedItems.find((item) => item.id === id)?.qty ?? 0,

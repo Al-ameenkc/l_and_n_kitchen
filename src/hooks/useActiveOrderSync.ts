@@ -1,7 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import type { LockedOrderItem, OrderItem, OrderStatus } from "@/lib/orders-db";
+import {
+  isOrderPaid,
+  type LockedOrderItem,
+  type OrderItem,
+  type OrderStatus,
+} from "@/lib/orders-db";
 import { useMenuStore } from "@/store/menuStore";
 
 type LiveOrderPayload = {
@@ -50,6 +55,7 @@ export function useActiveOrderSync(allDishes: MenuDish[]) {
     lockedItems,
     setActiveOrder,
     applyOrderSnapshot,
+    resetGuestSession,
   } = useMenuStore();
 
   const dishesRef = useRef(allDishes);
@@ -57,6 +63,10 @@ export function useActiveOrderSync(allDishes: MenuDish[]) {
 
   const ingestOrder = useCallback(
     (order: LiveOrderPayload, token?: string | null) => {
+      if (isOrderPaid(order.status)) {
+        resetGuestSession();
+        return;
+      }
       const nextToken = token || customerToken;
       if (!nextToken) return;
       setActiveOrder({
@@ -67,7 +77,7 @@ export function useActiveOrderSync(allDishes: MenuDish[]) {
         status: order.status,
       });
     },
-    [customerToken, lockedItems, setActiveOrder]
+    [customerToken, lockedItems, resetGuestSession, setActiveOrder]
   );
 
   useEffect(() => {
@@ -76,19 +86,28 @@ export function useActiveOrderSync(allDishes: MenuDish[]) {
     const tick = async () => {
       if (activeOrderId && customerToken) {
         const order = await fetchOrder(activeOrderId, customerToken);
-        if (!cancelled && order) {
-          applyOrderSnapshot({
-            items: order.items,
-            lockedItems: order.locked_items,
-            status: order.status,
-          });
+        if (cancelled || !order) return;
+        if (isOrderPaid(order.status)) {
+          resetGuestSession();
+          return;
         }
+        applyOrderSnapshot({
+          items: order.items,
+          lockedItems: order.locked_items,
+          status: order.status,
+        });
         return;
       }
 
       if (!activeShareId) return;
       const share = await fetchShare(activeShareId);
       if (cancelled || !share) return;
+
+      const shareStatus = share.order?.status ?? share.status;
+      if (isOrderPaid(shareStatus)) {
+        resetGuestSession();
+        return;
+      }
 
       if (share.order?.id && (share.customer_token || share.order.customer_token)) {
         ingestOrder(share.order, share.customer_token || share.order.customer_token);
@@ -118,6 +137,7 @@ export function useActiveOrderSync(allDishes: MenuDish[]) {
     applyOrderSnapshot,
     customerToken,
     ingestOrder,
+    resetGuestSession,
   ]);
 
   const addDishToOrder = useCallback(

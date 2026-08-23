@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import {
+  getOrderById,
   isMissingOrdersSchemaError,
+  isOrderClosed,
   mapDbOrder,
   normalizeOrderItems,
   orderTotal,
@@ -12,7 +14,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 
 type Params = { params: Promise<{ id: string }> };
 
-const STATUSES: OrderStatus[] = ["new", "accepted", "completed", "cancelled"];
+const STATUSES: OrderStatus[] = ["new", "accepted", "completed", "cancelled", "paid"];
 
 export async function PUT(request: Request, { params }: Params) {
   if (!(await isAdminAuthenticated())) {
@@ -54,6 +56,17 @@ export async function PUT(request: Request, { params }: Params) {
     }
 
     const supabase = createServiceClient();
+    const existing = await getOrderById(id, supabase);
+    if (!existing) {
+      return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    }
+    if (body.items !== undefined && isOrderClosed(existing.status)) {
+      return NextResponse.json(
+        { error: "Paid or closed orders cannot be edited." },
+        { status: 400 }
+      );
+    }
+
     const { data, error } = await supabase
       .from("orders")
       .update(updates)

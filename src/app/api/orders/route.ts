@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   createCustomerToken,
   findWaiterByStaffId,
+  getOrderByShareId,
   isMissingOrdersSchemaError,
   mapDbOrder,
   normalizeOrderItems,
@@ -40,6 +41,23 @@ export async function POST(request: Request) {
     }
 
     const supabase = createServiceClient();
+
+    if (shareId) {
+      const existing = await getOrderByShareId(shareId, supabase);
+      if (existing) {
+        return NextResponse.json(
+          {
+            error: "This order is already assigned to admin.",
+            alreadyAssigned: true,
+            order_id: existing.id,
+            assigned_at: existing.assigned_at,
+            status: existing.status,
+          },
+          { status: 409 }
+        );
+      }
+    }
+
     const waiter = await findWaiterByStaffId(staffId, supabase);
     if (!waiter) {
       return NextResponse.json(

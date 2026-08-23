@@ -3,6 +3,7 @@ import {
   assertCustomerItemsAllowed,
   getOrderById,
   isMissingOrdersSchemaError,
+  isOrderClosed,
   normalizeOrderItems,
   publicOrderPayload,
   syncShareFromOrder,
@@ -71,7 +72,7 @@ export async function PATCH(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
 
-    if (order.status === "completed" || order.status === "cancelled") {
+    if (isOrderClosed(order.status)) {
       return NextResponse.json(
         { error: "This order is closed and can no longer be changed." },
         { status: 400 }

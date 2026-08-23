@@ -23,7 +23,7 @@ create table if not exists orders (
   total numeric(12, 2) not null check (total >= 0),
   currency text not null default 'NGN',
   status text not null default 'new'
-    check (status in ('new', 'accepted', 'completed', 'cancelled')),
+    check (status in ('new', 'accepted', 'completed', 'cancelled', 'paid')),
   dish_ids text[] not null default '{}',
   share_id text,
   customer_token text,

@@ -2,7 +2,15 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createServiceClient } from "./supabase/server";
 import { ensureOrderSharesBucket, ORDER_SHARES_BUCKET } from "./storage";
 
-export type OrderStatus = "new" | "accepted" | "completed" | "cancelled";
+export type OrderStatus = "new" | "accepted" | "completed" | "cancelled" | "paid";
+
+export function isOrderClosed(status: OrderStatus | string | null | undefined): boolean {
+  return status === "completed" || status === "paid" || status === "cancelled";
+}
+
+export function isOrderPaid(status: OrderStatus | string | null | undefined): boolean {
+  return status === "paid" || status === "completed";
+}
 
 export interface DbWaiter {
   id: string;

@@ -34,12 +34,16 @@ export function WaiterOrderView() {
   const [sharedItems, setSharedItems] = useState<OrderShareItem[] | null>(null);
   const [shareLoading, setShareLoading] = useState(Boolean(shareId));
   const [shareLoadError, setShareLoadError] = useState("");
+  const [alreadyAssigned, setAlreadyAssigned] = useState(false);
+  const [assignedAtLabel, setAssignedAtLabel] = useState("");
 
   useEffect(() => {
     if (!shareId) {
       setSharedItems(null);
       setShareLoading(false);
       setShareLoadError("");
+      setAlreadyAssigned(false);
+      setAssignedAtLabel("");
       return;
     }
 
@@ -57,6 +61,13 @@ export function WaiterOrderView() {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Order share not found");
         if (cancelled) return;
+        if (data.order?.id || data.order_id) {
+          setAlreadyAssigned(true);
+          const when = data.order?.assigned_at
+            ? new Date(data.order.assigned_at).toLocaleString()
+            : "";
+          if (when) setAssignedAtLabel(when);
+        }
         if (data.order?.items) {
           setSharedItems(
             data.order.items.map((item: { id: string; qty: number }) => ({
@@ -238,7 +249,7 @@ export function WaiterOrderView() {
   };
 
   const assignToAdmin = async () => {
-    if (!canAct) return;
+    if (!canAct || alreadyAssigned) return;
     setAssigning(true);
     setAssignError("");
     setAssignSuccess("");
@@ -263,12 +274,26 @@ export function WaiterOrderView() {
       });
       const data = await res.json();
       if (!res.ok) {
+        if (res.status === 409 || data.alreadyAssigned) {
+          setAlreadyAssigned(true);
+          const when = data.assigned_at
+            ? new Date(data.assigned_at).toLocaleString()
+            : "";
+          if (when) setAssignedAtLabel(when);
+          setAssignSuccess(
+            when ? `Already assigned to admin at ${when}` : "Already assigned to admin"
+          );
+          setAssignError("");
+          return;
+        }
         setAssignError(data.error ?? "Could not assign order");
         return;
       }
       const when = data.assigned_at
         ? new Date(data.assigned_at).toLocaleString()
         : new Date().toLocaleString();
+      setAlreadyAssigned(true);
+      setAssignedAtLabel(when);
       setAssignSuccess(`Assigned to admin at ${when}`);
       try {
         localStorage.setItem(
@@ -480,11 +505,15 @@ export function WaiterOrderView() {
       <div className="mt-5 space-y-3">
         <button
           type="button"
-          disabled={!canAct || assigning}
+          disabled={!canAct || assigning || alreadyAssigned}
           onClick={assignToAdmin}
           className="w-full rounded-2xl bg-white px-4 py-3.5 text-base font-extrabold text-black disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400"
         >
-          {assigning ? "Assigning…" : "Assign to admin"}
+          {assigning
+            ? "Assigning…"
+            : alreadyAssigned
+              ? "Already assigned"
+              : "Assign to admin"}
         </button>
         <button
           type="button"
@@ -498,8 +527,13 @@ export function WaiterOrderView() {
               ? "Download order image"
               : "Enter table to download"}
         </button>
-        {assignSuccess && (
-          <p className="text-center text-sm text-green-400">{assignSuccess}</p>
+        {(assignSuccess || (alreadyAssigned && assignedAtLabel)) && (
+          <p className="text-center text-sm text-green-400">
+            {assignSuccess ||
+              (assignedAtLabel
+                ? `Already assigned to admin at ${assignedAtLabel}`
+                : "Already assigned to admin")}
+          </p>
         )}
         {assignError && (
           <p className="text-center text-sm text-red-400">{assignError}</p>
@@ -507,7 +541,7 @@ export function WaiterOrderView() {
         {downloadError && (
           <p className="text-center text-sm text-red-400">{downloadError}</p>
         )}
-        {!assignSuccess && !assignError && !downloadError && (
+        {!alreadyAssigned && !assignSuccess && !assignError && !downloadError && (
           <p className="text-center text-xs text-zinc-500">
             Assign sends table, waiter details, wish list, and timestamp to the admin dashboard.
           </p>

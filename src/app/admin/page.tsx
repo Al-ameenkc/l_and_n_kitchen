@@ -3,7 +3,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import type { DbCategory, DbDish } from "@/lib/menu-db";
-import type { DbOrder, DbWaiter, OrderStatus } from "@/lib/orders-db";
+import {
+  isOrderClosed,
+  isOrderPaid,
+  type DbOrder,
+  type DbWaiter,
+  type OrderStatus,
+} from "@/lib/orders-db";
 
 type Tab = "orders" | "categories" | "dishes" | "waiters";
 
@@ -645,7 +651,7 @@ export default function AdminPage() {
                             <div className="flex items-center gap-1 rounded-full bg-zinc-800 px-1 py-0.5">
                               <button
                                 type="button"
-                                disabled={order.status === "completed" || order.status === "cancelled"}
+                                disabled={isOrderClosed(order.status)}
                                 onClick={() => changeOrderItemQty(order, item.id, item.qty - 1)}
                                 className="h-6 w-6 rounded-full text-zinc-300 disabled:opacity-40"
                               >
@@ -654,7 +660,7 @@ export default function AdminPage() {
                               <span className="w-5 text-center text-xs font-bold">{item.qty}</span>
                               <button
                                 type="button"
-                                disabled={order.status === "completed" || order.status === "cancelled"}
+                                disabled={isOrderClosed(order.status)}
                                 onClick={() => changeOrderItemQty(order, item.id, item.qty + 1)}
                                 className="h-6 w-6 rounded-full text-zinc-300 disabled:opacity-40"
                               >
@@ -670,9 +676,7 @@ export default function AdminPage() {
                             <button
                               type="button"
                               disabled={
-                                order.status === "completed" ||
-                                order.status === "cancelled" ||
-                                order.items.length <= 1
+                                isOrderClosed(order.status) || order.items.length <= 1
                               }
                               onClick={() => removeOrderItem(order, item.id)}
                               className="text-xs font-semibold text-red-400 disabled:opacity-40"
@@ -685,7 +689,7 @@ export default function AdminPage() {
                     })}
                   </ul>
 
-                  {order.status !== "completed" && order.status !== "cancelled" && (
+                  {!isOrderClosed(order.status) && (
                     <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-3">
                       <select
                         id={`add-dish-${order.id}`}
@@ -724,16 +728,21 @@ export default function AdminPage() {
                           Accept
                         </button>
                       )}
-                      {order.status !== "completed" && order.status !== "cancelled" && (
+                      {!isOrderClosed(order.status) && (
                         <button
                           type="button"
-                          onClick={() => updateOrderStatus(order.id, "completed")}
+                          onClick={() => updateOrderStatus(order.id, "paid")}
                           className="rounded-lg border border-zinc-600 px-3 py-1.5 text-xs font-semibold"
                         >
-                          Complete
+                          Mark paid
                         </button>
                       )}
-                      {order.status !== "cancelled" && (
+                      {isOrderPaid(order.status) && (
+                        <span className="rounded-lg bg-zinc-800 px-3 py-1.5 text-xs font-semibold text-zinc-300">
+                          Paid
+                        </span>
+                      )}
+                      {!isOrderClosed(order.status) && (
                         <button
                           type="button"
                           onClick={() => updateOrderStatus(order.id, "cancelled")}
