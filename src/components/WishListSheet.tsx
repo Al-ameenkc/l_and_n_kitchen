@@ -17,6 +17,16 @@ interface WishListSheetProps {
   onRemove: (id: string) => void;
   onChangeQty: (id: string, qty: number) => void;
   onSelectDish: (dish: Dish) => void;
+  shareId: string | null;
+  onShareId: (id: string) => void;
+  orderLive?: boolean;
+  lockedItemIds?: string[];
+  lockedQtyById?: Record<string, number>;
+  /** Which screen to show when the sheet opens */
+  initialView?: "list" | "order";
+  onAddMore?: () => void;
+  /** Called when guest swipes to place the order (snapshot + clear wish list) */
+  onPlaceOrder?: () => void;
 }
 
 const SWIPE_THRESHOLD = 0.72;
@@ -189,7 +199,19 @@ function SwipeToOrderBar({
   );
 }
 
-function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: number }) {
+function OrderSummaryTable({
+  dishes,
+  total,
+  shareId,
+  onShareId,
+  orderLive,
+}: {
+  dishes: WishlistDish[];
+  total: number;
+  shareId: string | null;
+  onShareId: (id: string) => void;
+  orderLive: boolean;
+}) {
   const [shareUrl, setShareUrl] = useState("");
   const [shareError, setShareError] = useState("");
   const itemsKey = useMemo(
@@ -207,6 +229,23 @@ function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: n
     const timer = setTimeout(async () => {
       setShareError("");
       try {
+        if (shareId) {
+          // Keep the same QR after first create; update payload until order is assigned
+          if (!orderLive) {
+            await fetch(`/api/order-shares/${encodeURIComponent(shareId)}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                items: dishes.map((d) => ({ id: d.id, qty: d.qty })),
+              }),
+            });
+          }
+          if (!cancelled) {
+            setShareUrl(buildOrderShareUrl(window.location.origin, shareId));
+          }
+          return;
+        }
+
         const res = await fetch("/api/order-shares", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -219,6 +258,7 @@ function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: n
           throw new Error(data.error ?? "Could not create QR link");
         }
         if (!cancelled) {
+          onShareId(data.id as string);
           setShareUrl(buildOrderShareUrl(window.location.origin, data.id as string));
         }
       } catch (e) {
@@ -233,9 +273,8 @@ function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: n
       cancelled = true;
       clearTimeout(timer);
     };
-    // itemsKey captures dish ids + quantities without recreating on unrelated renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [itemsKey]);
+  }, [itemsKey, shareId, orderLive]);
 
   const qrSrc = useMemo(
     () => (shareUrl ? qrImageUrl(shareUrl, 220) : ""),
@@ -243,58 +282,64 @@ function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: n
   );
 
   return (
-    <div className="overflow-hidden rounded-2xl bg-white text-black">
-      <div className="flex items-center gap-3 border-b border-zinc-200 bg-zinc-50 px-4 py-3">
+    <div className="overflow-hidden rounded-xl bg-white text-black">
+      <div className="flex items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-3 py-2">
         <div className="min-w-0 flex-1 text-left">
-          <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-            L&amp;N Kitchen — Order summary
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500">
+            L&amp;N Kitchen Order summary
           </p>
-          <p className="mt-1 text-xs text-zinc-400">Show this table to your waiter</p>
-          <p className="mt-2 text-[11px] leading-snug text-zinc-500">
-            Or let them scan the QR — they&apos;ll see this list and enter your table.
+          <p className="mt-0.5 text-[10px] text-zinc-400">
+            {orderLive
+              ? "Live with kitchen. Updates appear here instantly."
+              : "Show this table to your waiter"}
+          </p>
+          <p className="mt-1 text-[10px] leading-snug text-zinc-500">
+            {orderLive
+              ? "Swipe to add more. Removals need a waiter/admin."
+              : "Or scan the QR so they see this list and enter your table."}
           </p>
           {shareError ? (
-            <p className="mt-2 text-[11px] text-red-500">{shareError}</p>
+            <p className="mt-1 text-[10px] text-red-500">{shareError}</p>
           ) : null}
         </div>
         {qrSrc ? (
-          <div className="shrink-0 rounded-xl bg-white p-1.5 ring-1 ring-zinc-200">
+          <div className="shrink-0 rounded-lg bg-white p-1 ring-1 ring-zinc-200">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={qrSrc}
               alt="Scan to open this order"
-              width={112}
-              height={112}
-              className="h-28 w-28"
+              width={72}
+              height={72}
+              className="h-[72px] w-[72px]"
             />
           </div>
         ) : (
-          <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-xl bg-zinc-200 text-center text-[10px] font-medium text-zinc-500">
-            {shareError ? "QR unavailable" : "Preparing QR…"}
+          <div className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-lg bg-zinc-200 text-center text-[9px] font-medium text-zinc-500">
+            {shareError ? "QR unavailable" : "Preparing…"}
           </div>
         )}
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[280px] text-left text-sm">
+        <table className="w-full min-w-[240px] text-left text-xs">
           <thead>
-            <tr className="border-b border-zinc-200 text-xs uppercase tracking-wide text-zinc-500">
-              <th className="px-4 py-3 font-semibold">#</th>
-              <th className="px-2 py-3 font-semibold">Dish</th>
-              <th className="px-2 py-3 text-center font-semibold">Qty</th>
-              <th className="px-4 py-3 text-right font-semibold">Price</th>
+            <tr className="border-b border-zinc-200 text-[10px] uppercase tracking-wide text-zinc-500">
+              <th className="px-3 py-2 font-semibold">#</th>
+              <th className="px-1.5 py-2 font-semibold">Dish</th>
+              <th className="px-1.5 py-2 text-center font-semibold">Qty</th>
+              <th className="px-3 py-2 text-right font-semibold">Price</th>
             </tr>
           </thead>
           <tbody>
             {dishes.map((dish, index) => (
               <tr key={dish.id} className="border-b border-zinc-100 last:border-0">
-                <td className="px-4 py-3 font-medium text-zinc-500">{index + 1}</td>
-                <td className="px-2 py-3">
-                  <p className="font-bold leading-tight">{dish.name}</p>
-                  <p className="mt-0.5 text-xs text-zinc-500">{dish.category}</p>
+                <td className="px-3 py-2 font-medium text-zinc-500">{index + 1}</td>
+                <td className="px-1.5 py-2">
+                  <p className="text-[11px] font-bold leading-tight">{dish.name}</p>
+                  <p className="mt-0.5 text-[10px] text-zinc-500">{dish.category}</p>
                 </td>
-                <td className="px-2 py-3 text-center font-extrabold">{dish.qty}</td>
-                <td className="px-4 py-3 text-right font-extrabold">
+                <td className="px-1.5 py-2 text-center text-[11px] font-extrabold">{dish.qty}</td>
+                <td className="px-3 py-2 text-right text-[11px] font-extrabold">
                   {formatPrice(dish.price * dish.qty)}
                 </td>
               </tr>
@@ -302,10 +347,10 @@ function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: n
           </tbody>
           <tfoot>
             <tr className="bg-zinc-50">
-              <td colSpan={3} className="px-4 py-4 text-base font-extrabold">
+              <td colSpan={3} className="px-3 py-2.5 text-xs font-extrabold">
                 Total
               </td>
-              <td className="px-4 py-4 text-right text-lg font-extrabold text-green-600">
+              <td className="px-3 py-2.5 text-right text-sm font-extrabold text-green-600">
                 {formatPrice(total)}
               </td>
             </tr>
@@ -318,25 +363,28 @@ function OrderSummaryTable({ dishes, total }: { dishes: WishlistDish[]; total: n
 
 function QtyStepper({
   qty,
+  minQty = 1,
   onChange,
 }: {
   qty: number;
+  minQty?: number;
   onChange: (qty: number) => void;
 }) {
+  const floor = Math.max(1, minQty);
   return (
     <div className="flex items-center gap-0.5 rounded-full bg-zinc-100 p-0.5">
       <button
         type="button"
         aria-label="Decrease quantity"
         onClick={() => onChange(qty - 1)}
-        disabled={qty <= 1}
+        disabled={qty <= floor}
         className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-sm font-bold text-zinc-700 disabled:opacity-40"
       >
         −
       </button>
       <input
         type="number"
-        min={1}
+        min={floor}
         max={99}
         value={qty}
         onChange={(e) => onChange(Number(e.target.value))}
@@ -363,12 +411,21 @@ export function WishListSheet({
   onRemove,
   onChangeQty,
   onSelectDish,
+  shareId,
+  onShareId,
+  orderLive = false,
+  lockedItemIds = [],
+  lockedQtyById = {},
+  initialView = "list",
+  onAddMore,
+  onPlaceOrder,
 }: WishListSheetProps) {
-  const [view, setView] = useState<"list" | "order">("list");
+  const [view, setView] = useState<"list" | "order">(initialView);
+  const lockedSet = useMemo(() => new Set(lockedItemIds), [lockedItemIds]);
 
   useEffect(() => {
-    if (!open) setView("list");
-  }, [open]);
+    if (open) setView(initialView);
+  }, [open, initialView]);
 
   return (
     <AnimatePresence>
@@ -390,104 +447,152 @@ export function WishListSheet({
             transition={{ type: "spring", damping: 28, stiffness: 320 }}
             className="fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[85vh] max-w-[430px] flex-col rounded-t-[2rem] bg-[#111111]"
           >
-            <div className="grid grid-cols-[auto_1fr_auto] items-center border-b border-zinc-800 px-5 py-4">
+            <div className="grid grid-cols-[auto_1fr_auto] items-center border-b border-zinc-800 px-4 py-3">
               {view === "order" ? (
-                <button
-                  type="button"
-                  onClick={() => setView("list")}
-                  className="flex items-center gap-1 text-sm font-semibold text-green-400"
-                >
-                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 18l-6-6 6-6" />
-                  </svg>
-                  Back
-                </button>
+                initialView === "order" ? (
+                  <div className="w-12" />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setView("list")}
+                    className="flex items-center gap-1 text-xs font-semibold text-green-400"
+                  >
+                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                    Back
+                  </button>
+                )
               ) : (
                 <div className="col-span-2">
-                  <h2 className="text-lg font-extrabold text-white">My Wish List</h2>
-                  <p className="text-xs font-normal text-zinc-500">
-                    Set quantities · swipe to order when ready
+                  <h2 className="text-base font-extrabold text-white">My Wish List</h2>
+                  <p className="text-[11px] font-normal text-zinc-500">
+                    {orderLive
+                      ? "Add more anytime · ask waiter to remove locked dishes"
+                      : "Set quantities · swipe to order when ready"}
                   </p>
                 </div>
               )}
               {view === "order" && (
-                <h2 className="text-center text-lg font-extrabold text-white">Your order</h2>
+                <h2 className="text-center text-base font-extrabold text-white">
+                  {orderLive ? "My Orders" : "Your order"}
+                </h2>
               )}
               <button
                 type="button"
                 onClick={onClose}
-                className={`text-sm font-medium text-zinc-400 ${view === "list" ? "" : "justify-self-end"}`}
+                className={`text-xs font-medium text-zinc-400 ${view === "list" ? "" : "justify-self-end"}`}
               >
                 Close
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-5 py-3">
+            <div className="flex-1 overflow-y-auto px-4 py-2.5">
               {view === "order" ? (
-                <OrderSummaryTable dishes={dishes} total={total} />
+                <div className="space-y-2.5">
+                  <OrderSummaryTable
+                    dishes={dishes}
+                    total={total}
+                    shareId={shareId}
+                    onShareId={onShareId}
+                    orderLive={orderLive}
+                  />
+                  {onAddMore ? (
+                    <button
+                      type="button"
+                      onClick={onAddMore}
+                      className="w-full rounded-xl border border-green-500/40 bg-green-500/15 px-3 py-2.5 text-xs font-bold text-green-400"
+                    >
+                      Add more dishes from the menu
+                    </button>
+                  ) : null}
+                  {orderLive ? (
+                    <p className="px-1 text-center text-[10px] leading-snug text-zinc-500">
+                      Swipe right on new dishes to add them here. To remove an original item, ask your waiter.
+                    </p>
+                  ) : null}
+                </div>
               ) : dishes.length === 0 ? (
-                <p className="py-8 text-center text-sm font-normal text-zinc-500">
+                <p className="py-8 text-center text-xs font-normal text-zinc-500">
                   Swipe right on dishes to add them here.
                 </p>
               ) : (
-                <ul className="space-y-3">
-                  {dishes.map((dish) => (
-                    <li key={dish.id} className="flex items-center gap-3 rounded-2xl bg-white p-3">
-                      <button
-                        type="button"
-                        onClick={() => onSelectDish(dish)}
-                        className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                      >
-                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
-                          <Image
-                            src={dish.image}
-                            alt={dish.name}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate font-bold text-black">{dish.name}</p>
-                          <p className="text-xs font-normal text-zinc-500">
-                            {formatPrepTime(dish.prepTimeMin, dish.prepTimeMax)}
-                          </p>
-                          <p className="text-sm font-extrabold text-green-600">
-                            {formatPrice(dish.price)}
-                            {dish.qty > 1 ? (
-                              <span className="font-semibold text-zinc-500">
-                                {" "}
-                                × {dish.qty}
-                              </span>
-                            ) : null}
-                          </p>
-                        </div>
-                      </button>
-                      <div className="flex shrink-0 flex-col items-end gap-1.5">
+                <ul className="space-y-2">
+                  {dishes.map((dish) => {
+                    const locked = lockedSet.has(dish.id);
+                    const minQty = lockedQtyById[dish.id] ?? 1;
+                    return (
+                      <li key={dish.id} className="flex items-center gap-2.5 rounded-xl bg-white p-2.5">
                         <button
                           type="button"
-                          onClick={() => onRemove(dish.id)}
-                          className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-semibold text-red-500"
+                          onClick={() => onSelectDish(dish)}
+                          className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
                         >
-                          Remove
+                          <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg bg-zinc-200">
+                            <Image
+                              src={dish.image}
+                              alt={dish.name}
+                              fill
+                              className="object-cover"
+                              unoptimized
+                            />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-[13px] font-bold text-black">{dish.name}</p>
+                            <p className="text-[10px] font-normal text-zinc-500">
+                              {formatPrepTime(dish.prepTimeMin, dish.prepTimeMax)}
+                              {locked ? " · locked" : ""}
+                            </p>
+                            <p className="text-xs font-extrabold text-green-600">
+                              {formatPrice(dish.price)}
+                              {dish.qty > 1 ? (
+                                <span className="font-semibold text-zinc-500">
+                                  {" "}
+                                  × {dish.qty}
+                                </span>
+                              ) : null}
+                            </p>
+                          </div>
                         </button>
-                        <QtyStepper qty={dish.qty} onChange={(qty) => onChangeQty(dish.id, qty)} />
-                      </div>
-                    </li>
-                  ))}
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          {locked ? (
+                            <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-semibold text-amber-700">
+                              Ask waiter
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => onRemove(dish.id)}
+                              className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-[10px] font-semibold text-red-500"
+                            >
+                              Remove
+                            </button>
+                          )}
+                          <QtyStepper
+                            qty={dish.qty}
+                            minQty={locked ? minQty : 1}
+                            onChange={(qty) => onChangeQty(dish.id, qty)}
+                          />
+                        </div>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>
 
             {view === "list" && (
-              <div className="overflow-visible border-t border-zinc-800 px-5 pt-4 pb-2">
-                <div className="mb-3 flex items-center justify-between rounded-2xl bg-white px-4 py-3">
-                  <span className="text-sm font-semibold text-zinc-600">Total</span>
-                  <span className="text-2xl font-extrabold text-black">{formatPrice(total)}</span>
+              <div className="overflow-visible border-t border-zinc-800 px-4 pt-3 pb-2">
+                <div className="mb-2.5 flex items-center justify-between rounded-xl bg-white px-3 py-2.5">
+                  <span className="text-xs font-semibold text-zinc-600">Total</span>
+                  <span className="text-lg font-extrabold text-black">{formatPrice(total)}</span>
                 </div>
                 <SwipeToOrderBar
                   disabled={dishes.length === 0}
-                  onComplete={() => setView("order")}
+                  onComplete={() => {
+                    onPlaceOrder?.();
+                    setView("order");
+                  }}
                 />
               </div>
             )}

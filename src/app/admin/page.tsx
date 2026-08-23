@@ -50,6 +50,7 @@ const emptyDish = {
   estimated_calories: 0,
   best_combo_with: "",
   image_url: "",
+  available: true,
 };
 
 async function uploadImage(file: File): Promise<string> {
@@ -281,9 +282,26 @@ export default function AdminPage() {
       estimated_calories: dish.estimated_calories,
       best_combo_with: dish.best_combo_with,
       image_url: dish.image_url ?? "",
+      available: dish.available !== false,
     });
     setTab("dishes");
     window.scrollTo({ top: 0 });
+  };
+
+  const toggleDishAvailability = async (dish: DbDish) => {
+    const next = dish.available === false;
+    const res = await fetch(`/api/admin/dishes/${dish.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ available: next }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showMessage(data.error ?? "Could not update availability", true);
+      return;
+    }
+    showMessage(next ? `"${dish.name}" is now available.` : `"${dish.name}" is now unavailable.`);
+    load();
   };
 
   const deleteDish = async (id: string) => {
@@ -351,6 +369,69 @@ export default function AdminPage() {
     load();
   };
 
+  const updateOrderItems = async (
+    orderId: string,
+    items: DbOrder["items"],
+    successMessage = "Order items updated."
+  ) => {
+    const res = await fetch(`/api/admin/orders/${orderId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showMessage(data.error ?? "Failed to update order items", true);
+      return;
+    }
+    showMessage(successMessage);
+    load();
+  };
+
+  const removeOrderItem = async (order: DbOrder, dishId: string) => {
+    if (order.items.length <= 1) {
+      showMessage("Order must keep at least one dish.", true);
+      return;
+    }
+    if (!confirm("Remove this dish from the customer order?")) return;
+    await updateOrderItems(
+      order.id,
+      order.items.filter((item) => item.id !== dishId),
+      "Dish removed from order."
+    );
+  };
+
+  const changeOrderItemQty = async (order: DbOrder, dishId: string, qty: number) => {
+    const nextQty = Math.max(1, Math.min(99, Math.round(qty) || 1));
+    await updateOrderItems(
+      order.id,
+      order.items.map((item) => (item.id === dishId ? { ...item, qty: nextQty } : item)),
+      "Quantity updated."
+    );
+  };
+
+  const addDishToOrder = async (order: DbOrder, dishId: string) => {
+    const dish = dishes.find((d) => d.id === dishId || d.slug === dishId);
+    if (!dish) return;
+    const slug = dish.slug;
+    const existing = order.items.find((item) => item.id === slug);
+    const nextItems = existing
+      ? order.items.map((item) =>
+          item.id === slug ? { ...item, qty: Math.min(99, item.qty + 1) } : item
+        )
+      : [
+          ...order.items,
+          {
+            id: slug,
+            name: dish.name,
+            category: dish.categories?.name ?? "",
+            price: Number(dish.price) || 0,
+            qty: 1,
+          },
+        ];
+    await updateOrderItems(order.id, nextItems, `"${dish.name}" added to order.`);
+  };
+
   const filteredDishes = useMemo(() => {
     const query = dishSearch.trim().toLowerCase();
     return dishes.filter((dish) => {
@@ -385,8 +466,8 @@ export default function AdminPage() {
   useEffect(() => {
     if (!authed) return;
     const timer = setInterval(() => {
-      if (tab === "orders") load();
-    }, 8000);
+      if (tab === "orders" || tab === "dishes") load();
+    }, 3000);
     return () => clearInterval(timer);
   }, [authed, tab, load]);
 
@@ -479,8 +560,9 @@ export default function AdminPage() {
 
       {schemaMissing && (
         <div className="mt-4 rounded-xl border border-amber-700/50 bg-amber-950/40 px-4 py-3 text-sm text-amber-200">
-          Orders &amp; waiters tables are missing. In Supabase → SQL Editor, run the file{" "}
-          <code className="rounded bg-black/30 px-1">supabase/orders-waiters.sql</code>, then refresh
+          Orders tables need setup/update. In Supabase → SQL Editor, run{" "}
+          <code className="rounded bg-black/30 px-1">supabase/orders-waiters.sql</code> then{" "}
+          <code className="rounded bg-black/30 px-1">supabase/order-live-sync.sql</code>, then refresh
           this page.
         </div>
       )}
@@ -491,7 +573,7 @@ export default function AdminPage() {
             <div>
               <h2 className="font-bold">Incoming orders</h2>
               <p className="text-xs text-zinc-500">
-                Assigned by waiters with table, staff details, and timestamp. Auto-refreshes.
+                Live with guest phones - add/remove dishes here and their order table updates. Auto-refreshes.
               </p>
             </div>
             <button
@@ -543,28 +625,90 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  <ul className="mt-3 space-y-1.5 border-t border-zinc-800 pt-3">
-                    {order.items.map((item, index) => (
-                      <li
-                        key={`${order.id}-${item.id}-${index}`}
-                        className="flex items-center justify-between gap-3 text-sm"
-                      >
-                        <span className="min-w-0 truncate">
-                          {index + 1}. {item.name}
-                          <span className="text-zinc-500">
-                            {" "}
-                            · {item.category} · ×{Math.max(1, Number(item.qty) || 1)}
+                  <ul className="mt-3 space-y-2 border-t border-zinc-800 pt-3">
+                    {order.items.map((item, index) => {
+                      const locked = (order.locked_items ?? []).some((row) => row.id === item.id);
+                      return (
+                        <li
+                          key={`${order.id}-${item.id}-${index}`}
+                          className="flex flex-wrap items-center justify-between gap-2 text-sm"
+                        >
+                          <span className="min-w-0 flex-1 truncate">
+                            {index + 1}. {item.name}
+                            <span className="text-zinc-500">
+                              {" "}
+                              · {item.category}
+                              {locked ? " · original" : " · added"}
+                            </span>
                           </span>
-                        </span>
-                        <span className="shrink-0 font-semibold">
-                          ₦
-                          {(
-                            Number(item.price) * Math.max(1, Number(item.qty) || 1)
-                          ).toLocaleString()}
-                        </span>
-                      </li>
-                    ))}
+                          <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1 rounded-full bg-zinc-800 px-1 py-0.5">
+                              <button
+                                type="button"
+                                disabled={order.status === "completed" || order.status === "cancelled"}
+                                onClick={() => changeOrderItemQty(order, item.id, item.qty - 1)}
+                                className="h-6 w-6 rounded-full text-zinc-300 disabled:opacity-40"
+                              >
+                                −
+                              </button>
+                              <span className="w-5 text-center text-xs font-bold">{item.qty}</span>
+                              <button
+                                type="button"
+                                disabled={order.status === "completed" || order.status === "cancelled"}
+                                onClick={() => changeOrderItemQty(order, item.id, item.qty + 1)}
+                                className="h-6 w-6 rounded-full text-zinc-300 disabled:opacity-40"
+                              >
+                                +
+                              </button>
+                            </div>
+                            <span className="w-16 shrink-0 text-right font-semibold">
+                              ₦
+                              {(
+                                Number(item.price) * Math.max(1, Number(item.qty) || 1)
+                              ).toLocaleString()}
+                            </span>
+                            <button
+                              type="button"
+                              disabled={
+                                order.status === "completed" ||
+                                order.status === "cancelled" ||
+                                order.items.length <= 1
+                              }
+                              onClick={() => removeOrderItem(order, item.id)}
+                              className="text-xs font-semibold text-red-400 disabled:opacity-40"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </li>
+                      );
+                    })}
                   </ul>
+
+                  {order.status !== "completed" && order.status !== "cancelled" && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-3">
+                      <select
+                        id={`add-dish-${order.id}`}
+                        defaultValue=""
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (!value) return;
+                          void addDishToOrder(order, value);
+                          e.target.value = "";
+                        }}
+                        className={`${inputClass} sm:max-w-xs`}
+                      >
+                        <option value="">Add dish to order…</option>
+                        {dishes
+                          .filter((d) => d.available !== false)
+                          .map((d) => (
+                            <option key={d.id} value={d.id}>
+                              {d.name} · {d.categories?.name ?? "-"}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  )}
 
                   <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                     <p className="text-base font-extrabold text-green-400">
@@ -940,6 +1084,22 @@ export default function AdminPage() {
                 <Image src={dishForm.image_url} alt="" fill className="object-cover" unoptimized />
               </div>
             )}
+            <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-3">
+              <input
+                id="dish-available"
+                name="dish-available"
+                type="checkbox"
+                checked={dishForm.available}
+                onChange={(e) => setDishForm({ ...dishForm, available: e.target.checked })}
+                className="h-4 w-4 rounded border-zinc-600 bg-zinc-900 text-green-600 focus:ring-green-500"
+              />
+              <span className="text-sm text-zinc-200">
+                Available on menu
+                <span className="mt-0.5 block text-xs font-normal text-zinc-500">
+                  Unavailable dishes stay in admin but are hidden from the customer swipe deck.
+                </span>
+              </span>
+            </label>
             <div className="flex gap-2">
               <button type="submit" className="rounded-lg bg-green-600 px-4 py-2 font-semibold">
                 {editingDishId ? "Update dish" : "Add dish"}
@@ -989,7 +1149,7 @@ export default function AdminPage() {
             <div className="flex items-center justify-between gap-3 text-xs text-zinc-500">
               <p>
                 Showing {pagedDishes.length === 0 ? 0 : (currentDishPage - 1) * DISHES_PER_PAGE + 1}
-                –
+                -
                 {Math.min(currentDishPage * DISHES_PER_PAGE, filteredDishes.length)} of{" "}
                 {filteredDishes.length} dishes
               </p>
@@ -1025,13 +1185,29 @@ export default function AdminPage() {
                         </div>
                       )}
                       <div className="min-w-0">
-                        <p className="truncate font-semibold">{d.name}</p>
+                        <p className="truncate font-semibold">
+                          {d.name}
+                          {d.available === false && (
+                            <span className="ml-2 text-xs font-medium text-amber-400">· unavailable</span>
+                          )}
+                        </p>
                         <p className="text-xs text-zinc-500">
-                          {d.categories?.name ?? "—"} · ₦{Number(d.price).toLocaleString()}
+                          {d.categories?.name ?? "-"} · ₦{Number(d.price).toLocaleString()}
                         </p>
                       </div>
                     </div>
-                    <div className="flex shrink-0 gap-2">
+                    <div className="flex shrink-0 items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => toggleDishAvailability(d)}
+                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          d.available === false
+                            ? "bg-amber-500/15 text-amber-400"
+                            : "bg-green-500/15 text-green-400"
+                        }`}
+                      >
+                        {d.available === false ? "Mark available" : "Mark unavailable"}
+                      </button>
                       <button type="button" onClick={() => editDish(d)} className="text-sm text-green-400">
                         Edit
                       </button>

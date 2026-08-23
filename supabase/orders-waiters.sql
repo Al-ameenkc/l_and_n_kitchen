@@ -19,17 +19,21 @@ create table if not exists orders (
   waiter_name text not null,
   waiter_image_url text,
   items jsonb not null default '[]'::jsonb,
+  locked_items jsonb not null default '[]'::jsonb,
   total numeric(12, 2) not null check (total >= 0),
   currency text not null default 'NGN',
   status text not null default 'new'
     check (status in ('new', 'accepted', 'completed', 'cancelled')),
   dish_ids text[] not null default '{}',
+  share_id text,
+  customer_token text,
   assigned_at timestamptz not null default now(),
   created_at timestamptz not null default now()
 );
 
 create index if not exists orders_assigned_at_idx on orders (assigned_at desc);
 create index if not exists orders_status_idx on orders (status);
+create index if not exists orders_share_id_idx on orders (share_id);
 
 alter table waiters enable row level security;
 alter table orders enable row level security;

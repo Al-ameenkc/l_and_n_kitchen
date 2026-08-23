@@ -38,7 +38,7 @@ function getLabel(category: string): string {
   return LABELS[category] ?? category;
 }
 
-/** Visual arc only — items scroll horizontally; Y/scale follow distance from center. */
+/** Visual arc only - items scroll horizontally; Y/scale follow distance from center. */
 function getArcStyle(distanceFromCenter: number): { y: number; scale: number; opacity: number } {
   const x = Math.max(-WHEEL_RADIUS + 2, Math.min(WHEEL_RADIUS - 2, distanceFromCenter));
   const arcY = WHEEL_RADIUS - Math.sqrt(WHEEL_RADIUS * WHEEL_RADIUS - x * x);

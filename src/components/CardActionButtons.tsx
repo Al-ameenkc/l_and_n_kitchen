@@ -76,27 +76,66 @@ export function CardActionButtons({
 }
 
 interface WishListBarProps {
-  count: number;
-  onOpen: () => void;
+  wishlistCount: number;
+  orderCount?: number;
+  hasOrder?: boolean;
+  onOpenWishlist: () => void;
+  onOpenOrders?: () => void;
 }
 
-export function WishListBar({ count, onOpen }: WishListBarProps) {
+function CartIcon({ className, stroke = "currentColor" }: { className?: string; stroke?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke={stroke} strokeWidth="2">
+      <circle cx="9" cy="20" r="1.5" fill={stroke} stroke="none" />
+      <circle cx="17" cy="20" r="1.5" fill={stroke} stroke="none" />
+      <path d="M3 4h2l2.4 11.2a1 1 0 0 0 1 .8h8.8a1 1 0 0 0 1-.8L20 7H7" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function OrdersIcon({ className, stroke = "currentColor" }: { className?: string; stroke?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke={stroke} strokeWidth="2">
+      <path d="M9 5h11M9 12h11M9 19h11M4 5h.01M4 12h.01M4 19h.01" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function WishListBar({
+  wishlistCount,
+  orderCount = 0,
+  hasOrder = false,
+  onOpenWishlist,
+  onOpenOrders,
+}: WishListBarProps) {
+  const count = hasOrder ? orderCount : wishlistCount;
+
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-center bg-transparent px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-1">
       <button
         type="button"
-        onClick={onOpen}
-        className="pointer-events-auto flex w-auto min-w-[11rem] max-w-[16rem] items-center justify-center gap-2 rounded-full bg-white px-7 py-3 text-[0.95rem] font-extrabold text-black shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition active:scale-[0.98]"
+        onClick={hasOrder ? onOpenOrders : onOpenWishlist}
+        className={`pointer-events-auto flex w-auto min-w-[11rem] max-w-[16rem] items-center justify-center gap-2 rounded-full px-7 py-3 text-[0.95rem] font-extrabold shadow-[0_8px_30px_rgba(0,0,0,0.35)] transition active:scale-[0.98] ${
+          hasOrder
+            ? "bg-[#2a2a2a] text-white ring-1 ring-white/10"
+            : "bg-white text-black"
+        }`}
       >
-        My Wish List
+        {hasOrder ? "My Orders" : "My Wish List"}
         {count > 0 && (
-          <span className="rounded-full bg-green-500 px-2 py-0.5 text-xs font-bold text-white">
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-bold ${
+              hasOrder ? "bg-white/15 text-white" : "bg-green-500 text-white"
+            }`}
+          >
             {count}
           </span>
         )}
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="#22c55e" strokeWidth="2">
-          <path d="M12 21s-7-4.5-9.5-9C.5 8 3 4 7 4c2 0 3.5 1.5 5 3 1.5-1.5 3-3 5-3 4 0 6.5 4 4.5 8C19 16.5 12 21 12 21z" />
-        </svg>
+        {hasOrder ? (
+          <OrdersIcon className="h-5 w-5" stroke="currentColor" />
+        ) : (
+          <CartIcon className="h-5 w-5" stroke="#22c55e" />
+        )}
       </button>
     </div>
   );

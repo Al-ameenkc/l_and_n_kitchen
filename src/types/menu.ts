@@ -13,6 +13,8 @@ export interface Dish {
   estimatedCalories: number;
   bestComboWith: string;
   image: string;
+  /** When false, dish is hidden from the customer swipe deck */
+  available?: boolean;
 }
 
 export interface MenuData {

@@ -25,17 +25,18 @@ const VISIBLE_BEHIND = 2;
 
 function behindCardStyle(depth: number, dragX: number) {
   const dragProgress = Math.min(1, Math.abs(dragX) / SWIPE_THRESHOLD);
+  const tilt = depth % 2 === 0 ? -5.5 : 5.5;
 
   if (depth === 1) {
     return {
-      transform: `translateX(0px) scale(${0.97 + dragProgress * 0.03}) translateY(${6 * (1 - dragProgress)}px)`,
-      opacity: 0.92 + dragProgress * 0.08,
+      transform: `translateX(${8 * (1 - dragProgress)}px) rotate(${tilt * (1 - dragProgress * 0.55)}deg) scale(${0.94 + dragProgress * 0.06}) translateY(${10 * (1 - dragProgress)}px)`,
+      opacity: 0.88 + dragProgress * 0.12,
     };
   }
 
   return {
-    transform: `translateX(${depth % 2 === 0 ? -10 : 10}px) scale(${1 - depth * 0.03}) translateY(${depth * 6}px)`,
-    opacity: 0.9,
+    transform: `translateX(${depth % 2 === 0 ? -16 : 16}px) rotate(${tilt}deg) scale(${1 - depth * 0.045}) translateY(${depth * 10}px)`,
+    opacity: 0.82,
   };
 }
 

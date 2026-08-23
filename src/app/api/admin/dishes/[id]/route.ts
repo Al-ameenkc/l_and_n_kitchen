@@ -43,6 +43,7 @@ export async function PUT(request: Request, { params }: Params) {
   if (body.estimated_calories !== undefined) updates.estimated_calories = Number(body.estimated_calories);
   if (body.best_combo_with !== undefined) updates.best_combo_with = String(body.best_combo_with);
   if (body.image_url !== undefined) updates.image_url = body.image_url;
+  if (body.available !== undefined) updates.available = Boolean(body.available);
 
   const supabase = createServiceClient();
   const { data, error } = await supabase

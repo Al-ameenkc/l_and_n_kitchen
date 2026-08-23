@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import {
+  createCustomerToken,
   findWaiterByStaffId,
   isMissingOrdersSchemaError,
+  mapDbOrder,
+  normalizeOrderItems,
+  orderTotal,
+  publicOrderPayload,
+  syncShareFromOrder,
   type OrderItem,
 } from "@/lib/orders-db";
 import { createServiceClient } from "@/lib/supabase/server";
@@ -12,6 +18,7 @@ export async function POST(request: Request) {
       table_label?: string;
       waiter_staff_id?: string;
       waiter_name?: string;
+      share_id?: string;
       items?: OrderItem[];
       dish_ids?: string[];
     };
@@ -19,7 +26,8 @@ export async function POST(request: Request) {
     const tableLabel = body.table_label?.trim() ?? "";
     const staffId = body.waiter_staff_id?.trim() ?? "";
     const waiterNameInput = body.waiter_name?.trim() ?? "";
-    const items = Array.isArray(body.items) ? body.items : [];
+    const shareId = body.share_id?.trim().replace(/[^a-zA-Z0-9]/g, "") ?? "";
+    const items = normalizeOrderItems(body.items);
 
     if (!tableLabel) {
       return NextResponse.json({ error: "Table / lounge is required." }, { status: 400 });
@@ -41,23 +49,12 @@ export async function POST(request: Request) {
     }
 
     const waiterName = waiterNameInput || waiter.name;
-    const normalizedItems = items.map((item) => {
-      const qty = Math.max(1, Math.round(Number(item.qty) || 1));
-      return {
-        id: String(item.id),
-        name: String(item.name),
-        category: String(item.category ?? ""),
-        price: Number(item.price) || 0,
-        qty,
-      };
-    });
-    const total = normalizedItems.reduce(
-      (sum, item) => sum + item.price * item.qty,
-      0
-    );
+    const total = orderTotal(items);
     const dishIds = Array.isArray(body.dish_ids)
       ? body.dish_ids.map(String)
-      : normalizedItems.map((item) => item.id);
+      : items.map((item) => item.id);
+    const lockedItems = items.map((item) => ({ id: item.id, qty: item.qty }));
+    const customerToken = createCustomerToken();
 
     const { data, error } = await supabase
       .from("orders")
@@ -67,11 +64,14 @@ export async function POST(request: Request) {
         waiter_staff_id: waiter.staff_id,
         waiter_name: waiterName,
         waiter_image_url: waiter.image_url,
-        items: normalizedItems,
+        items,
+        locked_items: lockedItems,
         total,
         currency: "NGN",
         status: "new",
         dish_ids: dishIds,
+        share_id: shareId || null,
+        customer_token: customerToken,
         assigned_at: new Date().toISOString(),
       })
       .select("*")
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
         return NextResponse.json(
           {
             error:
-              "Orders/waiters tables are not set up yet. Run supabase/orders-waiters.sql in the Supabase SQL Editor.",
+              "Orders tables need an update. Run supabase/order-live-sync.sql in the Supabase SQL Editor.",
             schemaMissing: true,
           },
           { status: 503 }
@@ -91,7 +91,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    return NextResponse.json(data, { status: 201 });
+    const order = mapDbOrder(data as Record<string, unknown>);
+    try {
+      await syncShareFromOrder(order);
+    } catch (shareErr) {
+      console.error("syncShareFromOrder:", shareErr);
+    }
+
+    return NextResponse.json(
+      {
+        ...publicOrderPayload(order),
+        customer_token: customerToken,
+        waiter_name: order.waiter_name,
+        waiter_staff_id: order.waiter_staff_id,
+        waiter_image_url: order.waiter_image_url,
+      },
+      { status: 201 }
+    );
   } catch (e) {
     const message = e instanceof Error ? e.message : "Could not assign order";
     return NextResponse.json({ error: message }, { status: 400 });

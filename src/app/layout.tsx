@@ -10,7 +10,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "L&N Kitchen Menu",
-  description: "Swipe through the L&N Kitchen menu — An Oasis of Pleasure",
+  description: "Swipe through the L&N Kitchen menu - An Oasis of Pleasure",
   applicationName: "L&N Kitchen Menu",
 };
 

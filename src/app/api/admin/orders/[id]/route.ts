@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
-import type { OrderStatus } from "@/lib/orders-db";
+import {
+  isMissingOrdersSchemaError,
+  mapDbOrder,
+  normalizeOrderItems,
+  orderTotal,
+  syncShareFromOrder,
+  type OrderStatus,
+} from "@/lib/orders-db";
 import { createServiceClient } from "@/lib/supabase/server";
 
 type Params = { params: Promise<{ id: string }> };
@@ -12,23 +19,71 @@ export async function PUT(request: Request, { params }: Params) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await params;
-  const body = (await request.json()) as { status?: string };
-  const status = body.status as OrderStatus | undefined;
-  if (!status || !STATUSES.includes(status)) {
-    return NextResponse.json({ error: "Invalid status." }, { status: 400 });
-  }
+  try {
+    const { id } = await params;
+    const body = (await request.json()) as {
+      status?: string;
+      items?: unknown;
+    };
 
-  const supabase = createServiceClient();
-  const { data, error } = await supabase
-    .from("orders")
-    .update({ status })
-    .eq("id", id)
-    .select("*")
-    .single();
+    const updates: Record<string, unknown> = {};
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    if (body.status !== undefined) {
+      const status = body.status as OrderStatus;
+      if (!STATUSES.includes(status)) {
+        return NextResponse.json({ error: "Invalid status." }, { status: 400 });
+      }
+      updates.status = status;
+    }
+
+    if (body.items !== undefined) {
+      const items = normalizeOrderItems(body.items);
+      if (!items.length) {
+        return NextResponse.json(
+          { error: "Order must keep at least one dish." },
+          { status: 400 }
+        );
+      }
+      updates.items = items;
+      updates.total = orderTotal(items);
+      updates.dish_ids = items.map((item) => item.id);
+    }
+
+    if (!Object.keys(updates).length) {
+      return NextResponse.json({ error: "Nothing to update." }, { status: 400 });
+    }
+
+    const supabase = createServiceClient();
+    const { data, error } = await supabase
+      .from("orders")
+      .update(updates)
+      .eq("id", id)
+      .select("*")
+      .single();
+
+    if (error) {
+      if (isMissingOrdersSchemaError(error.message)) {
+        return NextResponse.json(
+          {
+            error: "Run supabase/order-live-sync.sql in the Supabase SQL Editor.",
+            schemaMissing: true,
+          },
+          { status: 503 }
+        );
+      }
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+
+    const order = mapDbOrder(data as Record<string, unknown>);
+    try {
+      await syncShareFromOrder(order);
+    } catch (shareErr) {
+      console.error("syncShareFromOrder:", shareErr);
+    }
+
+    return NextResponse.json(order);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Could not update order";
+    return NextResponse.json({ error: message }, { status: 400 });
   }
-  return NextResponse.json(data);
 }

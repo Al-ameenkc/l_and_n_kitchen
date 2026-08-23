@@ -11,6 +11,9 @@ interface DishDetailViewProps {
   inWishlist?: boolean;
   onClose: () => void;
   onAddToWishlist?: (dish: Dish) => void;
+  /** When true, button reads as order actions instead of wish list */
+  orderMode?: boolean;
+  inOrder?: boolean;
 }
 
 function DetailCard({
@@ -33,7 +36,18 @@ export function DishDetailView({
   inWishlist = false,
   onClose,
   onAddToWishlist,
+  orderMode = false,
+  inOrder = false,
 }: DishDetailViewProps) {
+  const alreadyAdded = orderMode ? inOrder : inWishlist;
+  const addLabel = orderMode
+    ? alreadyAdded
+      ? "In order"
+      : "Add to order"
+    : alreadyAdded
+      ? "In wish list"
+      : "Add to wish list";
+
   return (
     <AnimatePresence>
       {dish && (
@@ -59,10 +73,10 @@ export function DishDetailView({
               <button
                 type="button"
                 onClick={() => onAddToWishlist(dish)}
-                disabled={inWishlist}
+                disabled={alreadyAdded}
                 className="absolute right-5 top-12 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-sm font-semibold text-white backdrop-blur-md disabled:opacity-60"
               >
-                {inWishlist ? "In wish list" : "Add to wish list"}
+                {addLabel}
               </button>
             )}
           </div>

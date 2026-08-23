@@ -26,6 +26,7 @@ export interface DbDish {
   estimated_calories: number;
   best_combo_with: string;
   image_url: string | null;
+  available: boolean;
   categories?: { name: string; slug: string; image_url: string | null } | null;
 }
 
@@ -45,6 +46,7 @@ function mapDish(row: DbDish, categoryName: string): Dish {
     estimatedCalories: row.estimated_calories,
     bestComboWith: row.best_combo_with,
     image: row.image_url || getCategoryPlaceholder(categoryName),
+    available: row.available !== false,
   };
 }
 
@@ -65,8 +67,9 @@ export async function fetchMenuFromDb(): Promise<MenuData | null> {
     const { data: dishes, error: dishErr } = await supabase
       .from("dishes")
       .select(
-        "id, slug, name, category_id, price, currency, short_description, description, ingredients, allergens, prep_time_min, prep_time_max, estimated_calories, best_combo_with, image_url, categories(name)"
-      );
+        "id, slug, name, category_id, price, currency, short_description, description, ingredients, allergens, prep_time_min, prep_time_max, estimated_calories, best_combo_with, image_url, available, categories(name)"
+      )
+      .eq("available", true);
 
     if (dishErr) throw dishErr;
 

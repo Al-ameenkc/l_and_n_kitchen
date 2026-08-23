@@ -53,6 +53,7 @@ export async function POST(request: Request) {
       estimated_calories: Number(body.estimated_calories) || 0,
       best_combo_with: String(body.best_combo_with ?? ""),
       image_url: body.image_url ? String(body.image_url) : null,
+      available: body.available === undefined ? true : Boolean(body.available),
       updated_at: new Date().toISOString(),
     })
     .select()

@@ -44,27 +44,47 @@ export function WaiterOrderView() {
     }
 
     let cancelled = false;
-    setShareLoading(true);
-    setShareLoadError("");
 
-    fetch(`/api/order-shares/${encodeURIComponent(shareId)}`)
-      .then(async (res) => {
+    const loadShare = async (initial = false) => {
+      if (initial) {
+        setShareLoading(true);
+        setShareLoadError("");
+      }
+      try {
+        const res = await fetch(`/api/order-shares/${encodeURIComponent(shareId)}`, {
+          cache: "no-store",
+        });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Order share not found");
-        if (!cancelled) setSharedItems(data.items as OrderShareItem[]);
-      })
-      .catch((e) => {
-        if (!cancelled) {
+        if (cancelled) return;
+        if (data.order?.items) {
+          setSharedItems(
+            data.order.items.map((item: { id: string; qty: number }) => ({
+              id: item.id,
+              qty: item.qty,
+            }))
+          );
+        } else {
+          setSharedItems(data.items as OrderShareItem[]);
+        }
+      } catch (e) {
+        if (!cancelled && initial) {
           setSharedItems([]);
           setShareLoadError(e instanceof Error ? e.message : "Could not load order");
         }
-      })
-      .finally(() => {
-        if (!cancelled) setShareLoading(false);
-      });
+      } finally {
+        if (!cancelled && initial) setShareLoading(false);
+      }
+    };
+
+    void loadShare(true);
+    const timer = window.setInterval(() => {
+      void loadShare(false);
+    }, 2500);
 
     return () => {
       cancelled = true;
+      window.clearInterval(timer);
     };
   }, [shareId]);
 
@@ -230,6 +250,7 @@ export function WaiterOrderView() {
           table_label: tableLabel.trim(),
           waiter_staff_id: waiterStaffId.trim(),
           waiter_name: waiterName.trim() || waiterProfile?.name,
+          share_id: shareId || undefined,
           dish_ids: dishes.map((d) => d.id),
           items: dishes.map((d) => ({
             id: d.id,
@@ -389,7 +410,7 @@ export function WaiterOrderView() {
       >
         <div className="border-b border-zinc-200 bg-zinc-50 px-4 py-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-            L&amp;N Kitchen — Guest order
+            L&amp;N Kitchen Guest order
           </p>
           {tableLabel.trim() ? (
             <>

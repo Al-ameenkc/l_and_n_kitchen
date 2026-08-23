@@ -28,11 +28,13 @@ create table if not exists dishes (
   estimated_calories int not null default 0,
   best_combo_with text not null default '',
   image_url text,
+  available boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 create index if not exists dishes_category_id_idx on dishes(category_id);
+create index if not exists dishes_available_idx on dishes(available);
 create index if not exists categories_sort_order_idx on categories(sort_order);
 
 alter table categories enable row level security;
@@ -46,7 +48,7 @@ create policy "Public read categories"
 create policy "Public read dishes"
   on dishes for select
   to anon, authenticated
-  using (true);
+  using (available = true);
 
 -- Storage bucket for category & dish images (run after tables)
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
