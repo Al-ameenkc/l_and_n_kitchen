@@ -111,7 +111,7 @@ export function WishListBar({
   const count = hasOrder ? orderCount : wishlistCount;
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-center bg-transparent px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-1">
+    <div className="pointer-events-none absolute inset-x-0 bottom-0 z-40 flex justify-center bg-transparent px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-1">
       <button
         type="button"
         onClick={hasOrder ? onOpenOrders : onOpenWishlist}

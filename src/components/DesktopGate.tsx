@@ -2,19 +2,10 @@
 
 export function DesktopGate({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <div className="hidden min-h-screen items-center justify-center bg-[#111111] p-8 md:flex">
-        <div className="max-w-md rounded-[2rem] bg-[#1a1a1a] p-8 text-center ring-1 ring-zinc-800">
-          <h1 className="text-2xl font-extrabold text-white">L&amp;N Kitchen Menu</h1>
-          <p className="mt-3 text-sm font-normal text-zinc-400">
-            This menu is designed for mobile phones. Please open this link on your phone or scan
-            the QR code at your table.
-          </p>
-        </div>
-      </div>
-      <div className="relative mx-auto flex h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden bg-[#111111] md:hidden">
+    <div className="box-border flex h-[100dvh] justify-center bg-[#111111] p-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom,0px)+0.75rem))] pt-[max(1rem,calc(env(safe-area-inset-top,0px)+0.5rem))] md:items-center md:p-8">
+      <div className="relative flex h-full min-h-0 w-full max-w-[430px] flex-col overflow-hidden bg-[#111111] shadow-[0_24px_80px_rgba(0,0,0,0.55)] ring-1 ring-zinc-800 transform-gpu md:h-[min(900px,calc(100dvh-4rem))] md:flex-none md:rounded-[2rem]">
         {children}
       </div>
-    </>
+    </div>
   );
 }

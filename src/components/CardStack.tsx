@@ -5,7 +5,6 @@ import type { Dish } from "@/types/menu";
 import { hapticCardSwipe } from "@/utils/haptics";
 import { CardActionButtons } from "./CardActionButtons";
 import { DishCard } from "./DishCard";
-import { markSwipeHintSeen } from "./SwipeHintOverlay";
 
 interface CardStackProps {
   deck: Dish[];
@@ -15,6 +14,7 @@ interface CardStackProps {
   onCardTap: (dish: Dish) => void;
   onOpenWishlist: () => void;
   onOpenTrash: () => void;
+  onDismissOnboarding?: () => void;
   onCurrentChange?: (dish: Dish | null) => void;
 }
 
@@ -48,6 +48,7 @@ export function CardStack({
   onCardTap,
   onOpenWishlist,
   onOpenTrash,
+  onDismissOnboarding,
   onCurrentChange,
 }: CardStackProps) {
   const [dragX, setDragX] = useState(0);
@@ -82,20 +83,20 @@ export function CardStack({
 
   const completeWish = useCallback(() => {
     if (!current) return;
-    markSwipeHintSeen();
+    onDismissOnboarding?.();
     onWish(current);
     advance();
-  }, [current, onWish, advance]);
+  }, [current, onDismissOnboarding, onWish, advance]);
 
   const completeTrash = useCallback(() => {
     if (!current) return;
-    markSwipeHintSeen();
+    onDismissOnboarding?.();
     onTrash(current);
     advance();
-  }, [current, onTrash, advance]);
+  }, [current, onDismissOnboarding, onTrash, advance]);
 
   return (
-    <div className="relative flex h-full min-h-[min(50vh,400px)] max-h-[min(52vh,420px)] flex-1 overflow-visible px-0">
+    <div className="relative flex h-full min-h-[min(50vh,400px)] max-h-[min(52vh,420px)] flex-1 overflow-visible px-0" data-walkthrough="deck">
       <CardActionButtons
         onOpenTrash={onOpenTrash}
         onOpenWishlist={onOpenWishlist}

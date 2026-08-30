@@ -11,12 +11,26 @@ interface HeaderBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   dishes: Dish[];
+  showOrdersIcon?: boolean;
+  orderCount?: number;
+  onOpenOrders?: () => void;
+}
+
+function OrdersCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 5h11M9 12h11M9 19h11M4 5h.01M4 12h.01M4 19h.01" strokeLinecap="round" />
+    </svg>
+  );
 }
 
 export function HeaderBar({
   searchQuery,
   onSearchChange,
   dishes,
+  showOrdersIcon = false,
+  orderCount = 0,
+  onOpenOrders,
 }: HeaderBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -55,12 +69,13 @@ export function HeaderBar({
           className="pointer-events-none h-auto w-[16vw] max-w-[52px] min-w-[40px] shrink-0"
         />
 
-        <div ref={wrapRef} className="pointer-events-auto relative ml-auto flex min-w-0 flex-1 justify-end">
+        <div ref={wrapRef} className="pointer-events-auto relative ml-auto flex min-w-0 flex-1 items-center justify-end gap-2">
           <motion.div
+            data-walkthrough="search-pill"
             layout
             initial={false}
             animate={{
-              width: isExpanded ? "100%" : 124,
+              width: isExpanded ? "100%" : showOrdersIcon ? 96 : 124,
             }}
             transition={{
               type: "tween",
@@ -124,6 +139,25 @@ export function HeaderBar({
               </button>
             )}
           </motion.div>
+
+          {showOrdersIcon && onOpenOrders ? (
+            <motion.button
+              type="button"
+              layout
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              aria-label="View my orders"
+              onClick={onOpenOrders}
+              className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2a2a2a]/95 text-white ring-1 ring-zinc-700/60 backdrop-blur-sm"
+            >
+              <OrdersCircleIcon className="h-5 w-5" />
+              {orderCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-green-500 px-1 text-[9px] font-bold text-white">
+                  {orderCount > 99 ? "99+" : orderCount}
+                </span>
+              ) : null}
+            </motion.button>
+          ) : null}
 
           {showDropdown && (
             <div

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDeck } from "@/hooks/useDeck";
@@ -18,9 +18,11 @@ import { CardStack } from "./CardStack";
 import { CurvedCategoryCarousel } from "./CurvedCategoryCarousel";
 import { DishDetailView } from "./DishDetailView";
 import { HeaderBar } from "./HeaderBar";
-import { SwipeHintOverlay } from "./SwipeHintOverlay";
+import { OnboardingWalkthrough } from "./OnboardingWalkthrough";
 import { TrashSheet } from "./TrashSheet";
 import { WishListSheet } from "./WishListSheet";
+
+type SheetView = "list" | "order" | "history" | "record";
 
 function AddToOrderConfirm({
   dish,
@@ -92,6 +94,8 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     activeOrderId,
     lockedItems,
     orderSnapshotItems,
+    orderRecords,
+    activeRecordId,
     addToWishlist,
     addToTrash,
     removeFromWishlist,
@@ -105,17 +109,23 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     setTrashOpen,
     syncWithMenuDishIds,
     setActiveShareId,
+    updateOrderRecordShareId,
     placeOrderFromWishlist,
     addToLocalOrder,
+    startNewOrderSession,
   } = useMenuStore();
 
-  const [sheetView, setSheetView] = useState<"list" | "order">("list");
+  const [sheetView, setSheetView] = useState<SheetView>("list");
+  const [viewingRecordId, setViewingRecordId] = useState<string | null>(null);
   const [pendingOrderDish, setPendingOrderDish] = useState<Dish | null>(null);
   const [deckRemountKey, setDeckRemountKey] = useState(0);
 
   const { addDishToOrder } = useActiveOrderSync(menuData.dishes);
 
   const deck = useDeck(menuData.dishes);
+
+  const hasActiveOrderSession = orderSnapshotItems.length > 0;
+  const hasOrderHistory = orderRecords.length > 0;
 
   const searchableDishes = useMemo(() => {
     const wishIds = new Set(wishlist.map((entry) => entry.id));
@@ -163,8 +173,6 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     () => orderSnapshotItems.reduce((sum, item) => sum + item.qty, 0),
     [orderSnapshotItems]
   );
-
-  const hasOrder = Boolean(activeOrderId || activeShareId || orderSnapshotItems.length > 0);
 
   const lockedItemIds = useMemo(
     () => lockedItems.map((item) => item.id),
@@ -217,13 +225,13 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
 
   const handleWish = useCallback(
     (dish: Dish) => {
-      if (hasOrder) {
+      if (hasActiveOrderSession) {
         setPendingOrderDish(dish);
         return;
       }
       commitWish(dish);
     },
-    [commitWish, hasOrder]
+    [commitWish, hasActiveOrderSession]
   );
 
   const handlePlaceOrder = useCallback(() => {
@@ -243,18 +251,60 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
 
   const openWishlist = useCallback(() => {
     setSheetView("list");
+    setViewingRecordId(null);
     setWishlistOpen(true);
   }, [setWishlistOpen]);
 
-  const openOrders = useCallback(() => {
-    setSheetView("order");
+  const openOrdersHistory = useCallback(() => {
+    setSheetView("history");
+    setViewingRecordId(null);
     setWishlistOpen(true);
   }, [setWishlistOpen]);
+
+  const openCurrentOrder = useCallback(() => {
+    setSheetView("order");
+    setViewingRecordId(null);
+    setWishlistOpen(true);
+  }, [setWishlistOpen]);
+
+  const handleOrderMore = useCallback(() => {
+    setWishlistOpen(false);
+    setSheetView("order");
+  }, [setWishlistOpen]);
+
+  const handleNewOrder = useCallback(() => {
+    startNewOrderSession();
+    setSheetView("list");
+    setViewingRecordId(null);
+    setDeckRemountKey((k) => k + 1);
+  }, [startNewOrderSession]);
 
   const closeWishlist = useCallback(() => {
     setWishlistOpen(false);
-    setSheetView(hasOrder ? "order" : "list");
-  }, [hasOrder, setWishlistOpen]);
+    if (hasActiveOrderSession) {
+      setSheetView("order");
+    } else if (hasOrderHistory) {
+      setSheetView("history");
+    } else {
+      setSheetView("list");
+    }
+    setViewingRecordId(null);
+  }, [hasActiveOrderSession, hasOrderHistory, setWishlistOpen]);
+
+  const handleViewRecord = useCallback((recordId: string) => {
+    setViewingRecordId(recordId);
+    setSheetView("record");
+  }, []);
+
+  const handleShareIdForRecord = useCallback(
+    (recordId: string, shareId: string) => {
+      updateOrderRecordShareId(recordId, shareId);
+      if (activeRecordId === recordId) {
+        setActiveShareId(shareId);
+      }
+    },
+    [activeRecordId, setActiveShareId, updateOrderRecordShareId]
+  );
 
   useEffect(() => {
     syncWithMenuDishIds(menuData.dishes.map((d) => d.id));
@@ -268,13 +318,27 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     }
   }, [menuData.categories, categoryFilter, setCategoryFilter]);
 
+  const rootRef = useRef<HTMLDivElement>(null);
+  const dismissOnboardingRef = useRef<(() => void) | null>(null);
+  const [storeHydrated, setStoreHydrated] = useState(
+    () => useMenuStore.persist.hasHydrated()
+  );
+
+  useEffect(() => {
+    if (storeHydrated) return;
+    return useMenuStore.persist.onFinishHydration(() => setStoreHydrated(true));
+  }, [storeHydrated]);
+
   return (
-    <div className="relative flex h-full flex-col overflow-hidden bg-[#111111]">
+    <div ref={rootRef} className="relative flex h-full flex-col overflow-hidden bg-[#111111]">
       <div className="relative z-40 shrink-0 overflow-visible">
         <HeaderBar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           dishes={searchableDishes}
+          showOrdersIcon={hasOrderHistory}
+          orderCount={orderRecords.length}
+          onOpenOrders={openOrdersHistory}
         />
         <div className="relative z-10">
           <CurvedCategoryCarousel
@@ -286,7 +350,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         </div>
       </div>
 
-      <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(5.75rem,env(safe-area-inset-bottom))] pt-1">
+      <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(6.25rem,env(safe-area-inset-bottom))] pt-1">
         <CardStack
           key={`${deckKey}-${deckRemountKey}`}
           deck={deck}
@@ -294,26 +358,32 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
           onWish={handleWish}
           onTrash={handleTrash}
           onCardTap={(dish) => setDetailDishId(dish.id)}
-          onOpenWishlist={hasOrder ? openOrders : openWishlist}
+          onOpenWishlist={hasActiveOrderSession ? openCurrentOrder : openWishlist}
           onOpenTrash={() => setTrashOpen(true)}
+          onDismissOnboarding={() => dismissOnboardingRef.current?.()}
         />
       </main>
 
-      <SwipeHintOverlay />
+      <OnboardingWalkthrough
+        containerRef={rootRef}
+        dismissRef={dismissOnboardingRef}
+        ready={storeHydrated}
+        skip={hasOrderHistory}
+      />
 
       <WishListBar
         wishlistCount={wishlistCount}
         orderCount={orderItemCount}
-        hasOrder={hasOrder}
+        hasOrder={hasActiveOrderSession}
         onOpenWishlist={openWishlist}
-        onOpenOrders={openOrders}
+        onOpenOrders={openCurrentOrder}
       />
 
       <DishDetailView
         dish={detailDish}
         inWishlist={detailInWishlist}
         inOrder={detailInOrder}
-        orderMode={hasOrder}
+        orderMode={hasActiveOrderSession}
         onClose={() => setDetailDishId(null)}
         onAddToWishlist={handleWish}
       />
@@ -332,7 +402,17 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         lockedItemIds={lockedItemIds}
         lockedQtyById={lockedQtyById}
         initialView={sheetView}
-        onAddMore={closeWishlist}
+        orderRecords={orderRecords}
+        menuDishes={menuData.dishes}
+        viewingRecordId={viewingRecordId}
+        onViewRecord={handleViewRecord}
+        onBackToHistory={() => {
+          setViewingRecordId(null);
+          setSheetView("history");
+        }}
+        onShareIdForRecord={handleShareIdForRecord}
+        onOrderMore={hasActiveOrderSession ? handleOrderMore : undefined}
+        onNewOrder={hasActiveOrderSession ? handleNewOrder : undefined}
         onPlaceOrder={handlePlaceOrder}
       />
 

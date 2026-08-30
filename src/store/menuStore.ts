@@ -10,6 +10,20 @@ export type WishlistEntry = {
 
 export type WishlistDish = Dish & { qty: number };
 
+export type OrderRecord = {
+  id: string;
+  items: OrderItem[];
+  shareId: string | null;
+  lockedItems: LockedOrderItem[];
+  createdAt: string;
+  liveOrderId?: string | null;
+  status?: OrderStatus | null;
+};
+
+function newOrderRecordId(): string {
+  return `ord_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+}
+
 interface MenuStore {
   wishlist: WishlistEntry[];
   trash: string[];
@@ -26,6 +40,8 @@ interface MenuStore {
   lockedItems: LockedOrderItem[];
   orderStatus: OrderStatus | null;
   orderSnapshotItems: OrderItem[];
+  orderRecords: OrderRecord[];
+  activeRecordId: string | null;
   addToWishlist: (id: string) => void;
   addToTrash: (id: string) => void;
   removeFromWishlist: (id: string) => void;
@@ -57,6 +73,9 @@ interface MenuStore {
   clearActiveOrder: () => void;
   /** Full guest reset after payment - fresh menu session */
   resetGuestSession: () => void;
+  /** Back to wishlist browsing for a new order */
+  startNewOrderSession: () => void;
+  updateOrderRecordShareId: (recordId: string, shareId: string) => void;
   isItemLocked: (id: string) => boolean;
   lockedQtyFor: (id: string) => number;
 }
@@ -106,6 +125,8 @@ export const useMenuStore = create<MenuStore>()(
       lockedItems: [],
       orderStatus: null,
       orderSnapshotItems: [],
+      orderRecords: [],
+      activeRecordId: null,
       addToWishlist: (id) =>
         set((state) => ({
           wishlist: hasWishlistId(state.wishlist, id)
@@ -167,6 +188,7 @@ export const useMenuStore = create<MenuStore>()(
             ...valid,
             ...state.lockedItems.map((item) => item.id),
             ...state.orderSnapshotItems.map((item) => item.id),
+            ...state.orderRecords.flatMap((r) => r.items.map((item) => item.id)),
           ]);
           return {
             wishlist: state.wishlist.filter((entry) => keep.has(entry.id)),
@@ -177,27 +199,93 @@ export const useMenuStore = create<MenuStore>()(
                 : null,
           };
         }),
-      setActiveShareId: (id) => set({ activeShareId: id }),
+      setActiveShareId: (id) =>
+        set((state) => ({
+          activeShareId: id,
+          orderRecords: state.activeRecordId
+            ? state.orderRecords.map((record) =>
+                record.id === state.activeRecordId ? { ...record, shareId: id } : record
+              )
+            : state.orderRecords,
+        })),
+      updateOrderRecordShareId: (recordId, shareId) =>
+        set((state) => ({
+          orderRecords: state.orderRecords.map((record) =>
+            record.id === recordId ? { ...record, shareId } : record
+          ),
+          activeShareId: state.activeRecordId === recordId ? shareId : state.activeShareId,
+        })),
       setActiveOrder: ({ orderId, customerToken, lockedItems, items, status }) =>
-        set({
-          activeOrderId: orderId,
-          customerToken,
-          lockedItems,
-          orderStatus: status,
-          orderSnapshotItems: items,
+        set((state) => {
+          const recordId =
+            state.activeRecordId ??
+            state.orderRecords.find((r) => r.shareId && r.shareId === state.activeShareId)?.id ??
+            state.orderRecords[state.orderRecords.length - 1]?.id;
+          const orderRecords = recordId
+            ? state.orderRecords.map((record) =>
+                record.id === recordId
+                  ? {
+                      ...record,
+                      items,
+                      lockedItems,
+                      liveOrderId: orderId,
+                      status,
+                    }
+                  : record
+              )
+            : state.orderRecords;
+          return {
+            activeOrderId: orderId,
+            customerToken,
+            lockedItems,
+            orderStatus: status,
+            orderSnapshotItems: items,
+            activeRecordId: recordId ?? state.activeRecordId,
+            orderRecords,
+          };
         }),
       applyOrderSnapshot: ({ items, lockedItems, status }) =>
-        set((state) => ({
-          orderSnapshotItems: items,
-          lockedItems: lockedItems ?? state.lockedItems,
-          orderStatus: status ?? state.orderStatus,
-        })),
+        set((state) => {
+          const recordId = state.activeRecordId;
+          const orderRecords = recordId
+            ? state.orderRecords.map((record) =>
+                record.id === recordId
+                  ? {
+                      ...record,
+                      items,
+                      lockedItems: lockedItems ?? record.lockedItems,
+                      status: status ?? record.status,
+                    }
+                  : record
+              )
+            : state.orderRecords;
+          return {
+            orderSnapshotItems: items,
+            lockedItems: lockedItems ?? state.lockedItems,
+            orderStatus: status ?? state.orderStatus,
+            orderRecords,
+          };
+        }),
       placeOrderFromWishlist: (items) =>
-        set({
-          orderSnapshotItems: items,
-          lockedItems: items.map((item) => ({ id: item.id, qty: item.qty })),
-          wishlist: [],
-          trash: [],
+        set((state) => {
+          const id = newOrderRecordId();
+          const locked = items.map((item) => ({ id: item.id, qty: item.qty }));
+          const record: OrderRecord = {
+            id,
+            items,
+            shareId: null,
+            lockedItems: locked,
+            createdAt: new Date().toISOString(),
+          };
+          return {
+            orderRecords: [...state.orderRecords, record],
+            activeRecordId: id,
+            orderSnapshotItems: items,
+            lockedItems: locked,
+            activeShareId: null,
+            wishlist: [],
+            trash: [],
+          };
         }),
       addToLocalOrder: (item) =>
         set((state) => {
@@ -209,9 +297,28 @@ export const useMenuStore = create<MenuStore>()(
                   : row
               )
             : [...state.orderSnapshotItems, { ...item, qty: Math.max(1, item.qty) }];
+          const nextLocked = state.lockedItems.some((row) => row.id === item.id)
+            ? state.lockedItems.map((row) =>
+                row.id === item.id
+                  ? { ...row, qty: nextItems.find((i) => i.id === item.id)?.qty ?? row.qty }
+                  : row
+              )
+            : [
+                ...state.lockedItems,
+                { id: item.id, qty: nextItems.find((i) => i.id === item.id)?.qty ?? 1 },
+              ];
+          const orderRecords = state.activeRecordId
+            ? state.orderRecords.map((record) =>
+                record.id === state.activeRecordId
+                  ? { ...record, items: nextItems, lockedItems: nextLocked }
+                  : record
+              )
+            : state.orderRecords;
           return {
             orderSnapshotItems: nextItems,
-            trash: state.trash.filter((id) => id !== item.id),
+            lockedItems: nextLocked,
+            orderRecords,
+            trash: state.trash.filter((tid) => tid !== item.id),
             wishlist: state.wishlist.filter((entry) => entry.id !== item.id),
           };
         }),
@@ -233,17 +340,33 @@ export const useMenuStore = create<MenuStore>()(
           lockedItems: [],
           orderStatus: null,
           orderSnapshotItems: [],
+          orderRecords: [],
+          activeRecordId: null,
           detailDishId: null,
           wishlistOpen: false,
           trashOpen: false,
           searchQuery: "",
+        }),
+      startNewOrderSession: () =>
+        set({
+          wishlist: [],
+          trash: [],
+          activeShareId: null,
+          activeOrderId: null,
+          customerToken: null,
+          lockedItems: [],
+          orderStatus: null,
+          orderSnapshotItems: [],
+          activeRecordId: null,
+          detailDishId: null,
+          wishlistOpen: false,
         }),
       isItemLocked: (id) => get().lockedItems.some((item) => item.id === id),
       lockedQtyFor: (id) => get().lockedItems.find((item) => item.id === id)?.qty ?? 0,
     }),
     {
       name: "ln-kitchen-menu",
-      version: 3,
+      version: 4,
       partialize: (state) => ({
         wishlist: state.wishlist,
         trash: state.trash,
@@ -253,8 +376,10 @@ export const useMenuStore = create<MenuStore>()(
         lockedItems: state.lockedItems,
         orderStatus: state.orderStatus,
         orderSnapshotItems: state.orderSnapshotItems,
+        orderRecords: state.orderRecords,
+        activeRecordId: state.activeRecordId,
       }),
-      migrate: (persisted) => {
+      migrate: (persisted, version) => {
         const state = (persisted ?? {}) as {
           wishlist?: unknown;
           trash?: string[];
@@ -264,7 +389,23 @@ export const useMenuStore = create<MenuStore>()(
           lockedItems?: LockedOrderItem[];
           orderStatus?: OrderStatus | null;
           orderSnapshotItems?: OrderItem[];
+          orderRecords?: OrderRecord[];
+          activeRecordId?: string | null;
         };
+        let orderRecords = Array.isArray(state.orderRecords) ? state.orderRecords : [];
+        if (version < 4 && state.orderSnapshotItems?.length && !orderRecords.length) {
+          orderRecords = [
+            {
+              id: newOrderRecordId(),
+              items: state.orderSnapshotItems,
+              shareId: state.activeShareId ?? null,
+              lockedItems: state.lockedItems ?? [],
+              createdAt: new Date().toISOString(),
+              liveOrderId: state.activeOrderId ?? null,
+              status: state.orderStatus ?? null,
+            },
+          ];
+        }
         return {
           wishlist: normalizeWishlist(state.wishlist),
           trash: Array.isArray(state.trash) ? state.trash : [],
@@ -276,6 +417,8 @@ export const useMenuStore = create<MenuStore>()(
           orderSnapshotItems: Array.isArray(state.orderSnapshotItems)
             ? state.orderSnapshotItems
             : [],
+          orderRecords,
+          activeRecordId: state.activeRecordId ?? null,
         };
       },
     }
