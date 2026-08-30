@@ -2,8 +2,8 @@
 
 export function DesktopGate({ children }: { children: React.ReactNode }) {
   return (
-    <div className="box-border flex h-[100dvh] justify-center bg-[#111111] p-4 pb-[max(1.25rem,calc(env(safe-area-inset-bottom,0px)+0.75rem))] pt-[max(1rem,calc(env(safe-area-inset-top,0px)+0.5rem))] md:items-center md:p-8">
-      <div className="relative flex h-full min-h-0 w-full max-w-[430px] flex-col overflow-hidden bg-[#111111] shadow-[0_24px_80px_rgba(0,0,0,0.55)] ring-1 ring-zinc-800 transform-gpu md:h-[min(900px,calc(100dvh-4rem))] md:flex-none md:rounded-[2rem]">
+    <div className="flex h-[100dvh] justify-center bg-[#111111] md:items-center md:p-8">
+      <div className="relative mx-auto flex h-[100dvh] w-full max-w-[430px] flex-col overflow-hidden bg-[#111111] md:h-[min(900px,calc(100dvh-4rem))] md:rounded-[2rem] md:shadow-[0_24px_80px_rgba(0,0,0,0.55)] md:ring-1 md:ring-zinc-800 md:transform-gpu">
         {children}
       </div>
     </div>

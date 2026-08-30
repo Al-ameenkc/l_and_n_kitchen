@@ -350,7 +350,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         </div>
       </div>
 
-      <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(6.25rem,env(safe-area-inset-bottom))] pt-1">
+      <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(5.75rem,env(safe-area-inset-bottom))] pt-1">
         <CardStack
           key={`${deckKey}-${deckRemountKey}`}
           deck={deck}
