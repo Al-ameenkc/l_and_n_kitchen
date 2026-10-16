@@ -10,6 +10,8 @@ import {
   type DbWaiter,
   type OrderStatus,
 } from "@/lib/orders-db";
+import { formatOrderNumber } from "@/lib/restaurant";
+import { OrderReceipt, printOrderReceipt } from "@/components/OrderReceipt";
 
 type Tab = "orders" | "categories" | "dishes" | "waiters";
 
@@ -438,6 +440,25 @@ export default function AdminPage() {
     await updateOrderItems(order.id, nextItems, `"${dish.name}" added to order.`);
   };
 
+  const resolvePendingProposal = async (
+    order: DbOrder,
+    proposalId: string,
+    action: "accept" | "reject"
+  ) => {
+    const res = await fetch(`/api/admin/orders/${order.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pending_action: action, proposal_id: proposalId }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showMessage(data.error ?? "Failed to update proposal", true);
+      return;
+    }
+    showMessage(action === "accept" ? "Waiter addition accepted." : "Waiter addition rejected.");
+    load();
+  };
+
   const filteredDishes = useMemo(() => {
     const query = dishSearch.trim().toLowerCase();
     return dishes.filter((dish) => {
@@ -567,8 +588,9 @@ export default function AdminPage() {
       {schemaMissing && (
         <div className="mt-4 rounded-xl border border-amber-700/50 bg-amber-950/40 px-4 py-3 text-sm text-amber-200">
           Orders tables need setup/update. In Supabase → SQL Editor, run{" "}
-          <code className="rounded bg-black/30 px-1">supabase/orders-waiters.sql</code> then{" "}
-          <code className="rounded bg-black/30 px-1">supabase/order-live-sync.sql</code>, then refresh
+          <code className="rounded bg-black/30 px-1">supabase/orders-waiters.sql</code>,{" "}
+          <code className="rounded bg-black/30 px-1">supabase/order-live-sync.sql</code>, and{" "}
+          <code className="rounded bg-black/30 px-1">supabase/order-pending-and-number.sql</code>, then refresh
           this page.
         </div>
       )}
@@ -610,6 +632,12 @@ export default function AdminPage() {
                       <p className="mt-1 text-sm text-zinc-400">
                         {new Date(order.assigned_at).toLocaleString()} ·{" "}
                         <span className="capitalize text-zinc-300">{order.status}</span>
+                        {order.order_number ? (
+                          <span className="text-green-400">
+                            {" "}
+                            · Order #{formatOrderNumber(order.order_number)}
+                          </span>
+                        ) : null}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
@@ -689,6 +717,48 @@ export default function AdminPage() {
                     })}
                   </ul>
 
+                  {(order.pending_items ?? []).length > 0 ? (
+                    <ul className="mt-3 space-y-2 border-t border-amber-900/40 pt-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-amber-400">
+                        Proposed by waiter — accept or reject
+                      </p>
+                      {order.pending_items.map((item) => (
+                        <li
+                          key={item.proposal_id}
+                          className="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-amber-950/30 px-3 py-2 text-sm"
+                        >
+                          <span className="min-w-0 flex-1">
+                            {item.name}
+                            <span className="text-amber-200/70">
+                              {" "}
+                              · Qty {item.qty} · {item.waiter_name || "Waiter"}
+                            </span>
+                          </span>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void resolvePendingProposal(order, item.proposal_id, "accept")
+                              }
+                              className="rounded-lg bg-green-600 px-2.5 py-1 text-xs font-semibold"
+                            >
+                              Accept
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                void resolvePendingProposal(order, item.proposal_id, "reject")
+                              }
+                              className="rounded-lg border border-zinc-600 px-2.5 py-1 text-xs font-semibold text-zinc-300"
+                            >
+                              Reject
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+
                   {!isOrderClosed(order.status) && (
                     <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-zinc-800 pt-3">
                       <select
@@ -728,6 +798,25 @@ export default function AdminPage() {
                           Accept
                         </button>
                       )}
+                      {order.order_number ? (
+                        <>
+                          <div className="sr-only" aria-hidden>
+                            <OrderReceipt
+                              order={order}
+                              receiptId={`receipt-${order.id}`}
+                            />
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() =>
+                              printOrderReceipt(order, `receipt-${order.id}`)
+                            }
+                            className="rounded-lg border border-zinc-600 px-3 py-1.5 text-xs font-semibold"
+                          >
+                            Print receipt
+                          </button>
+                        </>
+                      ) : null}
                       {!isOrderClosed(order.status) && (
                         <button
                           type="button"

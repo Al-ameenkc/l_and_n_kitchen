@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import {
+  assignOrderNumberIfNeeded,
   getOrderById,
   isMissingOrdersSchemaError,
   isOrderClosed,
   mapDbOrder,
   normalizeOrderItems,
   orderTotal,
+  resolvePendingItem,
   syncShareFromOrder,
   type OrderStatus,
 } from "@/lib/orders-db";
@@ -26,7 +28,26 @@ export async function PUT(request: Request, { params }: Params) {
     const body = (await request.json()) as {
       status?: string;
       items?: unknown;
+      pending_action?: "accept" | "reject";
+      proposal_id?: string;
     };
+
+    const supabase = createServiceClient();
+
+    if (body.pending_action && body.proposal_id) {
+      const resolved = await resolvePendingItem(
+        id,
+        body.proposal_id,
+        body.pending_action,
+        supabase
+      );
+      try {
+        await syncShareFromOrder(resolved);
+      } catch (shareErr) {
+        console.error("syncShareFromOrder:", shareErr);
+      }
+      return NextResponse.json(resolved);
+    }
 
     const updates: Record<string, unknown> = {};
 
@@ -55,7 +76,6 @@ export async function PUT(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Nothing to update." }, { status: 400 });
     }
 
-    const supabase = createServiceClient();
     const existing = await getOrderById(id, supabase);
     if (!existing) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
@@ -87,7 +107,16 @@ export async function PUT(request: Request, { params }: Params) {
       return NextResponse.json({ error: error.message }, { status: 400 });
     }
 
-    const order = mapDbOrder(data as Record<string, unknown>);
+    let order = mapDbOrder(data as Record<string, unknown>);
+
+    if (body.status === "accepted" && !order.order_number) {
+      try {
+        order = await assignOrderNumberIfNeeded(id, supabase);
+      } catch (numErr) {
+        console.error("assignOrderNumberIfNeeded:", numErr);
+      }
+    }
+
     try {
       await syncShareFromOrder(order);
     } catch (shareErr) {

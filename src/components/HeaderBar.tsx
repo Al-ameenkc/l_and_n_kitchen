@@ -14,6 +14,7 @@ interface HeaderBarProps {
   showOrdersIcon?: boolean;
   orderCount?: number;
   onOpenOrders?: () => void;
+  onBack?: () => void;
 }
 
 function OrdersCircleIcon({ className }: { className?: string }) {
@@ -31,6 +32,7 @@ export function HeaderBar({
   showOrdersIcon = false,
   orderCount = 0,
   onOpenOrders,
+  onBack,
 }: HeaderBarProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -60,6 +62,18 @@ export function HeaderBar({
   return (
     <header className="pointer-events-none relative z-50 shrink-0 bg-transparent px-4 pb-1 pt-[max(1rem,env(safe-area-inset-top))]">
       <div className="flex h-11 w-full items-center gap-2">
+        {onBack ? (
+          <button
+            type="button"
+            onClick={onBack}
+            aria-label="Back to categories"
+            className="pointer-events-auto flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2a2a2a]/95 text-white ring-1 ring-zinc-700/60 backdrop-blur-sm transition-transform active:scale-95"
+          >
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        ) : null}
         <Image
           src="/images/ChatGPT_Image_Jun_15__2026__08_20_55_PM-removebg-preview.png"
           alt="L&N Kitchen"

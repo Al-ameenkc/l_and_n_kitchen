@@ -79,21 +79,21 @@ export async function PATCH(request: Request, { params }: Params) {
       );
     }
 
-    let nextItems = [...order.items];
     const action = body.action ?? "replace";
 
-    if (action === "add" && body.item) {
-      const item = normalizeOrderItems([body.item])[0];
-      if (!item) {
-        return NextResponse.json({ error: "Invalid dish." }, { status: 400 });
-      }
-      const existing = nextItems.find((row) => row.id === item.id);
-      if (existing) {
-        existing.qty = Math.min(99, existing.qty + item.qty);
-      } else {
-        nextItems.push(item);
-      }
-    } else if (action === "set_qty" && body.id) {
+    if (action === "add") {
+      return NextResponse.json(
+        {
+          error:
+            "Only your waiter can add dishes after submitting. Please ask a staff member.",
+        },
+        { status: 403 }
+      );
+    }
+
+    let nextItems = [...order.items];
+
+    if (action === "set_qty" && body.id) {
       const qty = Math.max(1, Math.min(99, Math.round(Number(body.qty) || 1)));
       nextItems = nextItems.map((row) =>
         row.id === body.id ? { ...row, qty } : row

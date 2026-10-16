@@ -134,6 +134,10 @@ export function WaiterOrderView() {
   const [assigning, setAssigning] = useState(false);
   const [assignError, setAssignError] = useState("");
   const [assignSuccess, setAssignSuccess] = useState("");
+  const [proposeDishId, setProposeDishId] = useState("");
+  const [proposing, setProposing] = useState(false);
+  const [proposeError, setProposeError] = useState("");
+  const [proposeSuccess, setProposeSuccess] = useState("");
   const ticketRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -245,6 +249,44 @@ export function WaiterOrderView() {
       setDownloadError("Couldn’t create the image. Try again.");
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const proposeDishToOrder = async () => {
+    if (!shareId || !proposeDishId || !waiterStaffId.trim()) return;
+    const dish = menuData.dishes.find((d) => d.id === proposeDishId);
+    if (!dish) return;
+
+    setProposing(true);
+    setProposeError("");
+    setProposeSuccess("");
+    try {
+      const res = await fetch("/api/orders/waiter-propose", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          share_id: shareId,
+          waiter_staff_id: waiterStaffId.trim(),
+          item: {
+            id: dish.id,
+            name: dish.name,
+            category: dish.category,
+            price: dish.price,
+            qty: 1,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setProposeError(data.error ?? "Could not propose dish");
+        return;
+      }
+      setProposeSuccess(`"${dish.name}" sent to admin for approval.`);
+      setProposeDishId("");
+    } catch {
+      setProposeError("Could not propose dish. Check your connection.");
+    } finally {
+      setProposing(false);
     }
   };
 
@@ -547,6 +589,45 @@ export function WaiterOrderView() {
           </p>
         )}
       </div>
+
+      {alreadyAssigned && shareId ? (
+        <div className="mt-6 space-y-3 rounded-2xl border border-zinc-800 bg-[#1a1a1a] p-4">
+          <div>
+            <h2 className="text-base font-extrabold text-white">Add dish for guest</h2>
+            <p className="mt-1 text-xs text-zinc-500">
+              Proposals go to admin for accept or reject before they appear on the order.
+            </p>
+          </div>
+          <select
+            value={proposeDishId}
+            onChange={(e) => setProposeDishId(e.target.value)}
+            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm text-white outline-none focus:border-green-500"
+          >
+            <option value="">Choose a dish to add…</option>
+            {menuData.dishes
+              .filter((d) => d.available !== false)
+              .map((dish) => (
+                <option key={dish.id} value={dish.id}>
+                  {dish.name} · {dish.category}
+                </option>
+              ))}
+          </select>
+          <button
+            type="button"
+            disabled={!proposeDishId || proposing}
+            onClick={() => void proposeDishToOrder()}
+            className="w-full rounded-2xl bg-green-600 px-4 py-3.5 text-sm font-extrabold text-white disabled:cursor-not-allowed disabled:bg-zinc-700 disabled:text-zinc-400"
+          >
+            {proposing ? "Sending…" : "Send to admin"}
+          </button>
+          {proposeSuccess ? (
+            <p className="text-center text-sm text-green-400">{proposeSuccess}</p>
+          ) : null}
+          {proposeError ? (
+            <p className="text-center text-sm text-red-400">{proposeError}</p>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -34,6 +34,13 @@ export interface LockedOrderItem {
   qty: number;
 }
 
+export interface PendingOrderItem extends OrderItem {
+  proposal_id: string;
+  proposed_by: "waiter";
+  proposed_at: string;
+  waiter_name?: string;
+}
+
 export interface DbOrder {
   id: string;
   table_label: string;
@@ -43,6 +50,8 @@ export interface DbOrder {
   waiter_image_url: string | null;
   items: OrderItem[];
   locked_items: LockedOrderItem[];
+  pending_items: PendingOrderItem[];
+  order_number: number | null;
   total: number;
   currency: string;
   status: OrderStatus;
@@ -88,6 +97,30 @@ export function normalizeLockedItems(raw: unknown): LockedOrderItem[] {
     .filter((item): item is LockedOrderItem => Boolean(item));
 }
 
+export function normalizePendingItems(raw: unknown): PendingOrderItem[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item) => {
+      if (!item || typeof item !== "object") return null;
+      const row = item as Partial<PendingOrderItem>;
+      const id = String(row.id ?? "").trim();
+      const proposal_id = String(row.proposal_id ?? "").trim();
+      if (!id || !proposal_id) return null;
+      return {
+        id,
+        proposal_id,
+        name: String(row.name ?? id),
+        category: String(row.category ?? ""),
+        price: Number(row.price) || 0,
+        qty: Math.max(1, Math.min(99, Math.round(Number(row.qty) || 1))),
+        proposed_by: "waiter" as const,
+        proposed_at: String(row.proposed_at ?? new Date().toISOString()),
+        ...(row.waiter_name ? { waiter_name: String(row.waiter_name) } : {}),
+      } satisfies PendingOrderItem;
+    })
+    .filter((item): item is PendingOrderItem => Boolean(item));
+}
+
 export function orderTotal(items: OrderItem[]): number {
   return items.reduce((sum, item) => sum + item.price * item.qty, 0);
 }
@@ -106,6 +139,11 @@ export function mapDbOrder(row: Record<string, unknown>): DbOrder {
     locked_items: locked.length
       ? locked
       : items.map((item) => ({ id: item.id, qty: item.qty })),
+    pending_items: normalizePendingItems(row.pending_items),
+    order_number:
+      row.order_number === null || row.order_number === undefined
+        ? null
+        : Number(row.order_number) || null,
     total: Number(row.total) || orderTotal(items),
     currency: String(row.currency ?? "NGN"),
     status: (row.status as OrderStatus) || "new",
@@ -205,22 +243,110 @@ export async function getOrderByShareId(
 export async function updateOrderItems(
   id: string,
   items: OrderItem[],
-  client?: SupabaseClient
+  client?: SupabaseClient,
+  pendingItems?: PendingOrderItem[]
 ): Promise<DbOrder> {
   const supabase = client ?? createServiceClient();
   const total = orderTotal(items);
+  const updates: Record<string, unknown> = {
+    items,
+    total,
+    dish_ids: items.map((item) => item.id),
+  };
+  if (pendingItems !== undefined) {
+    updates.pending_items = pendingItems;
+  }
   const { data, error } = await supabase
     .from("orders")
-    .update({
-      items,
-      total,
-      dish_ids: items.map((item) => item.id),
-    })
+    .update(updates)
     .eq("id", id)
     .select("*")
     .single();
   if (error) throw error;
   return mapDbOrder(data as Record<string, unknown>);
+}
+
+export async function assignOrderNumberIfNeeded(
+  id: string,
+  client?: SupabaseClient
+): Promise<DbOrder> {
+  const supabase = client ?? createServiceClient();
+  const { error: rpcError } = await supabase.rpc("assign_order_number", { p_order_id: id });
+  if (rpcError && !isMissingOrdersSchemaError(rpcError.message)) {
+    throw rpcError;
+  }
+  const order = await getOrderById(id, supabase);
+  if (!order) throw new Error("Order not found.");
+  return order;
+}
+
+export function mergeItemIntoList(items: OrderItem[], item: OrderItem): OrderItem[] {
+  const next = [...items];
+  const existing = next.find((row) => row.id === item.id);
+  if (existing) {
+    existing.qty = Math.min(99, existing.qty + item.qty);
+    return next;
+  }
+  next.push(item);
+  return next;
+}
+
+export async function proposeWaiterItem(
+  orderId: string,
+  item: OrderItem,
+  waiterName: string,
+  client?: SupabaseClient
+): Promise<DbOrder> {
+  const supabase = client ?? createServiceClient();
+  const order = await getOrderById(orderId, supabase);
+  if (!order) throw new Error("Order not found.");
+  if (isOrderClosed(order.status)) throw new Error("This order is closed.");
+
+  const proposal: PendingOrderItem = {
+    ...item,
+    proposal_id: `prop_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    proposed_by: "waiter",
+    proposed_at: new Date().toISOString(),
+    waiter_name: waiterName,
+  };
+
+  const pending_items = [...order.pending_items, proposal];
+  const { data, error } = await supabase
+    .from("orders")
+    .update({ pending_items })
+    .eq("id", orderId)
+    .select("*")
+    .single();
+  if (error) throw error;
+  return mapDbOrder(data as Record<string, unknown>);
+}
+
+export async function resolvePendingItem(
+  orderId: string,
+  proposalId: string,
+  action: "accept" | "reject",
+  client?: SupabaseClient
+): Promise<DbOrder> {
+  const supabase = client ?? createServiceClient();
+  const order = await getOrderById(orderId, supabase);
+  if (!order) throw new Error("Order not found.");
+
+  const pending = order.pending_items.find((row) => row.proposal_id === proposalId);
+  if (!pending) throw new Error("Pending item not found.");
+
+  const pending_items = order.pending_items.filter((row) => row.proposal_id !== proposalId);
+  let items = order.items;
+  if (action === "accept") {
+    items = mergeItemIntoList(items, {
+      id: pending.id,
+      name: pending.name,
+      category: pending.category,
+      price: pending.price,
+      qty: pending.qty,
+    });
+  }
+
+  return updateOrderItems(orderId, items, supabase, pending_items);
 }
 
 export async function writeOrderSharePayload(
@@ -250,9 +376,11 @@ export async function syncShareFromOrder(order: DbOrder): Promise<void> {
     order_id: order.id,
     customer_token: order.customer_token,
     locked_items: order.locked_items,
+    pending_items: order.pending_items,
     status: order.status,
     table_label: order.table_label,
     total: order.total,
+    order_number: order.order_number,
   });
 }
 
@@ -262,11 +390,13 @@ export function publicOrderPayload(order: DbOrder) {
     table_label: order.table_label,
     items: order.items,
     locked_items: order.locked_items,
+    pending_items: order.pending_items,
     total: order.total,
     currency: order.currency,
     status: order.status,
     share_id: order.share_id,
     assigned_at: order.assigned_at,
+    order_number: order.order_number,
   };
 }
 

@@ -1,8 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
-import { AnimatePresence, motion } from "framer-motion";
 import { useDeck } from "@/hooks/useDeck";
 import { useActiveOrderSync } from "@/hooks/useActiveOrderSync";
 import {
@@ -12,10 +10,9 @@ import {
   useMenuStore,
 } from "@/store/menuStore";
 import type { Dish, MenuData } from "@/types/menu";
-import { formatPrice } from "@/utils/formatPrice";
 import { WishListBar } from "./CardActionButtons";
 import { CardStack } from "./CardStack";
-import { CurvedCategoryCarousel } from "./CurvedCategoryCarousel";
+import { CategoryLanding } from "./CategoryLanding";
 import { DishDetailView } from "./DishDetailView";
 import { HeaderBar } from "./HeaderBar";
 import { OnboardingWalkthrough } from "./OnboardingWalkthrough";
@@ -23,63 +20,9 @@ import { TrashSheet } from "./TrashSheet";
 import { WishListSheet } from "./WishListSheet";
 
 type SheetView = "list" | "order" | "history" | "record";
+type ScreenView = "categories" | "menu";
 
-function AddToOrderConfirm({
-  dish,
-  onCancel,
-  onConfirm,
-}: {
-  dish: Dish;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/70 px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-8 backdrop-blur-sm sm:items-center">
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 16 }}
-        className="w-full max-w-sm overflow-hidden rounded-3xl bg-[#1a1a1a] shadow-[0_20px_60px_rgba(0,0,0,0.55)] ring-1 ring-white/10"
-      >
-        <div className="flex gap-3 border-b border-zinc-800 p-4">
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-zinc-800">
-            <Image src={dish.image} alt="" fill className="object-cover" unoptimized />
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-400">
-              Add to order?
-            </p>
-            <p className="mt-1 truncate text-base font-extrabold text-white">{dish.name}</p>
-            <p className="mt-0.5 text-sm font-bold text-green-400">{formatPrice(dish.price)}</p>
-          </div>
-        </div>
-        <div className="space-y-4 px-4 py-4">
-          <p className="text-sm leading-relaxed text-zinc-300">
-            Are you sure you want to add this to your order? Once added, you{" "}
-            <span className="font-semibold text-white">cannot remove it yourself</span>. Ask a
-            waiter if you need a change.
-          </p>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="flex-1 rounded-full bg-zinc-800 py-3 text-sm font-bold text-zinc-200"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={onConfirm}
-              className="flex-1 rounded-full bg-green-500 py-3 text-sm font-bold text-white"
-            >
-              Add to order
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
+const PRUNE_INTERVAL_MS = 60 * 1000;
 
 export function MenuApp({ menuData }: { menuData: MenuData }) {
   const {
@@ -102,6 +45,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     setWishlistQty,
     restoreFromTrashToWishlist,
     restoreFromTrashToDeck,
+    restoreAllTrashToDeck,
     setSearchQuery,
     setCategoryFilter,
     setDetailDishId,
@@ -111,16 +55,17 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     setActiveShareId,
     updateOrderRecordShareId,
     placeOrderFromWishlist,
-    addToLocalOrder,
     startNewOrderSession,
+    beginNewOrderWithDish,
+    pruneExpiredOrders,
   } = useMenuStore();
 
+  const [screen, setScreen] = useState<ScreenView>("categories");
   const [sheetView, setSheetView] = useState<SheetView>("list");
   const [viewingRecordId, setViewingRecordId] = useState<string | null>(null);
-  const [pendingOrderDish, setPendingOrderDish] = useState<Dish | null>(null);
   const [deckRemountKey, setDeckRemountKey] = useState(0);
 
-  const { addDishToOrder } = useActiveOrderSync(menuData.dishes);
+  useActiveOrderSync(menuData.dishes);
 
   const deck = useDeck(menuData.dishes);
 
@@ -199,39 +144,24 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     [orderSnapshotItems, detailDishId]
   );
 
-  const commitWish = useCallback(
-    (dish: Dish) => {
-      addToWishlist(dish.id);
-    },
-    [addToWishlist]
-  );
-
-  const commitOrderAdd = useCallback(
-    async (dish: Dish) => {
-      if (activeOrderId) {
-        await addDishToOrder(dish);
-        return;
-      }
-      addToLocalOrder({
-        id: dish.id,
-        name: dish.name,
-        category: dish.category,
-        price: dish.price,
-        qty: 1,
-      });
-    },
-    [activeOrderId, addDishToOrder, addToLocalOrder]
-  );
-
   const handleWish = useCallback(
     (dish: Dish) => {
       if (hasActiveOrderSession) {
-        setPendingOrderDish(dish);
+        beginNewOrderWithDish(dish.id);
+        setSheetView("list");
+        setViewingRecordId(null);
+        setWishlistOpen(false);
+        setDeckRemountKey((k) => k + 1);
         return;
       }
-      commitWish(dish);
+      addToWishlist(dish.id);
     },
-    [commitWish, hasActiveOrderSession]
+    [
+      addToWishlist,
+      beginNewOrderWithDish,
+      hasActiveOrderSession,
+      setWishlistOpen,
+    ]
   );
 
   const handlePlaceOrder = useCallback(() => {
@@ -265,11 +195,6 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     setSheetView("order");
     setViewingRecordId(null);
     setWishlistOpen(true);
-  }, [setWishlistOpen]);
-
-  const handleOrderMore = useCallback(() => {
-    setWishlistOpen(false);
-    setSheetView("order");
   }, [setWishlistOpen]);
 
   const handleNewOrder = useCallback(() => {
@@ -329,8 +254,66 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     return useMenuStore.persist.onFinishHydration(() => setStoreHydrated(true));
   }, [storeHydrated]);
 
+  useEffect(() => {
+    if (!storeHydrated) return;
+    pruneExpiredOrders();
+    const timer = window.setInterval(pruneExpiredOrders, PRUNE_INTERVAL_MS);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") pruneExpiredOrders();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [storeHydrated, pruneExpiredOrders]);
+
+  const openCategory = useCallback(
+    (category: string) => {
+      setSearchQuery("");
+      setCategoryFilter(category);
+      setScreen("menu");
+      window.history.pushState({ lnScreen: "menu" }, "");
+    },
+    [setCategoryFilter, setSearchQuery]
+  );
+
+  const backToCategories = useCallback(() => {
+    if (window.history.state?.lnScreen === "menu") {
+      window.history.back();
+    } else {
+      setScreen("categories");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (window.history.state?.lnScreen === "menu") {
+      window.history.replaceState(null, "");
+    }
+    const onPopState = () => {
+      if (window.history.state?.lnScreen !== "menu") {
+        setScreen("categories");
+        setDetailDishId(null);
+      }
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [setDetailDishId]);
+
   return (
     <div ref={rootRef} className="relative flex h-full flex-col overflow-hidden bg-[#111111]">
+      {screen === "categories" ? (
+        <CategoryLanding
+          categories={menuData.categories}
+          categoryImages={menuData.categoryImages}
+          dishes={menuData.dishes}
+          showOrdersButton={hasOrderHistory}
+          orderCount={orderRecords.length}
+          onOpenOrders={openOrdersHistory}
+          onSelect={openCategory}
+        />
+      ) : (
+      <>
       <div className="relative z-40 shrink-0 overflow-visible">
         <HeaderBar
           searchQuery={searchQuery}
@@ -339,18 +322,14 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
           showOrdersIcon={hasOrderHistory}
           orderCount={orderRecords.length}
           onOpenOrders={openOrdersHistory}
+          onBack={backToCategories}
         />
-        <div className="relative z-10">
-          <CurvedCategoryCarousel
-            categories={menuData.categories}
-            categoryImages={menuData.categoryImages}
-            selected={categoryFilter}
-            onChange={setCategoryFilter}
-          />
-        </div>
+        <p className="truncate px-5 pt-1 text-lg font-extrabold text-white">
+          {searchQuery.trim() ? "Search results" : categoryFilter}
+        </p>
       </div>
 
-      <main className="relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(5.75rem,env(safe-area-inset-bottom))] pt-1">
+      <main className="relative z-10 mt-3 flex min-h-0 flex-1 flex-col overflow-visible pb-[max(5.75rem,env(safe-area-inset-bottom))]">
         <CardStack
           key={`${deckKey}-${deckRemountKey}`}
           deck={deck}
@@ -378,12 +357,14 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         onOpenWishlist={openWishlist}
         onOpenOrders={openCurrentOrder}
       />
+      </>
+      )}
 
       <DishDetailView
         dish={detailDish}
         inWishlist={detailInWishlist}
         inOrder={detailInOrder}
-        orderMode={hasActiveOrderSession}
+        orderMode={false}
         onClose={() => setDetailDishId(null)}
         onAddToWishlist={handleWish}
       />
@@ -411,7 +392,6 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
           setSheetView("history");
         }}
         onShareIdForRecord={handleShareIdForRecord}
-        onOrderMore={hasActiveOrderSession ? handleOrderMore : undefined}
         onNewOrder={hasActiveOrderSession ? handleNewOrder : undefined}
         onPlaceOrder={handlePlaceOrder}
       />
@@ -422,25 +402,9 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         onClose={() => setTrashOpen(false)}
         onRestoreToWishlist={restoreFromTrashToWishlist}
         onRestoreToDeck={restoreFromTrashToDeck}
+        onRestoreAllToDeck={restoreAllTrashToDeck}
         onSelectDish={(dish) => setDetailDishId(dish.id)}
       />
-
-      <AnimatePresence>
-        {pendingOrderDish ? (
-          <AddToOrderConfirm
-            key={pendingOrderDish.id}
-            dish={pendingOrderDish}
-            onCancel={() => {
-              setPendingOrderDish(null);
-              setDeckRemountKey((k) => k + 1);
-            }}
-            onConfirm={() => {
-              void commitOrderAdd(pendingOrderDish);
-              setPendingOrderDish(null);
-            }}
-          />
-        ) : null}
-      </AnimatePresence>
     </div>
   );
 }

@@ -20,6 +20,8 @@ export type OrderRecord = {
   status?: OrderStatus | null;
 };
 
+export const ORDER_RECORD_TTL_MS = 24 * 60 * 60 * 1000;
+
 function newOrderRecordId(): string {
   return `ord_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -48,6 +50,7 @@ interface MenuStore {
   setWishlistQty: (id: string, qty: number) => void;
   restoreFromTrashToWishlist: (id: string) => void;
   restoreFromTrashToDeck: (id: string) => void;
+  restoreAllTrashToDeck: () => void;
   setSearchQuery: (query: string) => void;
   setCategoryFilter: (category: string) => void;
   setDetailDishId: (id: string | null) => void;
@@ -75,7 +78,11 @@ interface MenuStore {
   resetGuestSession: () => void;
   /** Back to wishlist browsing for a new order */
   startNewOrderSession: () => void;
+  /** Clear active order session and start a fresh wishlist with one dish */
+  beginNewOrderWithDish: (id: string) => void;
   updateOrderRecordShareId: (recordId: string, shareId: string) => void;
+  /** Drop My Orders entries older than ORDER_RECORD_TTL_MS */
+  pruneExpiredOrders: () => void;
   isItemLocked: (id: string) => boolean;
   lockedQtyFor: (id: string) => number;
 }
@@ -175,6 +182,7 @@ export const useMenuStore = create<MenuStore>()(
         set((state) => ({
           trash: state.trash.filter((t) => t !== id),
         })),
+      restoreAllTrashToDeck: () => set({ trash: [] }),
       setSearchQuery: (query) => set({ searchQuery: query }),
       setCategoryFilter: (category) => set({ categoryFilter: category }),
       setDetailDishId: (id) => set({ detailDishId: id }),
@@ -360,6 +368,43 @@ export const useMenuStore = create<MenuStore>()(
           activeRecordId: null,
           detailDishId: null,
           wishlistOpen: false,
+        }),
+      beginNewOrderWithDish: (id) =>
+        set({
+          wishlist: [{ id, qty: 1 }],
+          trash: [],
+          activeShareId: null,
+          activeOrderId: null,
+          customerToken: null,
+          lockedItems: [],
+          orderStatus: null,
+          orderSnapshotItems: [],
+          activeRecordId: null,
+          detailDishId: null,
+          wishlistOpen: false,
+        }),
+      pruneExpiredOrders: () =>
+        set((state) => {
+          const cutoff = Date.now() - ORDER_RECORD_TTL_MS;
+          const kept = state.orderRecords.filter((record) => {
+            const placedAt = Date.parse(record.createdAt);
+            return !Number.isFinite(placedAt) || placedAt > cutoff;
+          });
+          if (kept.length === state.orderRecords.length) return state;
+          const activeExpired =
+            state.activeRecordId !== null &&
+            !kept.some((record) => record.id === state.activeRecordId);
+          if (!activeExpired) return { orderRecords: kept };
+          return {
+            orderRecords: kept,
+            activeRecordId: null,
+            activeShareId: null,
+            activeOrderId: null,
+            customerToken: null,
+            lockedItems: [],
+            orderStatus: null,
+            orderSnapshotItems: [],
+          };
         }),
       isItemLocked: (id) => get().lockedItems.some((item) => item.id === id),
       lockedQtyFor: (id) => get().lockedItems.find((item) => item.id === id)?.qty ?? 0,

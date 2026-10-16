@@ -30,7 +30,6 @@ interface WishListSheetProps {
   onViewRecord?: (recordId: string) => void;
   onBackToHistory?: () => void;
   onShareIdForRecord?: (recordId: string, shareId: string) => void;
-  onOrderMore?: () => void;
   onNewOrder?: () => void;
   /** Called when guest swipes to place the order (snapshot + clear wish list) */
   onPlaceOrder?: () => void;
@@ -407,7 +406,6 @@ export function WishListSheet({
   onViewRecord,
   onBackToHistory,
   onShareIdForRecord,
-  onOrderMore,
   onNewOrder,
   onPlaceOrder,
 }: WishListSheetProps) {
@@ -587,31 +585,20 @@ export function WishListSheet({
                     onShareId={onShareId}
                     orderLive={orderLive}
                   />
-                  {onOrderMore || onNewOrder ? (
-                    <div className="flex gap-2 pb-2">
-                      {onOrderMore ? (
-                        <button
-                          type="button"
-                          onClick={onOrderMore}
-                          className="flex-1 rounded-xl border border-green-500/40 bg-green-500/15 px-3 py-2.5 text-xs font-bold text-green-400"
-                        >
-                          Order more
-                        </button>
-                      ) : null}
-                      {onNewOrder ? (
-                        <button
-                          type="button"
-                          onClick={onNewOrder}
-                          className="flex-1 rounded-xl border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-xs font-bold text-zinc-200"
-                        >
-                          New order
-                        </button>
-                      ) : null}
+                  {onNewOrder ? (
+                    <div className="pb-2">
+                      <button
+                        type="button"
+                        onClick={onNewOrder}
+                        className="w-full rounded-xl border border-zinc-600 bg-zinc-800/80 px-3 py-2.5 text-xs font-bold text-zinc-200"
+                      >
+                        New order
+                      </button>
                     </div>
                   ) : null}
                   {orderLive ? (
                     <p className="px-1 text-center text-[10px] leading-snug text-zinc-500">
-                      Swipe right on new dishes to add them here. To remove an original item, ask your waiter.
+                      Need more dishes? Ask your waiter to add them. To change or remove items, ask your waiter.
                     </p>
                   ) : null}
                 </div>
