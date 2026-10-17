@@ -68,6 +68,9 @@ function SearchPulse({ rect }: { rect: SpotlightRect }) {
   );
 }
 
+/** Survives category changes; resets only when the page reloads. */
+let walkthroughShownThisLoad = false;
+
 function DeckSpotlight({ rect }: { rect: SpotlightRect }) {
   return (
     <motion.div
@@ -110,7 +113,11 @@ export function OnboardingWalkthrough({
       setStep(null);
       return;
     }
-    const timer = window.setTimeout(() => setStep(0), 600);
+    if (walkthroughShownThisLoad) return;
+    const timer = window.setTimeout(() => {
+      walkthroughShownThisLoad = true;
+      setStep(0);
+    }, 600);
     return () => window.clearTimeout(timer);
   }, [ready, skip]);
 

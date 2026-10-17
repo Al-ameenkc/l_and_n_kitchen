@@ -18,6 +18,7 @@ import { HeaderBar } from "./HeaderBar";
 import { OnboardingWalkthrough } from "./OnboardingWalkthrough";
 import { TrashSheet } from "./TrashSheet";
 import { WishListSheet } from "./WishListSheet";
+import { serviceNote } from "@/lib/waiter-limits";
 
 type SheetView = "list" | "order" | "history" | "record";
 type ScreenView = "categories" | "menu";
@@ -35,6 +36,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     trashOpen,
     activeShareId,
     activeOrderId,
+    customerToken,
     lockedItems,
     orderSnapshotItems,
     orderRecords,
@@ -53,6 +55,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     setTrashOpen,
     syncWithMenuDishIds,
     setActiveShareId,
+    setActiveOrder,
     updateOrderRecordShareId,
     placeOrderFromWishlist,
     startNewOrderSession,
@@ -64,6 +67,10 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
   const [sheetView, setSheetView] = useState<SheetView>("list");
   const [viewingRecordId, setViewingRecordId] = useState<string | null>(null);
   const [deckRemountKey, setDeckRemountKey] = useState(0);
+  const [tableToken, setTableToken] = useState("");
+  const [tableLabel, setTableLabel] = useState("");
+  const [placeError, setPlaceError] = useState("");
+  const [serviceNoteText, setServiceNoteText] = useState("");
 
   useActiveOrderSync(menuData.dishes);
 
@@ -164,7 +171,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     ]
   );
 
-  const handlePlaceOrder = useCallback(() => {
+  const handlePlaceOrder = useCallback(async () => {
     const items = wishlistDishes.map((dish) => ({
       id: dish.id,
       name: dish.name,
@@ -172,10 +179,46 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
       price: dish.price,
       qty: dish.qty,
     }));
-    if (!items.length) return;
+    if (!items.length) {
+      const message = "Add a dish before ordering.";
+      setPlaceError(message);
+      throw new Error(message);
+    }
+    if (!tableToken) {
+      const message = "Scan the QR code on your table before ordering.";
+      setPlaceError(message);
+      throw new Error(message);
+    }
+    setPlaceError("");
+    let res: Response;
+    try {
+      res = await fetch("/api/orders/place", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ table_token: tableToken, items }),
+      });
+    } catch {
+      const message = "Could not place the order. Check your connection.";
+      setPlaceError(message);
+      throw new Error(message);
+    }
+    const data = await res.json();
+    if (!res.ok) {
+      const message = data.error ?? "Could not place the order.";
+      setPlaceError(message);
+      throw new Error(message);
+    }
     placeOrderFromWishlist(items);
+    setActiveOrder({
+      orderId: data.id,
+      customerToken: data.customer_token,
+      lockedItems: data.locked_items ?? items.map((item) => ({ id: item.id, qty: item.qty })),
+      items: data.items ?? items,
+      status: data.status,
+    });
+    if (data.share_id) setActiveShareId(data.share_id);
     setSheetView("order");
-  }, [placeOrderFromWishlist, wishlistDishes]);
+  }, [placeOrderFromWishlist, setActiveOrder, setActiveShareId, tableToken, wishlistDishes]);
 
   const handleTrash = useCallback((dish: Dish) => addToTrash(dish.id), [addToTrash]);
 
@@ -230,6 +273,68 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
     },
     [activeRecordId, setActiveShareId, updateOrderRecordShareId]
   );
+
+  useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get("table")?.trim() ?? "";
+    if (fromUrl) {
+      try {
+        sessionStorage.setItem("ln-table-token", fromUrl);
+      } catch {
+        /* ignore */
+      }
+      setTableToken(fromUrl);
+      return;
+    }
+    try {
+      const saved = sessionStorage.getItem("ln-table-token") ?? "";
+      if (saved) setTableToken(saved);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!tableToken) {
+      setTableLabel("");
+      return;
+    }
+    let cancelled = false;
+    void fetch(`/api/tables/lookup?token=${encodeURIComponent(tableToken)}`, { cache: "no-store" })
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? "Table not found");
+        if (!cancelled) setTableLabel(`Table ${data.table_number}`);
+      })
+      .catch(() => {
+        if (!cancelled) setTableLabel("");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tableToken]);
+
+  useEffect(() => {
+    if (!activeOrderId || !customerToken) {
+      setServiceNoteText("");
+      return;
+    }
+    let cancelled = false;
+    const load = async () => {
+      const res = await fetch(
+        `/api/orders/${encodeURIComponent(activeOrderId)}?token=${encodeURIComponent(customerToken)}`,
+        { cache: "no-store" }
+      );
+      if (!res.ok || cancelled) return;
+      const data = await res.json();
+      if (!cancelled) setServiceNoteText(serviceNote(data));
+    };
+    void load();
+    const timer = window.setInterval(() => void load(), 2000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [activeOrderId, customerToken]);
 
   useEffect(() => {
     syncWithMenuDishIds(menuData.dishes.map((d) => d.id));
@@ -311,6 +416,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
           orderCount={orderRecords.length}
           onOpenOrders={openOrdersHistory}
           onSelect={openCategory}
+          tableLabel={tableLabel}
         />
       ) : (
       <>
@@ -326,6 +432,7 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         />
         <p className="truncate px-5 pt-1 text-lg font-extrabold text-white">
           {searchQuery.trim() ? "Search results" : categoryFilter}
+          {tableLabel ? <span className="ml-2 text-sm font-semibold text-green-400">{tableLabel}</span> : null}
         </p>
       </div>
 
@@ -394,6 +501,8 @@ export function MenuApp({ menuData }: { menuData: MenuData }) {
         onShareIdForRecord={handleShareIdForRecord}
         onNewOrder={hasActiveOrderSession ? handleNewOrder : undefined}
         onPlaceOrder={handlePlaceOrder}
+        placeError={placeError}
+        serviceNote={serviceNoteText}
       />
 
       <TrashSheet

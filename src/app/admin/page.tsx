@@ -12,8 +12,9 @@ import {
 } from "@/lib/orders-db";
 import { formatOrderNumber } from "@/lib/restaurant";
 import { OrderReceipt, printOrderReceipt } from "@/components/OrderReceipt";
+import { AdminFloor } from "@/components/AdminFloor";
 
-type Tab = "orders" | "categories" | "dishes" | "waiters";
+type Tab = "orders" | "floor" | "categories" | "dishes" | "waiters";
 
 const DISHES_PER_PAGE = 10;
 
@@ -131,8 +132,39 @@ export default function AdminPage() {
       setAuthed(false);
       return;
     }
-    setCategories(await cRes.json());
-    setDishes(await dRes.json());
+
+    const read = async (res: Response) => {
+      const text = await res.text();
+      if (!text) return null;
+      try {
+        return JSON.parse(text) as unknown;
+      } catch {
+        return null;
+      }
+    };
+    const errorOf = (body: unknown, fallback: string) =>
+      body && typeof body === "object" && "error" in body && typeof body.error === "string"
+        ? body.error
+        : fallback;
+
+    const categoriesBody = await read(cRes);
+    const dishesBody = await read(dRes);
+    const ordersBody = await read(oRes);
+    const waitersBody = await read(wRes);
+
+    if (!cRes.ok || !Array.isArray(categoriesBody) || !dRes.ok || !Array.isArray(dishesBody)) {
+      showMessage(
+        errorOf(categoriesBody, "") ||
+          errorOf(dishesBody, "") ||
+          "Could not load the menu. Check the Supabase connection and try again.",
+        true
+      );
+      setCategories(Array.isArray(categoriesBody) ? (categoriesBody as DbCategory[]) : []);
+      setDishes(Array.isArray(dishesBody) ? (dishesBody as DbDish[]) : []);
+    } else {
+      setCategories(categoriesBody as DbCategory[]);
+      setDishes(dishesBody as DbDish[]);
+    }
 
     if (oRes.status === 503 || wRes.status === 503) {
       setSchemaMissing(true);
@@ -140,8 +172,12 @@ export default function AdminPage() {
       setWaiters([]);
     } else {
       setSchemaMissing(false);
-      if (oRes.ok) setOrders(await oRes.json());
-      if (wRes.ok) setWaiters(await wRes.json());
+      setOrders(oRes.ok && Array.isArray(ordersBody) ? (ordersBody as DbOrder[]) : []);
+      setWaiters(wRes.ok && Array.isArray(waitersBody) ? (waitersBody as DbWaiter[]) : []);
+      if (!oRes.ok || !wRes.ok) {
+        const detail = errorOf(ordersBody, "") || errorOf(waitersBody, "");
+        if (detail) showMessage(detail, true);
+      }
     }
     setAuthed(true);
   }, []);
@@ -568,7 +604,7 @@ export default function AdminPage() {
       )}
 
       <div className="mt-6 flex flex-wrap gap-2">
-        {(["orders", "categories", "dishes", "waiters"] as Tab[]).map((t) => (
+        {(["orders", "floor", "categories", "dishes", "waiters"] as Tab[]).map((t) => (
           <button
             key={t}
             type="button"
@@ -590,7 +626,8 @@ export default function AdminPage() {
           Orders tables need setup/update. In Supabase → SQL Editor, run{" "}
           <code className="rounded bg-black/30 px-1">supabase/orders-waiters.sql</code>,{" "}
           <code className="rounded bg-black/30 px-1">supabase/order-live-sync.sql</code>, and{" "}
-          <code className="rounded bg-black/30 px-1">supabase/order-pending-and-number.sql</code>, then refresh
+          <code className="rounded bg-black/30 px-1">supabase/order-pending-and-number.sql</code>, and{" "}
+          <code className="rounded bg-black/30 px-1">supabase/waiter-queue.sql</code>, then refresh
           this page.
         </div>
       )}
@@ -632,6 +669,9 @@ export default function AdminPage() {
                       <p className="mt-1 text-sm text-zinc-400">
                         {new Date(order.assigned_at).toLocaleString()} ·{" "}
                         <span className="capitalize text-zinc-300">{order.status}</span>
+                        {order.assignment_state && order.assignment_state !== "manual" ? (
+                          <span className="text-zinc-400"> · {order.assignment_state}</span>
+                        ) : null}
                         {order.order_number ? (
                           <span className="text-green-400">
                             {" "}
@@ -848,6 +888,8 @@ export default function AdminPage() {
           )}
         </div>
       )}
+
+      {tab === "floor" && <AdminFloor />}
 
       {tab === "categories" && (
         <div className="mt-8 space-y-8">
@@ -1350,7 +1392,7 @@ export default function AdminPage() {
           <form onSubmit={saveWaiter} className="space-y-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5">
             <h2 className="font-bold">{editingWaiterId ? "Edit waiter" : "Add waiter"}</h2>
             <p className="text-xs text-zinc-500">
-              Waiters enter this ID on the order page. Their photo appears after lookup.
+              Each waiter opens /waiter on their own device and enters this ID to join the queue.
             </p>
             <Field id="waiter-staff-id" label="Waiter ID" required hint='Short code they type (e.g. "W001").'>
               <input

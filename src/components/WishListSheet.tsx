@@ -31,8 +31,10 @@ interface WishListSheetProps {
   onBackToHistory?: () => void;
   onShareIdForRecord?: (recordId: string, shareId: string) => void;
   onNewOrder?: () => void;
-  /** Called when guest swipes to place the order (snapshot + clear wish list) */
-  onPlaceOrder?: () => void;
+  /** Called when guest swipes to place the order. Throw to keep the wish list open. */
+  onPlaceOrder?: () => void | Promise<void>;
+  placeError?: string;
+  serviceNote?: string;
 }
 
 const SWIPE_THRESHOLD = 0.72;
@@ -408,6 +410,8 @@ export function WishListSheet({
   onShareIdForRecord,
   onNewOrder,
   onPlaceOrder,
+  placeError,
+  serviceNote,
 }: WishListSheetProps) {
   const [view, setView] = useState<"list" | "order" | "history" | "record">(initialView);
   const lockedSet = useMemo(() => new Set(lockedItemIds), [lockedItemIds]);
@@ -578,6 +582,11 @@ export function WishListSheet({
                 </div>
               ) : isCurrentOrderView ? (
                 <div className="space-y-2.5">
+                  {serviceNote ? (
+                    <p className="rounded-xl bg-green-500/15 px-3 py-2 text-center text-xs font-semibold text-green-300">
+                      {serviceNote}
+                    </p>
+                  ) : null}
                   <OrderSummaryTable
                     dishes={dishes}
                     total={total}
@@ -673,6 +682,9 @@ export function WishListSheet({
 
             {view === "list" && (
               <div className="overflow-visible border-t border-zinc-800 px-4 pt-3 pb-4">
+                {placeError ? (
+                  <p className="mb-2 text-center text-xs font-semibold text-red-400">{placeError}</p>
+                ) : null}
                 <div className="mb-2.5 flex items-center justify-between rounded-xl bg-white px-3 py-2.5">
                   <span className="text-xs font-semibold text-zinc-600">Total</span>
                   <span className="text-lg font-extrabold text-black">{formatPrice(total)}</span>
@@ -680,8 +692,9 @@ export function WishListSheet({
                 <SwipeToOrderBar
                   disabled={dishes.length === 0}
                   onComplete={() => {
-                    onPlaceOrder?.();
-                    setView("order");
+                    void Promise.resolve(onPlaceOrder?.())
+                      .then(() => setView("order"))
+                      .catch(() => undefined);
                   }}
                 />
               </div>

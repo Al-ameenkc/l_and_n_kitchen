@@ -19,8 +19,13 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const dishes = await listDishesAdmin();
-  return NextResponse.json(dishes);
+  try {
+    const dishes = await listDishesAdmin();
+    return NextResponse.json(dishes);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Could not load dishes";
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 }
 
 export async function POST(request: Request) {

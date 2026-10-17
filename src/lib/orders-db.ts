@@ -12,12 +12,17 @@ export function isOrderPaid(status: OrderStatus | string | null | undefined): bo
   return status === "paid" || status === "completed";
 }
 
+export type AssignmentState = "manual" | "seeking" | "offered" | "accepted" | "confirmed";
+
 export interface DbWaiter {
   id: string;
   staff_id: string;
   name: string;
   image_url: string | null;
   active: boolean;
+  on_duty?: boolean;
+  duty_started_at?: string | null;
+  queue_position?: number | null;
   created_at: string;
 }
 
@@ -60,6 +65,12 @@ export interface DbOrder {
   customer_token: string | null;
   assigned_at: string;
   created_at: string;
+  table_id: string | null;
+  assignment_state: AssignmentState;
+  offered_waiter_id: string | null;
+  offer_expires_at: string | null;
+  skipped_waiter_ids: string[];
+  table_confirmed_at: string | null;
 }
 
 export function normalizeOrderItems(raw: unknown): OrderItem[] {
@@ -152,6 +163,14 @@ export function mapDbOrder(row: Record<string, unknown>): DbOrder {
     customer_token: (row.customer_token as string | null) ?? null,
     assigned_at: String(row.assigned_at ?? row.created_at ?? ""),
     created_at: String(row.created_at ?? ""),
+    table_id: (row.table_id as string | null) ?? null,
+    assignment_state: (row.assignment_state as AssignmentState) || "manual",
+    offered_waiter_id: (row.offered_waiter_id as string | null) ?? null,
+    offer_expires_at: (row.offer_expires_at as string | null) ?? null,
+    skipped_waiter_ids: Array.isArray(row.skipped_waiter_ids)
+      ? row.skipped_waiter_ids.map(String)
+      : [],
+    table_confirmed_at: (row.table_confirmed_at as string | null) ?? null,
   };
 }
 
@@ -397,6 +416,9 @@ export function publicOrderPayload(order: DbOrder) {
     share_id: order.share_id,
     assigned_at: order.assigned_at,
     order_number: order.order_number,
+    assignment_state: order.assignment_state,
+    waiter_name: order.waiter_name,
+    offer_expires_at: order.offer_expires_at,
   };
 }
 

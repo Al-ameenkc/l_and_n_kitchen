@@ -11,6 +11,7 @@ import {
   type OrderItem,
 } from "@/lib/orders-db";
 import { createServiceClient } from "@/lib/supabase/server";
+import { tickQueue } from "@/lib/waiter-queue";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -36,7 +37,14 @@ export async function GET(request: Request, { params }: Params) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
 
-    return NextResponse.json(publicOrderPayload(order));
+    try {
+      await tickQueue();
+    } catch (tickErr) {
+      console.error("tickQueue:", tickErr);
+    }
+    const fresh = (await getOrderById(id)) ?? order;
+
+    return NextResponse.json(publicOrderPayload(fresh));
   } catch (e) {
     const message = e instanceof Error ? e.message : "Could not load order";
     if (isMissingOrdersSchemaError(message)) {

@@ -8,8 +8,13 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const categories = await listCategoriesAdmin();
-  return NextResponse.json(categories);
+  try {
+    const categories = await listCategoriesAdmin();
+    return NextResponse.json(categories);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Could not load categories";
+    return NextResponse.json({ error: message }, { status: 503 });
+  }
 }
 
 export async function POST(request: Request) {

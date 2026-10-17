@@ -12,6 +12,7 @@ import {
   syncShareFromOrder,
   type OrderStatus,
 } from "@/lib/orders-db";
+import { releaseTableForOrder } from "@/lib/waiter-queue";
 import { createServiceClient } from "@/lib/supabase/server";
 
 type Params = { params: Promise<{ id: string }> };
@@ -121,6 +122,14 @@ export async function PUT(request: Request, { params }: Params) {
       await syncShareFromOrder(order);
     } catch (shareErr) {
       console.error("syncShareFromOrder:", shareErr);
+    }
+
+    if (body.status && ["completed", "cancelled", "paid"].includes(body.status)) {
+      try {
+        await releaseTableForOrder(order.id);
+      } catch (releaseErr) {
+        console.error("releaseTableForOrder:", releaseErr);
+      }
     }
 
     return NextResponse.json(order);

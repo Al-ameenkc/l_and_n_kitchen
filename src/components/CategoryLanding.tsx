@@ -15,6 +15,7 @@ interface CategoryLandingProps {
   orderCount?: number;
   onOpenOrders?: () => void;
   onSelect: (category: string) => void;
+  tableLabel?: string;
 }
 
 export function CategoryLanding({
@@ -25,6 +26,7 @@ export function CategoryLanding({
   orderCount = 0,
   onOpenOrders,
   onSelect,
+  tableLabel,
 }: CategoryLandingProps) {
   const countByCategory = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -63,7 +65,11 @@ export function CategoryLanding({
           ) : null}
         </div>
         <h1 className="mt-4 text-2xl font-extrabold text-white">What are you craving?</h1>
-        <p className="mt-1 text-sm text-zinc-500">Pick a category to start browsing the menu.</p>
+        <p className="mt-1 text-sm text-zinc-500">
+          {tableLabel
+            ? `You're at ${tableLabel}. Pick a category to start browsing the menu.`
+            : "Scan the QR code on your table, then pick a category."}
+        </p>
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
