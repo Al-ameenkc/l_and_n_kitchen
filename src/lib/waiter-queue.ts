@@ -2,9 +2,12 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   assignOrderNumberIfNeeded,
   createCustomerToken,
+  findWaiterByStaffId,
+  getOrderById,
   getOrderByShareId,
   isOrderClosed,
   mapDbOrder,
+  mergeItemIntoList,
   normalizeOrderItems,
   orderTotal,
   syncShareFromOrder,
@@ -12,6 +15,7 @@ import {
   type DbWaiter,
   type OrderItem,
 } from "./orders-db";
+import { getMenuData } from "./menu-db";
 import { createServiceClient } from "./supabase/server";
 import { MAX_ACTIVE_TABLES, OFFER_SECONDS } from "./waiter-limits";
 
@@ -459,6 +463,76 @@ export async function confirmCustomerOrderScan(
     order: { ...order, assignment_state: "confirmed" as const, table_confirmed_at: confirmedAt },
     already: false,
   };
+}
+
+export async function editConfirmedOrder(
+  staffId: string,
+  orderId: string,
+  change:
+    | { action: "add"; dishId: string }
+    | { action: "remove"; dishId: string }
+    | { action: "set_qty"; dishId: string; qty: number },
+  client?: SupabaseClient
+) {
+  const supabase = clientOrNew(client);
+  const waiter = await findWaiterByStaffId(staffId, supabase);
+  if (!waiter) throw new Error("Waiter not found.");
+
+  const order = await getOrderById(orderId, supabase);
+  if (!order) throw new Error("Order not found.");
+  if (isOrderClosed(order.status)) throw new Error("This order is closed.");
+  if (order.waiter_id !== waiter.id) throw new Error("This order is not assigned to you.");
+  if (order.assignment_state !== "confirmed") {
+    throw new Error("Scan the customer's order QR before changing dishes.");
+  }
+
+  let next = order.items.map((item) => ({ ...item }));
+  if (change.action === "add") {
+    const menu = await getMenuData();
+    const dish = menu.dishes.find((row) => row.id === change.dishId);
+    if (!dish || dish.available === false) throw new Error("That dish is not available.");
+    next = mergeItemIntoList(next, {
+      id: dish.id,
+      name: dish.name,
+      category: dish.category,
+      price: dish.price,
+      qty: 1,
+    });
+  } else if (change.action === "remove") {
+    if (next.length <= 1) throw new Error("The order needs at least one dish.");
+    const filtered = next.filter((item) => item.id !== change.dishId);
+    if (filtered.length === next.length) throw new Error("That dish is not on this order.");
+    next = filtered;
+  } else {
+    const qty = Math.max(1, Math.min(99, Math.round(change.qty) || 1));
+    if (!next.some((item) => item.id === change.dishId)) {
+      throw new Error("That dish is not on this order.");
+    }
+    next = next.map((item) => (item.id === change.dishId ? { ...item, qty } : item));
+  }
+
+  const { data, error } = await supabase
+    .from("orders")
+    .update({
+      items: next,
+      total: orderTotal(next),
+      dish_ids: next.map((item) => item.id),
+      locked_items: next.map((item) => ({ id: item.id, qty: item.qty })),
+    })
+    .eq("id", order.id)
+    .eq("waiter_id", waiter.id)
+    .eq("assignment_state", "confirmed")
+    .select("*")
+    .single();
+  if (error) throw error;
+
+  const updated = mapDbOrder(data as Record<string, unknown>);
+  try {
+    await syncShareFromOrder(updated);
+  } catch (shareErr) {
+    console.error("syncShareFromOrder:", shareErr);
+  }
+  return updated;
 }
 
 export async function confirmTableScan(staffId: string, qrToken: string, client?: SupabaseClient) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { WaiterOrderEditor, type WaiterMenuDish } from "@/components/WaiterOrderEditor";
 import { MAX_ACTIVE_TABLES } from "@/lib/waiter-limits";
 
 const STORAGE_KEY = "ln-waiter-device";
@@ -18,6 +19,7 @@ type ActiveTable = {
   table_label: string;
   assignment_state: "accepted" | "confirmed" | string;
   total: number;
+  items: { id: string; name: string; qty: number; price: number }[];
 };
 
 type Session = {
@@ -41,6 +43,8 @@ export function WaiterDevice() {
   const [busy, setBusy] = useState(false);
   const [scanning, setScanning] = useState(false);
   const [scanMessage, setScanMessage] = useState("");
+  const [openOrderId, setOpenOrderId] = useState<string | null>(null);
+  const [menuDishes, setMenuDishes] = useState<WaiterMenuDish[]>([]);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -66,6 +70,24 @@ export function WaiterDevice() {
     setSession(data as Session);
     setError("");
   }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    let cancelled = false;
+    const loadMenu = async () => {
+      try {
+        const res = await fetch("/api/menu", { cache: "no-store" });
+        const data = (await res.json()) as { dishes?: WaiterMenuDish[] };
+        if (!cancelled) setMenuDishes(data.dishes ?? []);
+      } catch {
+        /* the add list stays empty until the menu loads */
+      }
+    };
+    void loadMenu();
+    return () => {
+      cancelled = true;
+    };
+  }, [ready]);
 
   useEffect(() => {
     if (!ready || !staffId.trim()) return;
@@ -128,9 +150,10 @@ export function WaiterDevice() {
         setScanMessage(
           data.already
             ? `${data.table_label} was already confirmed.`
-            : `${data.table_label} is confirmed. It is now on the admin orders.`
+            : `${data.table_label} is confirmed. You can change the dishes now.`
         );
         await refresh(staffId.trim());
+        if (data.order_id) setOpenOrderId(String(data.order_id));
       } catch (e) {
         setError(e instanceof Error ? e.message : "Could not confirm the order");
       } finally {
@@ -207,6 +230,32 @@ export function WaiterDevice() {
     };
   }, [confirmRaw, scanning]);
 
+  const changeOrder = async (
+    orderId: string,
+    change: { action: "add" | "remove" | "set_qty"; dish_id: string; qty?: number }
+  ) => {
+    setBusy(true);
+    setError("");
+    try {
+      const res = await fetch("/api/waiter/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          staff_id: staffId.trim(),
+          order_id: orderId,
+          ...change,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Could not update the order");
+      await refresh(staffId.trim());
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not update the order");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const respond = async (action: "accept" | "pass") => {
     if (!session?.offer) return;
     setBusy(true);
@@ -265,6 +314,9 @@ export function WaiterDevice() {
 
   const waiter = session?.waiter;
   const offer = session?.offer;
+  const openOrder = session?.tables.find(
+    (table) => table.id === openOrderId && table.assignment_state === "confirmed"
+  );
 
   return (
     <div className="flex h-full flex-col overflow-y-auto px-5 pb-8 pt-[max(1.25rem,env(safe-area-inset-top))]">
@@ -321,7 +373,7 @@ export function WaiterDevice() {
             Pass to the next waiter
           </button>
         </section>
-      ) : (
+      ) : openOrder ? null : (
         <section className="mt-6 rounded-3xl border border-zinc-800 bg-zinc-900 px-5 py-8 text-center">
           <p className="text-lg font-bold">Waiting for the next table</p>
           <p className="mt-1 text-sm text-zinc-500">
@@ -332,21 +384,50 @@ export function WaiterDevice() {
         </section>
       )}
 
+      {openOrder ? (
+        <WaiterOrderEditor
+          tableLabel={openOrder.table_label}
+          items={openOrder.items ?? []}
+          total={openOrder.total}
+          dishes={menuDishes}
+          busy={busy}
+          onBack={() => setOpenOrderId(null)}
+          onAdd={(dishId) => void changeOrder(openOrder.id, { action: "add", dish_id: dishId })}
+          onSetQty={(dishId, qty) =>
+            void changeOrder(openOrder.id, { action: "set_qty", dish_id: dishId, qty })
+          }
+          onRemove={(dishId) => void changeOrder(openOrder.id, { action: "remove", dish_id: dishId })}
+        />
+      ) : null}
+
       <section className="mt-6">
         <h2 className="text-sm font-bold text-zinc-300">Your tables</h2>
         {session?.tables.length ? (
           <ul className="mt-2 space-y-2">
-            {session.tables.map((table) => (
-              <li key={table.id} className="rounded-2xl bg-zinc-900 px-4 py-3">
-                <p className="font-bold">{table.table_label}</p>
-                <p className="text-xs text-zinc-500">
-                  {table.assignment_state === "confirmed"
-                    ? "Confirmed"
-                    : "Scan the customer's order QR"}{" "}
-                  · ₦{Number(table.total).toLocaleString()}
-                </p>
-              </li>
-            ))}
+            {session.tables.map((table) => {
+              const confirmed = table.assignment_state === "confirmed";
+              return (
+                <li key={table.id}>
+                  <button
+                    type="button"
+                    disabled={!confirmed}
+                    onClick={() => setOpenOrderId(table.id)}
+                    className="w-full rounded-2xl bg-zinc-900 px-4 py-3 text-left disabled:opacity-80"
+                  >
+                    <p className="font-bold">{table.table_label}</p>
+                    <p className="text-xs text-zinc-500">
+                      {confirmed ? "Tap to change dishes" : "Scan the customer's order QR"} · ₦
+                      {Number(table.total).toLocaleString()}
+                    </p>
+                    {confirmed && table.items?.length ? (
+                      <p className="mt-1 text-xs text-zinc-400">
+                        {table.items.map((item) => `${item.qty} × ${item.name}`).join(", ")}
+                      </p>
+                    ) : null}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p className="mt-2 text-sm text-zinc-500">No tables yet.</p>
