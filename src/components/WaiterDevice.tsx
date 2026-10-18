@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { MAX_ACTIVE_TABLES } from "@/lib/waiter-limits";
 
 const STORAGE_KEY = "ln-waiter-device";
@@ -39,8 +39,9 @@ export function WaiterDevice() {
   const [session, setSession] = useState<Session | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [scanValue, setScanValue] = useState("");
+  const [scanning, setScanning] = useState(false);
   const [scanMessage, setScanMessage] = useState("");
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     try {
@@ -111,6 +112,101 @@ export function WaiterDevice() {
     }
   };
 
+  const confirmRaw = useCallback(
+    async (raw: string) => {
+      setBusy(true);
+      setScanMessage("");
+      setError("");
+      try {
+        const res = await fetch("/api/waiter/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ staff_id: staffId.trim(), qr_token: raw }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? "Could not confirm the order");
+        setScanMessage(
+          data.already
+            ? `${data.table_label} was already confirmed.`
+            : `${data.table_label} is confirmed. It is now on the admin orders.`
+        );
+        await refresh(staffId.trim());
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Could not confirm the order");
+      } finally {
+        setBusy(false);
+      }
+    },
+    [refresh, staffId]
+  );
+
+  useEffect(() => {
+    if (!scanning) return;
+    const video = videoRef.current;
+    if (!video) return;
+    let stop = false;
+    let stream: MediaStream | null = null;
+
+    const Detector = (
+      window as Window & {
+        BarcodeDetector?: new (options?: { formats?: string[] }) => {
+          detect: (source: CanvasImageSource) => Promise<Array<{ rawValue?: string }>>;
+        };
+      }
+    ).BarcodeDetector;
+
+    const run = async () => {
+      if (!navigator.mediaDevices?.getUserMedia || !Detector) {
+        setScanning(false);
+        setError("This browser can't scan QR codes. Open the waiter page in Chrome or Safari.");
+        return;
+      }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: "environment" } },
+          audio: false,
+        });
+        if (stop) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        video.srcObject = stream;
+        await video.play();
+        const detector = new Detector({ formats: ["qr_code"] });
+        const tick = async () => {
+          if (stop) return;
+          try {
+            const codes = await detector.detect(video);
+            const raw = codes.find((code) => code.rawValue)?.rawValue;
+            if (raw) {
+              stop = true;
+              stream?.getTracks().forEach((track) => track.stop());
+              setScanning(false);
+              await confirmRaw(raw);
+              return;
+            }
+          } catch {
+            /* wait for the next frame */
+          }
+          if (!stop) window.setTimeout(() => void tick(), 250);
+        };
+        void tick();
+      } catch (e) {
+        if (!stop) {
+          setScanning(false);
+          setError(e instanceof Error ? e.message : "Could not open the camera");
+        }
+      }
+    };
+    void run();
+
+    return () => {
+      stop = true;
+      stream?.getTracks().forEach((track) => track.stop());
+      video.srcObject = null;
+    };
+  }, [confirmRaw, scanning]);
+
   const respond = async (action: "accept" | "pass") => {
     if (!session?.offer) return;
     setBusy(true);
@@ -130,33 +226,6 @@ export function WaiterDevice() {
       await refresh(staffId.trim());
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not update the offer");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const confirmScan = async () => {
-    if (!scanValue.trim()) return;
-    setBusy(true);
-    setScanMessage("");
-    setError("");
-    try {
-      const res = await fetch("/api/waiter/confirm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ staff_id: staffId.trim(), qr_token: scanValue.trim() }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Could not confirm the table");
-      setScanValue("");
-      setScanMessage(
-        data.already
-          ? `Table ${data.table_number} was already taken.`
-          : `Table ${data.table_number} is now taken.`
-      );
-      await refresh(staffId.trim());
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not confirm the table");
     } finally {
       setBusy(false);
     }
@@ -271,8 +340,10 @@ export function WaiterDevice() {
               <li key={table.id} className="rounded-2xl bg-zinc-900 px-4 py-3">
                 <p className="font-bold">{table.table_label}</p>
                 <p className="text-xs text-zinc-500">
-                  {table.assignment_state === "confirmed" ? "Taken" : "Scan the table QR to confirm"} · ₦
-                  {Number(table.total).toLocaleString()}
+                  {table.assignment_state === "confirmed"
+                    ? "Confirmed"
+                    : "Scan the customer's order QR"}{" "}
+                  · ₦{Number(table.total).toLocaleString()}
                 </p>
               </li>
             ))}
@@ -283,28 +354,39 @@ export function WaiterDevice() {
       </section>
 
       <section className="mt-6">
-        <h2 className="text-sm font-bold text-zinc-300">Confirm a table</h2>
-        <p className="mt-1 text-xs text-zinc-500">
-          Scan the table QR with the phone camera, or paste the code here.
+        <button
+          type="button"
+          disabled={busy || scanning}
+          onClick={() => {
+            setError("");
+            setScanMessage("");
+            setScanning(true);
+          }}
+          className="w-full rounded-full bg-white py-4 text-base font-bold text-black disabled:opacity-40"
+        >
+          Scan order QR
+        </button>
+        <p className="mt-2 text-center text-xs text-zinc-500">
+          Scan the QR on the customer's phone. The order reaches admin only after this scan.
         </p>
-        <div className="mt-3 flex gap-2">
-          <input
-            value={scanValue}
-            onChange={(e) => setScanValue(e.target.value)}
-            placeholder="Table QR or code"
-            className="min-w-0 flex-1 rounded-2xl border border-zinc-700 bg-zinc-950 px-4 py-3 text-sm outline-none focus:border-green-500"
-          />
-          <button
-            type="button"
-            disabled={busy || !scanValue.trim()}
-            onClick={() => void confirmScan()}
-            className="rounded-2xl bg-white px-4 text-sm font-bold text-black disabled:opacity-40"
-          >
-            Confirm
-          </button>
-        </div>
-        {scanMessage ? <p className="mt-2 text-sm text-green-400">{scanMessage}</p> : null}
+        {scanMessage ? <p className="mt-2 text-center text-sm text-green-400">{scanMessage}</p> : null}
       </section>
+
+      {scanning ? (
+        <div className="fixed inset-0 z-50 flex flex-col bg-black">
+          <video ref={videoRef} className="min-h-0 flex-1 object-cover" playsInline muted />
+          <div className="px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4">
+            <p className="mb-3 text-center text-sm text-zinc-300">Point the camera at the customer's order QR</p>
+            <button
+              type="button"
+              onClick={() => setScanning(false)}
+              className="w-full rounded-full border border-zinc-600 py-3 text-sm font-bold text-white"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

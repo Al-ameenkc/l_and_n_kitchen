@@ -214,6 +214,7 @@ function OrderSummaryTable({
   onShareId,
   orderLive,
   orderLabel,
+  caption,
 }: {
   dishes: WishlistDish[];
   total: number;
@@ -221,6 +222,7 @@ function OrderSummaryTable({
   onShareId: (id: string) => void;
   orderLive: boolean;
   orderLabel?: string;
+  caption?: string;
 }) {
   const [shareUrl, setShareUrl] = useState("");
   const [shareError, setShareError] = useState("");
@@ -314,7 +316,7 @@ function OrderSummaryTable({
           </div>
         )}
         <p className="text-center text-[11px] text-zinc-500">
-          {orderLive ? "Kitchen is updating this order live" : "Show QR to your waiter"}
+          {caption ?? (orderLive ? "Show this QR to your waiter to confirm the order" : "Show QR to your waiter")}
         </p>
         {shareError ? <p className="text-center text-[10px] text-red-500">{shareError}</p> : null}
       </div>
@@ -593,6 +595,7 @@ export function WishListSheet({
                     shareId={shareId}
                     onShareId={onShareId}
                     orderLive={orderLive}
+                    caption="Show this QR to your waiter to confirm the order"
                   />
                   {onNewOrder ? (
                     <div className="pb-2">

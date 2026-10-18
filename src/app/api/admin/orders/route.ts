@@ -7,7 +7,10 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    const orders = await listOrdersAdmin();
+    const orders = (await listOrdersAdmin()).filter((order) => {
+      if (!order.assignment_state || order.assignment_state === "manual") return true;
+      return order.assignment_state === "confirmed";
+    });
     return NextResponse.json(orders);
   } catch (e) {
     const message = e instanceof Error ? e.message : "Failed to load orders";

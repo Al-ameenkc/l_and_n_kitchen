@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   assignOrderNumberIfNeeded,
   createCustomerToken,
+  getOrderByShareId,
   isOrderClosed,
   mapDbOrder,
   normalizeOrderItems,
@@ -387,6 +388,77 @@ export async function findTableByToken(token: string, client?: SupabaseClient) {
   if (error) throw error;
   if (!data) return null;
   return mapTable(data as Record<string, unknown>);
+}
+
+export function shareIdFromOrderQr(raw: string): string {
+  const trimmed = raw.trim();
+  try {
+    const url = new URL(trimmed);
+    const share = url.searchParams.get("s")?.trim() ?? "";
+    if (share) return share.replace(/[^a-zA-Z0-9]/g, "");
+  } catch {
+    /* plain share id */
+  }
+  return trimmed.replace(/[^a-zA-Z0-9]/g, "");
+}
+
+/** Confirms a real customer order by matching the QR shown on their phone. */
+export async function confirmCustomerOrderScan(
+  staffId: string,
+  scanned: string,
+  client?: SupabaseClient
+) {
+  const supabase = clientOrNew(client);
+  const shareId = shareIdFromOrderQr(scanned);
+  if (!shareId) throw new Error("That QR code is not a customer order.");
+
+  const order = await getOrderByShareId(shareId, supabase);
+  if (!order || isOrderClosed(order.status)) {
+    throw new Error("No open order matches that QR code.");
+  }
+
+  const { data: waiter, error: waiterError } = await supabase
+    .from("waiters")
+    .select("id")
+    .eq("staff_id", staffId.trim())
+    .eq("active", true)
+    .maybeSingle();
+  if (waiterError) throw waiterError;
+  if (!waiter) throw new Error("Waiter not found.");
+  if (order.waiter_id !== waiter.id) {
+    throw new Error("This order is not assigned to you.");
+  }
+  if (order.assignment_state === "confirmed") {
+    return { order, already: true };
+  }
+  if (order.assignment_state !== "accepted") {
+    throw new Error("Accept the order first, then scan the customer's QR.");
+  }
+
+  const confirmedAt = new Date().toISOString();
+  const { error: orderError } = await supabase
+    .from("orders")
+    .update({
+      assignment_state: "confirmed",
+      table_confirmed_at: confirmedAt,
+    })
+    .eq("id", order.id)
+    .eq("assignment_state", "accepted")
+    .eq("waiter_id", waiter.id);
+  if (orderError) throw orderError;
+
+  if (order.table_id) {
+    const { error: tableError } = await supabase
+      .from("restaurant_tables")
+      .update({ status: "taken", active_order_id: order.id })
+      .eq("id", order.table_id);
+    if (tableError) throw tableError;
+  }
+
+  return {
+    order: { ...order, assignment_state: "confirmed" as const, table_confirmed_at: confirmedAt },
+    already: false,
+  };
 }
 
 export async function confirmTableScan(staffId: string, qrToken: string, client?: SupabaseClient) {

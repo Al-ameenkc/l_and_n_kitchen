@@ -23,25 +23,7 @@ export function TableEntry({ token }: { token: string }) {
       }
 
       if (staffId) {
-        setMessage("Confirming this table…");
-        try {
-          const res = await fetch("/api/waiter/confirm", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ staff_id: staffId, qr_token: token }),
-          });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.error ?? "Could not confirm the table");
-          if (cancelled) return;
-          setMessage(
-            data.already
-              ? `Table ${data.table_number} is already confirmed.`
-              : `Table ${data.table_number} is marked taken.`
-          );
-          window.setTimeout(() => router.replace("/waiter"), 900);
-        } catch (e) {
-          if (!cancelled) setError(e instanceof Error ? e.message : "Could not confirm the table");
-        }
+        router.replace("/waiter");
         return;
       }
 

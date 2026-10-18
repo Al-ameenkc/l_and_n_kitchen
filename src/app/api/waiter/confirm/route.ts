@@ -1,32 +1,18 @@
 import { NextResponse } from "next/server";
 import { isMissingOrdersSchemaError } from "@/lib/orders-db";
-import { confirmTableScan } from "@/lib/waiter-queue";
-
-function tokenFromScan(raw: string): string {
-  const trimmed = raw.trim();
-  try {
-    const url = new URL(trimmed);
-    const parts = url.pathname.split("/").filter(Boolean);
-    const tIndex = parts.indexOf("t");
-    if (tIndex >= 0 && parts[tIndex + 1]) return decodeURIComponent(parts[tIndex + 1]);
-  } catch {
-    /* plain token */
-  }
-  return trimmed.replace(/^\/?t\//, "");
-}
+import { confirmCustomerOrderScan } from "@/lib/waiter-queue";
 
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as { staff_id?: string; qr_token?: string };
     const staffId = body.staff_id?.trim() ?? "";
-    const token = tokenFromScan(body.qr_token ?? "");
-    if (!staffId || !token) {
-      return NextResponse.json({ error: "Waiter ID and table QR are required." }, { status: 400 });
+    const scanned = body.qr_token?.trim() ?? "";
+    if (!staffId || !scanned) {
+      return NextResponse.json({ error: "Scan the customer's order QR." }, { status: 400 });
     }
-    const result = await confirmTableScan(staffId, token);
+    const result = await confirmCustomerOrderScan(staffId, scanned);
     return NextResponse.json({
       already: result.already,
-      table_number: result.table.table_number,
       table_label: result.order.table_label,
       order_id: result.order.id,
     });
